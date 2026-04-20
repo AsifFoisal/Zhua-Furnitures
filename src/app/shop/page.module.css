@@ -204,7 +204,20 @@
   transform: translateY(100%); transition: transform 280ms ease;
 }
 
+.cardQuickAdd:disabled {
+  cursor: not-allowed;
+  opacity: 0.92;
+}
+
+.cardQuickAddOutOfStock {
+  transform: translateY(0);
+  background: rgba(123, 142, 166, 0.28);
+  color: #dce5f2;
+}
+
 .card:hover .cardQuickAdd { transform: translateY(0); }
+
+.card:hover .cardQuickAddOutOfStock { transform: translateY(0); }
 
 .cardBody { padding: 1rem; }
 .cardSub { font-family: 'Outfit', sans-serif; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #58708A; margin-bottom: 4px; }

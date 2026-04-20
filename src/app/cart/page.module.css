@@ -16,6 +16,7 @@
 .qtyRow { display: flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 4px 8px; }
 .qtyBtn { width: 26px; height: 26px; border-radius: 6px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.06); border: none; color: #A9B7C9; cursor: pointer; transition: all 150ms; }
 .qtyBtn:hover { background: rgba(181,146,65,0.15); color: #B59241; }
+.qtyBtn:disabled { cursor: not-allowed; opacity: 0.55; background: rgba(255,255,255,0.03); color: #7B8EA6; }
 .qty { font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 700; color: #EAF0F8; min-width: 1.5rem; text-align: center; }
 .removeBtn { display: flex; align-items: center; gap: 4px; background: none; border: none; color: #58708A; font-size: 0.78rem; cursor: pointer; transition: color 150ms; }
 .removeBtn:hover { color: #ff6b6b; }

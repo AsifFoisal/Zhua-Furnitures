@@ -145,12 +145,19 @@ export default function CartPage() {
                     <Link href={`/product/${item.product.slug}`} className={styles.itemName}>{item.product.name}</Link>
                     <p className={styles.itemVariant}>
                       {item.selectedColor}{item.selectedSize ? ` · ${item.selectedSize}` : ''}{item.selectedFabric ? ` · ${item.selectedFabric}` : ''}
+                      {!item.product.inStock ? ' · Out of stock' : ''}
                     </p>
                     <div className={styles.itemActions}>
                       <div className={styles.qtyRow}>
                         <button className={styles.qtyBtn} onClick={() => updateQuantity(item.product.id, item.selectedColor, item.quantity - 1)}><Minus size={13} /></button>
                         <span className={styles.qty}>{item.quantity}</span>
-                        <button className={styles.qtyBtn} onClick={() => updateQuantity(item.product.id, item.selectedColor, item.quantity + 1)}><Plus size={13} /></button>
+                        <button
+                          className={styles.qtyBtn}
+                          onClick={() => updateQuantity(item.product.id, item.selectedColor, item.quantity + 1)}
+                          disabled={!item.product.inStock}
+                        >
+                          <Plus size={13} />
+                        </button>
                       </div>
                       <button
                         className={styles.removeBtn}

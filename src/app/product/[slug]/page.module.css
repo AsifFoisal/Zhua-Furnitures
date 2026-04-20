@@ -152,12 +152,25 @@
 
 .qtyBtn:hover { background: rgba(181,146,65,0.15); color: #B59241; }
 
+.qtyBtn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  background: rgba(255, 255, 255, 0.03);
+  color: #7b8ea6;
+}
+
 .qty { font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 700; color: #EAF0F8; min-width: 2rem; text-align: center; }
 
 /* CTA */
 .ctaGroup { display: flex; gap: 0.75rem; align-items: stretch; }
 
 .cartBtn { flex: 1; justify-content: center; }
+
+.cartBtn:disabled {
+  cursor: not-allowed;
+  opacity: 0.86;
+  filter: saturate(0.35);
+}
 
 .wishBtn {
   width: 52px; height: 52px; border-radius: 14px; flex-shrink: 0;

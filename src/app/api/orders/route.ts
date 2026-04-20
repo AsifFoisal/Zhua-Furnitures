@@ -142,6 +142,61 @@ export async function POST(request: Request) {
     };
   });
 
+  if (normalizedItems.some((item) => !item.productId)) {
+    return NextResponse.json(
+      { error: 'Cart contains invalid products. Please refresh your cart and try again.' },
+      { status: 400 }
+    );
+  }
+
+  const productIds = Array.from(
+    new Set(
+      normalizedItems
+        .map((item) => item.productId)
+        .filter((value): value is string => Boolean(value))
+    )
+  );
+
+  if (productIds.length > 0) {
+    const { data: productRows, error: productError } = await supabase
+      .from('products')
+      .select('id, name, in_stock, status')
+      .in('id', productIds);
+
+    if (productError) {
+      return NextResponse.json({ error: productError.message }, { status: 500 });
+    }
+
+    const productMap = new Map((productRows ?? []).map((row) => [row.id, row]));
+    const unavailableProductNames = Array.from(
+      new Set(
+        normalizedItems
+          .map((item) => {
+            const product = productMap.get(item.productId as string);
+            if (!product) {
+              return item.productName;
+            }
+
+            if (!product.in_stock || product.status !== 'active') {
+              return product.name || item.productName;
+            }
+
+            return null;
+          })
+          .filter((name): name is string => typeof name === 'string' && name.trim().length > 0)
+      )
+    );
+
+    if (unavailableProductNames.length > 0) {
+      return NextResponse.json(
+        {
+          error: `Some items are out of stock: ${unavailableProductNames.slice(0, 3).join(', ')}. Please update your cart and try again.`,
+        },
+        { status: 400 }
+      );
+    }
+  }
+
   const subtotalCents = normalizedItems.reduce((sum, item) => sum + item.lineTotalCents, 0);
   const normalizedProvince = normalizeProvinceCode(delivery.province);
   const normalizedDeliveryType = normalizeDeliveryType(delivery.deliveryType || 'standard');

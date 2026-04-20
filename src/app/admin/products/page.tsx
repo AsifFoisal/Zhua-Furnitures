@@ -513,6 +513,15 @@ export default function ProductsAdminPage() {
     }
   };
 
+  const adjustProductStock = async (product: AdminProductRow, delta: number) => {
+    const nextStock = Math.max(0, Math.round(product.stock + delta));
+    if (nextStock === product.stock) {
+      return;
+    }
+
+    await updateProduct(product.id, { stock: nextStock }, `Stock updated to ${nextStock}.`);
+  };
+
   const openEditModal = (product: AdminProductRow) => {
     setError('');
     setEditingProductId(product.id);
@@ -1266,6 +1275,31 @@ export default function ProductsAdminPage() {
                     </div>
                   </td>
                   <td data-label="Actions">
+                    <div className={styles.inlineActions}>
+                      <button
+                        className={styles.ghostButton}
+                        disabled={
+                          savingId === product.id ||
+                          uploadingId === product.id ||
+                          (editingProductId !== null && editingProductId !== product.id) ||
+                          product.stock <= 0
+                        }
+                        onClick={() => void adjustProductStock(product, -1)}
+                      >
+                        -1 Stock
+                      </button>
+                      <button
+                        className={styles.ghostButton}
+                        disabled={
+                          savingId === product.id ||
+                          uploadingId === product.id ||
+                          (editingProductId !== null && editingProductId !== product.id)
+                        }
+                        onClick={() => void adjustProductStock(product, 1)}
+                      >
+                        +1 Stock
+                      </button>
+                    </div>
                     <div className={styles.inlineActions}>
                       <button
                         className={styles.ghostButton}

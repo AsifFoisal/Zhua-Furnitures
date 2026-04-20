@@ -36,12 +36,18 @@ export default function WishlistPage() {
                 <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
                   <button
                     className="btn btn-primary btn-sm"
+                    disabled={!product.inStock}
                     onClick={() => {
+                      if (!product.inStock) {
+                        toast.error(`${product.name} is out of stock.`);
+                        return;
+                      }
+
                       addItem({ product, quantity: 1, selectedColor: product.colors[0].name });
                       toast.success(`${product.name} added to cart.`);
                     }}
                   >
-                    Add to Cart
+                    {product.inStock ? 'Add to Cart' : 'Out of Stock'}
                   </button>
                   <button
                     className="btn btn-ghost btn-sm"

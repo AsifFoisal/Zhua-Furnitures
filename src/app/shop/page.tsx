@@ -210,9 +210,16 @@ export default function ShopPage() {
                       </button>
                     ) : null}
                     <button
-                      className={styles.cardQuickAdd}
+                      className={`${styles.cardQuickAdd} ${!product.inStock ? styles.cardQuickAddOutOfStock : ''}`}
+                      disabled={!product.inStock}
+                      aria-label={product.inStock ? 'Add to cart' : 'Out of stock'}
                       onClick={e => {
                         e.preventDefault();
+                        if (!product.inStock) {
+                          toast.error(`${product.name} is out of stock.`);
+                          return;
+                        }
+
                         addItem({
                           product,
                           quantity: 1,
@@ -220,7 +227,7 @@ export default function ShopPage() {
                         });
                         toast.success(`${product.name} added to cart.`);
                       }}
-                    ><ShoppingBag size={13} /> Add to Cart</button>
+                    ><ShoppingBag size={13} /> {product.inStock ? 'Add to Cart' : 'Out of Stock'}</button>
                   </div>
                   <div className={styles.cardBody}>
                     <p className={styles.cardSub}>{product.subcategory}</p>

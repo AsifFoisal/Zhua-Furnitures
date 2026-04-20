@@ -87,6 +87,7 @@ export default function CartDrawer() {
                     {item.selectedColor}
                     {item.selectedSize && ` · ${item.selectedSize}`}
                     {item.selectedFabric && ` · ${item.selectedFabric}`}
+                    {!item.product.inStock && ' · Out of stock'}
                   </p>
                   <div className={styles.itemActions}>
                     <div className={styles.qtyControl}>
@@ -102,6 +103,7 @@ export default function CartDrawer() {
                         className={styles.qtyBtn}
                         onClick={() => updateQuantity(item.product.id, item.selectedColor, item.quantity + 1)}
                         aria-label="Increase quantity"
+                        disabled={!item.product.inStock}
                       >
                         <Plus size={12} />
                       </button>

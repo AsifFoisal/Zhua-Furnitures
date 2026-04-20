@@ -194,6 +194,13 @@
 
 .qtyBtn:hover { background: rgba(181,146,65,0.15); color: #B59241; }
 
+.qtyBtn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  background: rgba(255, 255, 255, 0.03);
+  color: #7b8ea6;
+}
+
 .qty {
   font-family: 'Outfit', sans-serif;
   font-size: 0.85rem;

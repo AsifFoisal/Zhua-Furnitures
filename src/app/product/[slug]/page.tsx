@@ -100,9 +100,15 @@ export default function ProductPage() {
   const activeFabric = fabricOptions.includes(selectedFabric)
     ? selectedFabric
     : fabricOptions[0] || '';
+  const isOutOfStock = !product.inStock;
   const delivery = deliveryZones.find((zone) => zone.id === province);
 
   const handleAddToCart = () => {
+    if (isOutOfStock) {
+      toast.error(`${product.name} is out of stock.`);
+      return;
+    }
+
     addItem({ product, quantity, selectedColor: selectedColor.name, selectedSize: activeSize, selectedFabric: activeFabric });
     toast.success(`${product.name} added to cart.`);
     setAdded(true);
@@ -280,16 +286,38 @@ export default function ProductPage() {
             <div className={styles.optionGroup}>
               <label className={styles.optionLabel}>Quantity</label>
               <div className={styles.qtyControl}>
-                <button className={styles.qtyBtn} onClick={() => setQuantity(Math.max(1, quantity - 1))}>−</button>
+                <button
+                  className={styles.qtyBtn}
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  disabled={isOutOfStock}
+                >
+                  −
+                </button>
                 <span className={styles.qty}>{quantity}</span>
-                <button className={styles.qtyBtn} onClick={() => setQuantity(quantity + 1)}>+</button>
+                <button
+                  className={styles.qtyBtn}
+                  onClick={() => setQuantity(quantity + 1)}
+                  disabled={isOutOfStock}
+                >
+                  +
+                </button>
               </div>
             </div>
 
             {/* CTA */}
             <div className={styles.ctaGroup}>
-              <button className={`btn btn-primary btn-lg ${styles.cartBtn}`} onClick={handleAddToCart}>
-                {added ? <><Check size={18} /> Added!</> : <><ShoppingBag size={18} /> Add to Cart</>}
+              <button
+                className={`btn btn-primary btn-lg ${styles.cartBtn}`}
+                onClick={handleAddToCart}
+                disabled={isOutOfStock}
+              >
+                {isOutOfStock ? (
+                  <><ShoppingBag size={18} /> Out of Stock</>
+                ) : added ? (
+                  <><Check size={18} /> Added!</>
+                ) : (
+                  <><ShoppingBag size={18} /> Add to Cart</>
+                )}
               </button>
               <button
                 className={`${styles.wishBtn} ${has(product.id) ? styles.wishBtnActive : ''}`}

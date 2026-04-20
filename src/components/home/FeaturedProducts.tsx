@@ -28,6 +28,11 @@ export default function FeaturedProducts() {
 
   const handleAddToCart = (product: Product, e: React.MouseEvent) => {
     e.preventDefault();
+    if (!product.inStock) {
+      toast.error(`${product.name} is out of stock.`);
+      return;
+    }
+
     addItem({
       product,
       quantity: 1,
@@ -118,11 +123,12 @@ export default function FeaturedProducts() {
 
                 {/* Quick add */}
                 <button
-                  className={styles.quickAdd}
+                  className={`${styles.quickAdd} ${!product.inStock ? styles.quickAddOutOfStock : ''}`}
                   onClick={(e) => handleAddToCart(product, e)}
-                  aria-label="Add to cart"
+                  aria-label={product.inStock ? 'Add to cart' : 'Out of stock'}
+                  disabled={!product.inStock}
                 >
-                  <ShoppingBag size={14} /> Add to Cart
+                  <ShoppingBag size={14} /> {product.inStock ? 'Add to Cart' : 'Out of Stock'}
                 </button>
 
                 {product.images[0] ? (

@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getOptionalUser } from '@/lib/auth';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
-import { hasPublicSupabaseEnv } from '@/lib/supabase/env';
+import { createSupabaseAdminClient } from '@/lib/supabase/admin';
+import { hasPublicSupabaseEnv, hasServiceSupabaseEnv } from '@/lib/supabase/env';
 
 export const dynamic = 'force-dynamic';
 
@@ -47,6 +48,10 @@ type CartItem = {
   selectedFabric?: string;
   customNote?: string;
 };
+
+function isUuid(value: string): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+}
 
 function isObjectLike(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
@@ -198,6 +203,83 @@ function normalizeCartItems(value: unknown): CartItem[] {
     .filter((entry): entry is CartItem => Boolean(entry));
 }
 
+async function validateCartItemsAgainstStock(items: CartItem[]) {
+  if (items.length === 0 || !hasServiceSupabaseEnv) {
+    return {
+      items,
+      removedOutOfStockCount: 0,
+      removedMissingProductCount: 0,
+    };
+  }
+
+  const productIds = Array.from(
+    new Set(
+      items
+        .map((item) => item.product.id)
+        .filter((value) => typeof value === 'string' && value.length > 0)
+    )
+  );
+
+  const dbProductIds = productIds.filter((id) => isUuid(id));
+
+  if (dbProductIds.length === 0) {
+    return {
+      items: [],
+      removedOutOfStockCount: 0,
+      removedMissingProductCount: items.length,
+    };
+  }
+
+  const supabase = createSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from('products')
+    .select('id, in_stock, status')
+    .in('id', dbProductIds);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  const availability = new Map(
+    (data ?? []).map((row) => [
+      row.id,
+      row.in_stock === true && row.status === 'active',
+    ])
+  );
+
+  let removedOutOfStockCount = 0;
+  let removedMissingProductCount = 0;
+
+  const validItems = items
+    .map((item) => {
+      const isAvailable = availability.get(item.product.id);
+      if (isAvailable === undefined) {
+        removedMissingProductCount += 1;
+        return null;
+      }
+
+      if (!isAvailable) {
+        removedOutOfStockCount += 1;
+        return null;
+      }
+
+      return {
+        ...item,
+        product: {
+          ...item.product,
+          inStock: true,
+        },
+      };
+    })
+    .filter((item): item is CartItem => item !== null);
+
+  return {
+    items: validItems,
+    removedOutOfStockCount,
+    removedMissingProductCount,
+  };
+}
+
 async function fetchUserCartItems(userId: string): Promise<CartItem[]> {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
@@ -225,7 +307,18 @@ export async function GET() {
 
   try {
     const items = await fetchUserCartItems(user.id);
-    return NextResponse.json({ items });
+    const validated = await validateCartItemsAgainstStock(items);
+
+    return NextResponse.json({
+      items: validated.items,
+      warnings:
+        validated.removedOutOfStockCount > 0 || validated.removedMissingProductCount > 0
+          ? {
+              removedOutOfStockCount: validated.removedOutOfStockCount,
+              removedMissingProductCount: validated.removedMissingProductCount,
+            }
+          : undefined,
+    });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Could not load cart.';
     return NextResponse.json({ error: message }, { status: 500 });
@@ -245,13 +338,21 @@ export async function PUT(request: Request) {
   const payload = (await request.json()) as { items?: unknown };
   const items = normalizeCartItems(payload.items);
 
+  let validated;
+  try {
+    validated = await validateCartItemsAgainstStock(items);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Could not validate cart stock.';
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
+
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase
     .from('user_carts')
     .upsert(
       {
         user_id: user.id,
-        items,
+        items: validated.items,
       },
       { onConflict: 'user_id' }
     );
@@ -260,5 +361,14 @@ export async function PUT(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ items });
+  return NextResponse.json({
+    items: validated.items,
+    warnings:
+      validated.removedOutOfStockCount > 0 || validated.removedMissingProductCount > 0
+        ? {
+            removedOutOfStockCount: validated.removedOutOfStockCount,
+            removedMissingProductCount: validated.removedMissingProductCount,
+          }
+        : undefined,
+  });
 }

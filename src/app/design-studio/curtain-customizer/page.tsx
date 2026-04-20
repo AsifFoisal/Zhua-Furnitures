@@ -1,10 +1,11 @@
 'use client';
 import { useState } from 'react';
-import { fabricOptions, headingStyles, formatPrice, products } from '@/lib/data';
+import { fabricOptions, headingStyles, formatPrice, products as fallbackProducts } from '@/lib/data';
 import { useCartStore } from '@/store';
 import { toast } from 'sonner';
 import { MessageCircle, ShoppingBag } from 'lucide-react';
 import { buildWhatsAppUrl } from '@/lib/whatsapp';
+import { useStorefrontProducts } from '@/lib/use-storefront-products';
 import styles from './page.module.css';
 
 const colors = [
@@ -18,6 +19,7 @@ const lengths = ['Floor Length (280cm)', 'Mid Length (180cm)', 'Sill Length (120
 const fullnesses = [{ v: 1.5, label: '1.5× (Casual)' }, { v: 2, label: '2× (Standard)' }, { v: 2.5, label: '2.5× (Luxurious)' }];
 
 export default function CurtainCustomizerPage() {
+  const { products: liveProducts } = useStorefrontProducts();
   const [selectedFabric, setSelectedFabric] = useState(fabricOptions[0]);
   const [selectedHeading, setSelectedHeading] = useState(headingStyles[0]);
   const [selectedColor, setSelectedColor] = useState(colors[0]);
@@ -29,9 +31,18 @@ export default function CurtainCustomizerPage() {
   const totalMetres = +(baseMetres * fullness).toFixed(1);
   const totalPrice = Math.round(totalMetres * pricePerMetre + 350); // + making charge
   const { addItem } = useCartStore();
+  const baseProduct =
+    liveProducts.find((product) => product.category === 'curtains') ||
+    fallbackProducts.find((product) => product.category === 'curtains') ||
+    fallbackProducts[0];
+  const isOutOfStock = !baseProduct?.inStock;
 
   const handleAddCustomOrder = () => {
-    const baseProduct = products.find((p) => p.category === 'curtains') || products[0];
+    if (!baseProduct || isOutOfStock) {
+      toast.error('This custom curtain base product is out of stock.');
+      return;
+    }
+
     addItem({
       product: baseProduct,
       quantity: 1,
@@ -134,8 +145,13 @@ export default function CurtainCustomizerPage() {
             </div>
 
             <div className={styles.ctaGroup}>
-              <button className="btn btn-primary" style={{ flex: 1, justifyContent: 'center' }} onClick={handleAddCustomOrder}>
-                <ShoppingBag size={15} /> Add Custom Order
+              <button
+                className="btn btn-primary"
+                style={{ flex: 1, justifyContent: 'center' }}
+                onClick={handleAddCustomOrder}
+                disabled={isOutOfStock}
+              >
+                <ShoppingBag size={15} /> {isOutOfStock ? 'Out of Stock' : 'Add Custom Order'}
               </button>
               <a href={buildWhatsAppUrl(`Hi! I'd like a quote for custom curtains: ${selectedFabric.name} fabric, ${selectedColor.name} colour, ${selectedHeading.name} heading, ${selectedLength}. Estimated R${totalPrice}.`)}
                 target="_blank" rel="noopener noreferrer" className="btn btn-whatsapp" style={{ flex: 1, justifyContent: 'center' }}>

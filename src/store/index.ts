@@ -207,12 +207,19 @@ async function fetchAccountCart(): Promise<CartItem[]> {
   return normalizeCartItems(data.items);
 }
 
-async function putAccountCart(items: CartItem[]): Promise<void> {
-  await fetch('/api/account/cart', {
+async function putAccountCart(items: CartItem[]): Promise<CartItem[]> {
+  const res = await fetch('/api/account/cart', {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ items }),
   });
+
+  if (!res.ok) {
+    throw new Error('Could not sync account cart.');
+  }
+
+  const data = (await res.json()) as { items?: unknown };
+  return normalizeCartItems(data.items);
 }
 
 function readLegacyCartItems(): CartItem[] {
@@ -335,9 +342,14 @@ export const useCartStore = create<CartStore>()(
           return;
         }
 
+        const scopeKey = get().scopeKey;
+
         set({ syncing: true });
         try {
-          await putAccountCart(get().items);
+          const syncedItems = await putAccountCart(get().items);
+          if (get().scopeKey === scopeKey) {
+            set({ items: syncedItems });
+          }
         } catch {
           // Best effort: cart stays local if remote sync is temporarily unavailable.
         } finally {
@@ -346,6 +358,10 @@ export const useCartStore = create<CartStore>()(
       },
 
       addItem: (newItem) => {
+        if (!newItem.product.inStock) {
+          return;
+        }
+
         const commitItems = (nextItems: CartItem[]) => {
           if (get().scopeKey === 'guest') {
             set({ items: nextItems, guestItems: nextItems });
@@ -398,6 +414,18 @@ export const useCartStore = create<CartStore>()(
       updateQuantity: (productId, color, quantity) => {
         if (quantity <= 0) {
           get().removeItem(productId, color);
+          return;
+        }
+
+        const currentItem = get().items.find(
+          (item) => item.product.id === productId && item.selectedColor === color
+        );
+
+        if (!currentItem) {
+          return;
+        }
+
+        if (!currentItem.product.inStock && quantity > currentItem.quantity) {
           return;
         }
 
