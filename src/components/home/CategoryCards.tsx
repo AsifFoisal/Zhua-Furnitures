@@ -60,7 +60,6 @@ export default function CategoryCards() {
                 />
               </div>
               <div className={styles.cardContent}>
-                <span className={styles.cardCount} style={{ color: cat.accent }}>{cat.count}</span>
                 <h3 className={styles.cardTitle}>{cat.label}</h3>
                 <p className={styles.cardDesc}>{cat.desc}</p>
                 <div className={styles.cardArrow} style={{ color: cat.accent }}>
