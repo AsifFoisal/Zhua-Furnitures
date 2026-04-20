@@ -1,0 +1,54 @@
+<svg width="1200" height="680" viewBox="0 0 1200 680" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="120" y1="40" x2="1090" y2="660" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#122019"/>
+      <stop offset="1" stop-color="#203629"/>
+    </linearGradient>
+    <linearGradient id="wall" x1="0" y1="0" x2="0" y2="680" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#183028"/>
+      <stop offset="1" stop-color="#10241D"/>
+    </linearGradient>
+    <linearGradient id="window" x1="440" y1="130" x2="760" y2="470" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#9DEBE5" stop-opacity="0.32"/>
+      <stop offset="1" stop-color="#4ECDC4" stop-opacity="0.14"/>
+    </linearGradient>
+    <linearGradient id="curtain" x1="210" y1="120" x2="460" y2="640" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6FDAD0"/>
+      <stop offset="1" stop-color="#2F8E87"/>
+    </linearGradient>
+    <linearGradient id="curtainRight" x1="760" y1="120" x2="1010" y2="640" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6FDAD0"/>
+      <stop offset="1" stop-color="#2F8E87"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="680" fill="url(#bg)"/>
+  <rect width="1200" height="680" fill="url(#wall)" fill-opacity="0.45"/>
+
+  <rect x="194" y="96" width="812" height="12" rx="6" fill="#5BC5BC" fill-opacity="0.56"/>
+  <circle cx="194" cy="102" r="5" fill="#75E3D9"/>
+  <circle cx="1006" cy="102" r="5" fill="#75E3D9"/>
+
+  <rect x="432" y="126" width="336" height="392" rx="8" fill="url(#window)" stroke="#74D9CF" stroke-opacity="0.35" stroke-width="2"/>
+  <path d="M600 126V518" stroke="#70D6CD" stroke-opacity="0.28" stroke-width="2"/>
+  <path d="M432 322H768" stroke="#70D6CD" stroke-opacity="0.2" stroke-width="2"/>
+
+  <path d="M206 108C260 162 286 232 270 636H206V108Z" fill="url(#curtain)"/>
+  <path d="M270 108C336 174 366 248 356 636H270V108Z" fill="#48B6AD" fill-opacity="0.88"/>
+  <path d="M356 108C420 188 450 272 446 636H356V108Z" fill="#3AA39C" fill-opacity="0.84"/>
+
+  <path d="M994 108C940 162 914 232 930 636H994V108Z" fill="url(#curtainRight)"/>
+  <path d="M930 108C864 174 834 248 844 636H930V108Z" fill="#48B6AD" fill-opacity="0.88"/>
+  <path d="M844 108C780 188 750 272 754 636H844V108Z" fill="#3AA39C" fill-opacity="0.84"/>
+
+  <rect x="460" y="540" width="280" height="22" rx="11" fill="#4ECDC4" fill-opacity="0.24"/>
+  <ellipse cx="600" cy="586" rx="220" ry="36" fill="#000" fill-opacity="0.24"/>
+
+  <path d="M224 136C232 148 232 160 224 172" stroke="#A5F1EB" stroke-opacity="0.5" stroke-width="2" stroke-linecap="round"/>
+  <path d="M287 136C295 148 295 160 287 172" stroke="#A5F1EB" stroke-opacity="0.5" stroke-width="2" stroke-linecap="round"/>
+  <path d="M350 136C358 148 358 160 350 172" stroke="#A5F1EB" stroke-opacity="0.5" stroke-width="2" stroke-linecap="round"/>
+
+  <path d="M976 136C968 148 968 160 976 172" stroke="#A5F1EB" stroke-opacity="0.5" stroke-width="2" stroke-linecap="round"/>
+  <path d="M913 136C905 148 905 160 913 172" stroke="#A5F1EB" stroke-opacity="0.5" stroke-width="2" stroke-linecap="round"/>
+  <path d="M850 136C842 148 842 160 850 172" stroke="#A5F1EB" stroke-opacity="0.5" stroke-width="2" stroke-linecap="round"/>
+</svg>

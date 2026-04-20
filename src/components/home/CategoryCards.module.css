@@ -34,13 +34,24 @@
 .card:hover .cardBorder { border-color: inherit; }
 
 .cardVisual {
+  position: relative;
   width: 100%;
   aspect-ratio: 2/1;
-  opacity: 0.8;
-  transition: opacity 300ms;
+  border-radius: 14px;
+  overflow: hidden;
+  opacity: 0.88;
+  transition: opacity 300ms, transform 300ms;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
 }
 
-.card:hover .cardVisual { opacity: 1; }
+.cardVisualImage {
+  object-fit: cover;
+}
+
+.card:hover .cardVisual {
+  opacity: 1;
+  transform: scale(1.015);
+}
 
 .cardContent { display: flex; flex-direction: column; gap: 0.5rem; }
 
