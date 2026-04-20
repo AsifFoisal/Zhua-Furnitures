@@ -171,7 +171,7 @@ export default function ProductPage() {
                     <img
                       src={galleryImages[safeImgIndex]}
                       alt={`${product.name} image ${safeImgIndex + 1}`}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      className={styles.productImage}
                     />
                   </button>
                 ) : (
@@ -203,7 +203,7 @@ export default function ProductPage() {
                     <img
                       src={galleryImages[i]}
                       alt={`${product.name} thumbnail ${i + 1}`}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      className={styles.productImage}
                     />
                   ) : (
                     <div style={{ width: '100%', height: '100%', background: `${selectedColor.hex}20` }} />
@@ -425,7 +425,7 @@ export default function ProductPage() {
                     <img
                       src={p.images[0]}
                       alt={p.name}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      className={styles.productImage}
                     />
                   ) : (
                     <ProductHeroSVG category={p.category} color={p.colors[0].hex} />

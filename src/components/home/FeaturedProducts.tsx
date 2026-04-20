@@ -82,7 +82,7 @@ export default function FeaturedProducts() {
                     <img
                       src={product.images[0]}
                       alt={product.name}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      className={styles.productImage}
                     />
                   ) : (
                     <ProductVisual

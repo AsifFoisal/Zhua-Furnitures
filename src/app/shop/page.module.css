@@ -143,6 +143,7 @@
 }
 
 .cardImageInner { width: 100%; height: 100%; transition: transform 350ms ease; }
+.productImage { width: 100%; height: 100%; object-fit: cover; display: block; }
 .card:hover .cardImageInner { transform: scale(1.04); }
 
 .cardBadge { position: absolute; top: 0.75rem; left: 0.75rem; }
