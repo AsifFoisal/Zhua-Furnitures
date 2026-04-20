@@ -34,7 +34,6 @@ export default function TrustBar() {
 
   const items = useMemo(
     () => [
-      { icon: Truck, text: `Free Delivery on orders over ${formatPrice(freeShippingThreshold)}` },
       { icon: ShieldCheck, text: 'Secure checkout - SSL encrypted' },
       { icon: Star, text: '4.9★ Average customer rating' },
       { icon: Leaf, text: 'Proudly South African' },

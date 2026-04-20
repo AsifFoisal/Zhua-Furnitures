@@ -61,7 +61,7 @@ export default function HeroBanner() {
             </Link>
           </div>
 
-          <div className={styles.stats}>
+          {/* <div className={styles.stats}>
             {[
               { value: '12,000+', label: 'Happy Clients' },
               { value: '9', label: 'Provinces Served' },
@@ -73,7 +73,7 @@ export default function HeroBanner() {
                 <span className={styles.statLabel}>{s.label}</span>
               </div>
             ))}
-          </div>
+          </div> */}
         </div>
 
         {/* Hero visual card */}
