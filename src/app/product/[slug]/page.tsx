@@ -373,7 +373,7 @@ export default function ProductPage() {
 
             {/* Trust icons */}
             <div className={styles.trustIcons}>
-              {[{ icon: Shield, label: '5-Year Warranty' }, { icon: RotateCcw, label: '30-Day Returns' }, { icon: Truck, label: 'SA-Wide Delivery' }].map(({ icon: I, label }) => (
+              {[{ icon: Shield, label: '1-Year Warranty' }, { icon: RotateCcw, label: '30-Day Returns' }, { icon: Truck, label: 'SA-Wide Delivery' }].map(({ icon: I, label }) => (
                 <div key={label} className={styles.trustItem}><I size={14} color="#B59241" /> <span>{label}</span></div>
               ))}
             </div>
