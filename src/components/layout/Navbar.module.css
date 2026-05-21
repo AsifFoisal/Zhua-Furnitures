@@ -128,6 +128,26 @@
   background: rgba(255, 255, 255, 0.06);
 }
 
+.navLinkDisabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.comingSoonBadge {
+  margin-left: 0.5rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: #b59241;
+  border: 1px solid rgba(181, 146, 65, 0.4);
+  background: rgba(181, 146, 65, 0.12);
+}
+
 .navLinkActive {
   color: #B59241;
 }
@@ -181,6 +201,26 @@
 .megaMenuDesc {
   font-size: 0.75rem;
   color: #7B8EA6;
+}
+
+.megaMenuItemDisabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.comingSoonPill {
+  margin-top: 0.5rem;
+  align-self: flex-start;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: #b59241;
+  border: 1px solid rgba(181, 146, 65, 0.35);
+  background: rgba(181, 146, 65, 0.12);
 }
 
 /* Actions */
@@ -361,6 +401,11 @@
   color: #B59241;
 }
 
+.mobileLinkDisabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .mobileSubLinks {
   list-style: none;
   margin-left: 1rem;
@@ -379,6 +424,11 @@
 
 .mobileSubLink:hover {
   color: #B59241;
+}
+
+.mobileSubLinkDisabled {
+  opacity: 0.65;
+  cursor: not-allowed;
 }
 
 .mobileFooter {

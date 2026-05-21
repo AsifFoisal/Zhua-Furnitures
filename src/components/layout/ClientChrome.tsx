@@ -8,6 +8,7 @@ import SearchModal from '@/components/layout/SearchModal';
 import WhatsAppFloat from '@/components/layout/WhatsAppFloat';
 import WishlistSync from '@/components/layout/WishlistSync';
 import CartSync from '@/components/layout/CartSync';
+import ScrollRevealManager from '@/components/layout/ScrollRevealManager';
 
 export default function ClientChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -23,11 +24,12 @@ export default function ClientChrome({ children }: { children: React.ReactNode }
       <Navbar />
       <CartSync />
       <WishlistSync />
-      <main>{children}</main>
+      <main className="page-content">{children}</main>
       <Footer />
       <CartDrawer />
       <SearchModal />
       <WhatsAppFloat />
+      <ScrollRevealManager />
     </>
   );
 }

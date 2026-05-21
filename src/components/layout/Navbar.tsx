@@ -7,6 +7,7 @@ import { ShoppingBag, Search, Heart, Menu, X, ChevronDown, User, LogOut } from '
 import { useCartStore, useSearchStore } from '@/store';
 import { signOutUser } from '@/app/auth/actions';
 import { buildWhatsAppUrl } from '@/lib/whatsapp';
+import { DESIGN_STUDIO_FEATURE } from '@/lib/features';
 import styles from './Navbar.module.css';
 
 interface NavbarAuthUser {
@@ -28,10 +29,11 @@ const navLinks = [
   {
     label: 'Design Studio',
     href: '/design-studio',
+    disabled: !DESIGN_STUDIO_FEATURE.enabled,
     children: [
-      { label: 'Room Visualizer', href: '/design-studio/room-visualizer', desc: 'See furniture in your room' },
-      { label: 'Curtain Customizer', href: '/design-studio/curtain-customizer', desc: 'Design your perfect curtains' },
-      { label: 'Curtain Calculator', href: '/design-studio/calculator', desc: 'Get exact measurements' },
+      { label: 'Room Visualizer', href: '/design-studio/room-visualizer', desc: 'See furniture in your room', disabled: !DESIGN_STUDIO_FEATURE.enabled },
+      { label: 'Curtain Customizer', href: '/design-studio/curtain-customizer', desc: 'Design your perfect curtains', disabled: !DESIGN_STUDIO_FEATURE.enabled },
+      { label: 'Curtain Calculator', href: '/design-studio/calculator', desc: 'Get exact measurements', disabled: !DESIGN_STUDIO_FEATURE.enabled },
     ],
   },
   { label: 'Gallery', href: '/gallery' },
@@ -135,23 +137,36 @@ export default function Navbar() {
                 onMouseEnter={() => link.children && handleMouseEnter(link.label)}
                 onMouseLeave={handleMouseLeave}
               >
-                <Link
-                  href={link.href}
-                    className={styles.navLink}
-                >
-                  {link.label}
-                  {link.children && <ChevronDown size={14} />}
-                </Link>
+                {link.disabled ? (
+                  <span className={`${styles.navLink} ${styles.navLinkDisabled}`} aria-disabled="true">
+                    {link.label}
+                    {link.children && <ChevronDown size={14} />}
+                    <span className={styles.comingSoonBadge}>{DESIGN_STUDIO_FEATURE.label}</span>
+                  </span>
+                ) : (
+                  <Link href={link.href} className={styles.navLink}>
+                    {link.label}
+                    {link.children && <ChevronDown size={14} />}
+                  </Link>
+                )}
 
                 {link.children && activeMenu === link.label && (
                   <div className={styles.megaMenu}>
                     <div className={styles.megaMenuInner}>
-                      {link.children.map((child) => (
-                        <Link key={child.href} href={child.href} className={styles.megaMenuItem}>
-                          <span className={styles.megaMenuLabel}>{child.label}</span>
-                          <span className={styles.megaMenuDesc}>{child.desc}</span>
-                        </Link>
-                      ))}
+                      {link.children.map((child) =>
+                        child.disabled ? (
+                          <div key={child.href} className={`${styles.megaMenuItem} ${styles.megaMenuItemDisabled}`} aria-disabled="true">
+                            <span className={styles.megaMenuLabel}>{child.label}</span>
+                            <span className={styles.megaMenuDesc}>{child.desc}</span>
+                            <span className={styles.comingSoonPill}>{DESIGN_STUDIO_FEATURE.label}</span>
+                          </div>
+                        ) : (
+                          <Link key={child.href} href={child.href} className={styles.megaMenuItem}>
+                            <span className={styles.megaMenuLabel}>{child.label}</span>
+                            <span className={styles.megaMenuDesc}>{child.desc}</span>
+                          </Link>
+                        )
+                      )}
                     </div>
                   </div>
                 )}
@@ -214,14 +229,30 @@ export default function Navbar() {
             <ul className={styles.mobileLinks}>
               {navLinks.map((link) => (
                 <li key={link.label}>
-                  <Link href={link.href} className={styles.mobileLink} onClick={() => setMobileOpen(false)}>{link.label}</Link>
+                  {link.disabled ? (
+                    <div className={`${styles.mobileLink} ${styles.mobileLinkDisabled}`} aria-disabled="true">
+                      {link.label}
+                      <span className={styles.comingSoonBadge}>{DESIGN_STUDIO_FEATURE.label}</span>
+                    </div>
+                  ) : (
+                    <Link href={link.href} className={styles.mobileLink} onClick={() => setMobileOpen(false)}>
+                      {link.label}
+                    </Link>
+                  )}
                   {link.children && (
                     <ul className={styles.mobileSubLinks}>
                       {link.children.map((child) => (
                         <li key={child.href}>
-                          <Link href={child.href} className={styles.mobileSubLink} onClick={() => setMobileOpen(false)}>
-                            {child.label}
-                          </Link>
+                          {child.disabled ? (
+                            <div className={`${styles.mobileSubLink} ${styles.mobileSubLinkDisabled}`} aria-disabled="true">
+                              {child.label}
+                              <span className={styles.comingSoonPill}>{DESIGN_STUDIO_FEATURE.label}</span>
+                            </div>
+                          ) : (
+                            <Link href={child.href} className={styles.mobileSubLink} onClick={() => setMobileOpen(false)}>
+                              {child.label}
+                            </Link>
+                          )}
                         </li>
                       ))}
                     </ul>

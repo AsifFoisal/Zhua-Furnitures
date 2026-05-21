@@ -42,7 +42,7 @@ export default function TrustBar() {
   );
 
   return (
-    <div className={styles.bar}>
+    <section className={styles.bar}>
       <div className="container-wide">
         <div className={styles.inner}>
           {items.map(({ icon: Icon, text }) => (
@@ -53,6 +53,6 @@ export default function TrustBar() {
           ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 }

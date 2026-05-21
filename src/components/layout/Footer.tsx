@@ -6,11 +6,13 @@ import Image from 'next/image';
 import { toast } from 'sonner';
 import { MessageCircle, Heart, Star, Mail, Phone, MapPin, ArrowRight } from 'lucide-react';
 import { buildWhatsAppUrl, WHATSAPP_DISPLAY_NUMBER, WHATSAPP_TEL } from '@/lib/whatsapp';
+import { DESIGN_STUDIO_FEATURE } from '@/lib/features';
 import styles from './Footer.module.css';
 
 export default function Footer() {
   const [email, setEmail] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const isDesignStudioDisabled = !DESIGN_STUDIO_FEATURE.enabled;
 
   const submitNewsletter = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -121,9 +123,36 @@ export default function Footer() {
             <div>
               <h4 className={styles.colTitle}>Design Studio</h4>
               <ul className={styles.linkList}>
-                <li><Link href="/design-studio/room-visualizer" className={styles.footerLink}>Room Visualizer</Link></li>
-                <li><Link href="/design-studio/curtain-customizer" className={styles.footerLink}>Curtain Customizer</Link></li>
-                <li><Link href="/design-studio/calculator" className={styles.footerLink}>Curtain Calculator</Link></li>
+                <li>
+                  {isDesignStudioDisabled ? (
+                    <span className={`${styles.footerLink} ${styles.footerLinkDisabled}`} aria-disabled="true">
+                      Room Visualizer
+                      <span className={styles.comingSoonNote}>{DESIGN_STUDIO_FEATURE.label}</span>
+                    </span>
+                  ) : (
+                    <Link href="/design-studio/room-visualizer" className={styles.footerLink}>Room Visualizer</Link>
+                  )}
+                </li>
+                <li>
+                  {isDesignStudioDisabled ? (
+                    <span className={`${styles.footerLink} ${styles.footerLinkDisabled}`} aria-disabled="true">
+                      Curtain Customizer
+                      <span className={styles.comingSoonNote}>{DESIGN_STUDIO_FEATURE.label}</span>
+                    </span>
+                  ) : (
+                    <Link href="/design-studio/curtain-customizer" className={styles.footerLink}>Curtain Customizer</Link>
+                  )}
+                </li>
+                <li>
+                  {isDesignStudioDisabled ? (
+                    <span className={`${styles.footerLink} ${styles.footerLinkDisabled}`} aria-disabled="true">
+                      Curtain Calculator
+                      <span className={styles.comingSoonNote}>{DESIGN_STUDIO_FEATURE.label}</span>
+                    </span>
+                  ) : (
+                    <Link href="/design-studio/calculator" className={styles.footerLink}>Curtain Calculator</Link>
+                  )}
+                </li>
                 <li><Link href="/book-installation" className={styles.footerLink}>Book Installation</Link></li>
                 <li><Link href="/gallery" className={styles.footerLink}>Gallery</Link></li>
               </ul>

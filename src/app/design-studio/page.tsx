@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import ComingSoonPanel from '@/components/ui/ComingSoonPanel';
+import { DESIGN_STUDIO_FEATURE } from '@/lib/features';
 
 const tools = [
   {
@@ -19,6 +21,17 @@ const tools = [
 ];
 
 export default function DesignStudioPage() {
+  if (!DESIGN_STUDIO_FEATURE.enabled) {
+    return (
+      <ComingSoonPanel
+        title="Design Studio Is Getting an Upgrade"
+        message={DESIGN_STUDIO_FEATURE.message}
+        primaryCta={{ label: 'Shop Collection', href: '/shop' }}
+        secondaryCta={{ label: 'Browse Gallery', href: '/gallery' }}
+      />
+    );
+  }
+
   return (
     <div style={{ padding: '140px 0 6rem', minHeight: '100vh', background: 'var(--midnight)' }}>
       <div className="container">

@@ -1,6 +1,8 @@
 'use client';
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { Upload, Download, RotateCcw, ZoomIn, ZoomOut } from 'lucide-react';
+import ComingSoonPanel from '@/components/ui/ComingSoonPanel';
+import { DESIGN_STUDIO_FEATURE } from '@/lib/features';
 import styles from './page.module.css';
 
 const furnitureOverlays = [
@@ -17,6 +19,21 @@ const furnitureOverlays = [
 interface Overlay { id: string; type: string; x: number; y: number; w: number; h: number; color: string; emoji: string; label: string; }
 
 export default function RoomVisualizerPage() {
+  if (!DESIGN_STUDIO_FEATURE.enabled) {
+    return (
+      <ComingSoonPanel
+        title="Room Visualizer Is Almost Ready"
+        message={DESIGN_STUDIO_FEATURE.message}
+        primaryCta={{ label: 'Shop Furniture', href: '/shop/furniture' }}
+        secondaryCta={{ label: 'See the Gallery', href: '/gallery' }}
+      />
+    );
+  }
+
+  return <RoomVisualizerWorkspace />;
+}
+
+function RoomVisualizerWorkspace() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const overlayIdRef = useRef(1);
   const [roomImage, setRoomImage] = useState<HTMLImageElement | null>(null);

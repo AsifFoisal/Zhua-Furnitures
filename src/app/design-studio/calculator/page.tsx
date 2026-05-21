@@ -2,6 +2,8 @@
 import { useMemo, useState } from 'react';
 import { fabricOptions, formatPrice } from '@/lib/data';
 import { buildWhatsAppUrl } from '@/lib/whatsapp';
+import ComingSoonPanel from '@/components/ui/ComingSoonPanel';
+import { DESIGN_STUDIO_FEATURE } from '@/lib/features';
 
 const headingMultipliers: Record<string, number> = {
   eyelet: 2,
@@ -11,6 +13,21 @@ const headingMultipliers: Record<string, number> = {
 };
 
 export default function CurtainCalculatorPage() {
+  if (!DESIGN_STUDIO_FEATURE.enabled) {
+    return (
+      <ComingSoonPanel
+        title="Curtain Calculator Is Coming Soon"
+        message={DESIGN_STUDIO_FEATURE.message}
+        primaryCta={{ label: 'Shop Curtains', href: '/shop/curtains' }}
+        secondaryCta={{ label: 'WhatsApp Us', href: '/contact' }}
+      />
+    );
+  }
+
+  return <CurtainCalculatorWorkspace />;
+}
+
+function CurtainCalculatorWorkspace() {
   const [width, setWidth] = useState(240);
   const [drop, setDrop] = useState(260);
   const [panels, setPanels] = useState(2);

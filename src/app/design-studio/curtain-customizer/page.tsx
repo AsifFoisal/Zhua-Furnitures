@@ -6,6 +6,8 @@ import { toast } from 'sonner';
 import { MessageCircle, ShoppingBag } from 'lucide-react';
 import { buildWhatsAppUrl } from '@/lib/whatsapp';
 import { useStorefrontProducts } from '@/lib/use-storefront-products';
+import ComingSoonPanel from '@/components/ui/ComingSoonPanel';
+import { DESIGN_STUDIO_FEATURE } from '@/lib/features';
 import styles from './page.module.css';
 
 const colors = [
@@ -19,6 +21,21 @@ const lengths = ['Floor Length (280cm)', 'Mid Length (180cm)', 'Sill Length (120
 const fullnesses = [{ v: 1.5, label: '1.5× (Casual)' }, { v: 2, label: '2× (Standard)' }, { v: 2.5, label: '2.5× (Luxurious)' }];
 
 export default function CurtainCustomizerPage() {
+  if (!DESIGN_STUDIO_FEATURE.enabled) {
+    return (
+      <ComingSoonPanel
+        title="Curtain Customizer Is Almost Here"
+        message={DESIGN_STUDIO_FEATURE.message}
+        primaryCta={{ label: 'Shop Curtains', href: '/shop/curtains' }}
+        secondaryCta={{ label: 'Contact Us', href: '/contact' }}
+      />
+    );
+  }
+
+  return <CurtainCustomizerWorkspace />;
+}
+
+function CurtainCustomizerWorkspace() {
   const { products: liveProducts } = useStorefrontProducts();
   const [selectedFabric, setSelectedFabric] = useState(fabricOptions[0]);
   const [selectedHeading, setSelectedHeading] = useState(headingStyles[0]);

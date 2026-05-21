@@ -173,6 +173,21 @@
 
 .footerLink:hover { color: #EAF0F8; }
 
+.footerLinkDisabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.comingSoonNote {
+  margin-left: 0.5rem;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: #b59241;
+}
+
 .contactInfo {
   display: flex;
   flex-direction: column;
