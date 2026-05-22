@@ -15,7 +15,21 @@ interface NavbarAuthUser {
   email: string | null;
 }
 
-const navLinks = [
+type NavChildLink = {
+  label: string;
+  href: string;
+  desc: string;
+  disabled?: boolean;
+};
+
+type NavLink = {
+  label: string;
+  href: string;
+  disabled?: boolean;
+  children?: NavChildLink[];
+};
+
+const navLinks: NavLink[] = [
   {
     label: 'Shop',
     href: '/shop',
