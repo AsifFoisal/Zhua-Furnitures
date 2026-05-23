@@ -39,7 +39,9 @@ function toIsoDate(value: string): string {
 
 function statusClass(status: string): string {
   if (status === 'Delivered') return `${styles.badge} ${styles.badgeSuccess}`;
-  if (status === 'Shipped' || status === 'Processing') return `${styles.badge} ${styles.badgeInfo}`;
+  if (status === 'Shipped' || status === 'Processing' || status === 'Confirmed') {
+    return `${styles.badge} ${styles.badgeInfo}`;
+  }
   if (status === 'Pending') return `${styles.badge} ${styles.badgeWarn}`;
   return `${styles.badge} ${styles.badgeDanger}`;
 }

@@ -15,6 +15,8 @@ const yocoSecretKey = process.env.YOCO_SECRET_KEY ?? '';
 const yocoWebhookSecret = process.env.YOCO_WEBHOOK_SECRET ?? '';
 const yocoSuccessUrl = process.env.YOCO_SUCCESS_URL ?? '';
 const yocoCancelUrl = process.env.YOCO_CANCEL_URL ?? '';
+const resendApiKey = process.env.RESEND_API_KEY ?? '';
+const resendFromEmail = process.env.RESEND_FROM_EMAIL ?? '';
 const publicPayfastMode = process.env.NEXT_PUBLIC_PAYFAST_MODE ?? 'sandbox';
 const publicYocoMode = process.env.NEXT_PUBLIC_YOCO_MODE ?? 'sandbox';
 
@@ -32,6 +34,7 @@ export const hasPayFastEnv = Boolean(
     payfastNotifyUrl
 );
 export const hasYocoEnv = Boolean(yocoSecretKey && yocoWebhookSecret);
+export const hasResendEnv = Boolean(resendApiKey && resendFromEmail);
 
 function normalizePaymentMode(value: string): 'sandbox' | 'live' {
   return value.trim().toLowerCase() === 'live' ? 'live' : 'sandbox';
@@ -129,5 +132,16 @@ export function getYocoEnv(): {
     successUrl: yocoSuccessUrl || null,
     cancelUrl: yocoCancelUrl || null,
     mode: normalizePaymentMode(publicYocoMode),
+  };
+}
+
+export function getResendEnv(): { apiKey: string; fromEmail: string } {
+  if (!hasResendEnv) {
+    throw new Error('Missing RESEND_API_KEY or RESEND_FROM_EMAIL.');
+  }
+
+  return {
+    apiKey: resendApiKey,
+    fromEmail: resendFromEmail,
   };
 }

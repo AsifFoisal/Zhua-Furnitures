@@ -31,7 +31,7 @@ const productBadgeMap: Record<ProductBadge, string> = {
 
 const fulfillmentStatusMap: Record<FulfillmentStatus, string> = {
   pending: 'Pending',
-  processing: 'Processing',
+  processing: 'Confirmed',
   shipped: 'Shipped',
   delivered: 'Delivered',
   cancelled: 'Cancelled',
@@ -103,10 +103,15 @@ export function parseFulfillmentStatus(value: string): FulfillmentStatus {
   if (
     normalized === 'pending' ||
     normalized === 'processing' ||
+    normalized === 'confirmed' ||
     normalized === 'shipped' ||
     normalized === 'delivered' ||
     normalized === 'cancelled'
   ) {
+    if (normalized === 'confirmed') {
+      return 'processing';
+    }
+
     return normalized;
   }
 

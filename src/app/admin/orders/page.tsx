@@ -8,7 +8,9 @@ import styles from '../admin-pages.module.css';
 
 function statusClass(status: string): string {
   if (status === 'Delivered') return `${styles.badge} ${styles.badgeSuccess}`;
-  if (status === 'Shipped' || status === 'Processing') return `${styles.badge} ${styles.badgeInfo}`;
+  if (status === 'Shipped' || status === 'Processing' || status === 'Confirmed') {
+    return `${styles.badge} ${styles.badgeInfo}`;
+  }
   if (status === 'Pending') return `${styles.badge} ${styles.badgeWarn}`;
   return `${styles.badge} ${styles.badgeDanger}`;
 }
@@ -64,7 +66,7 @@ interface AdminOrderRow {
   items: number;
   orderItems: AdminOrderItem[];
   payment: 'Awaiting Payment' | 'Pending' | 'Paid' | 'Partial' | 'Failed' | 'Placeholder';
-  fulfillment: 'Pending' | 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled';
+  fulfillment: 'Pending' | 'Confirmed' | 'Shipped' | 'Delivered' | 'Cancelled';
 }
 
 interface AdminOrderDetails extends AdminOrderRow {
@@ -327,7 +329,7 @@ export default function OrdersAdminPage() {
                     }
                   >
                     <option>Pending</option>
-                    <option>Processing</option>
+                    <option>Confirmed</option>
                     <option>Shipped</option>
                     <option>Delivered</option>
                     <option>Cancelled</option>

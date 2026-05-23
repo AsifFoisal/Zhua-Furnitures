@@ -6,6 +6,7 @@ import {
   parseFulfillmentStatus,
   parsePaymentStatus,
 } from '@/lib/admin-api';
+import { sendOrderStatusNotification } from '@/lib/order-notifications';
 import { createSupabaseAdminClient } from '@/lib/supabase/admin';
 import { logUserActivity } from '@/lib/user-activity';
 
@@ -130,14 +131,15 @@ export async function PATCH(
     fulfillment?: string;
     payment?: string;
   };
+  const nextFulfillmentStatus = payload.fulfillment ? parseFulfillmentStatus(payload.fulfillment) : null;
 
   const updateData: {
     fulfillment_status?: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
     payment_status?: 'awaiting_payment' | 'pending' | 'paid' | 'partial' | 'failed' | 'placeholder';
   } = {};
 
-  if (payload.fulfillment) {
-    updateData.fulfillment_status = parseFulfillmentStatus(payload.fulfillment);
+  if (nextFulfillmentStatus) {
+    updateData.fulfillment_status = nextFulfillmentStatus;
   }
 
   if (payload.payment) {
@@ -167,6 +169,26 @@ export async function PATCH(
         fulfillmentStatus: data.fulfillment_status,
       },
     });
+  }
+
+  if (nextFulfillmentStatus && nextFulfillmentStatus !== 'pending') {
+    try {
+      await sendOrderStatusNotification({
+        customerEmail: data.customer_email,
+        customerName: data.customer_name,
+        orderNumber: data.order_number,
+        fulfillmentStatus: nextFulfillmentStatus,
+      });
+    } catch (notificationError) {
+      console.error('[Admin Order Update] Failed to send order status email.', {
+        orderId: data.id,
+        orderNumber: data.order_number,
+        customerEmail: data.customer_email,
+        fulfillmentStatus: data.fulfillment_status,
+        error:
+          notificationError instanceof Error ? notificationError.message : 'Unknown notification error',
+      });
+    }
   }
 
   return NextResponse.json({ order: mapAdminOrderRow(data as AdminOrderRow) });
