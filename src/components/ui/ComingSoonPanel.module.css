@@ -1,7 +1,7 @@
 .section {
   min-height: 100vh;
   padding: 140px 0 6rem;
-  background: var(--midnight);
+  background: var(--page-background);
   display: flex;
   align-items: center;
 }
@@ -9,12 +9,12 @@
 .panel {
   max-width: 720px;
   margin: 0 auto;
-  background: linear-gradient(135deg, rgba(22, 50, 80, 0.95), rgba(12, 30, 50, 0.98));
-  border: 1px solid rgba(181, 146, 65, 0.18);
+  background: var(--panel-background);
+  border: 1px solid var(--surface-border);
   border-radius: 22px;
   padding: 3rem;
   text-align: center;
-  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.55);
+  box-shadow: var(--shadow-lg);
 }
 
 .badge {
@@ -30,18 +30,18 @@
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #b59241;
+  color: var(--gold);
 }
 
 .title {
   font-family: 'Playfair Display', serif;
   font-size: clamp(2.2rem, 4vw, 3.2rem);
-  color: #eaf0f8;
+  color: var(--text-primary);
   margin: 1.6rem 0 1rem;
 }
 
 .message {
-  color: #a9b7c9;
+  color: var(--text-dim);
   font-size: 1rem;
   line-height: 1.8;
   margin-bottom: 2rem;

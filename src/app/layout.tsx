@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
+import { cookies } from 'next/headers';
 import './globals.css';
 import ClientChrome from '@/components/layout/ClientChrome';
 import AppToaster from '@/components/ui/AppToaster';
 import FdProcessedIdSanitizer from '@/components/layout/FdProcessedIdSanitizer';
 import { getCanonicalSiteUrl } from '@/lib/site-url';
+import { THEME_STORAGE_KEY } from '@/lib/theme';
 
 const canonicalSiteUrl = getCanonicalSiteUrl();
 
@@ -63,9 +65,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const cookieStore = await cookies();
+  const themeCookie = cookieStore.get(THEME_STORAGE_KEY)?.value;
+  const themeMode = themeCookie === 'light' ? 'light' : 'dark';
+
   return (
-    <html lang="en-ZA" data-scroll-behavior="smooth">
+    <html lang="en-ZA" data-theme={themeMode} data-scroll-behavior="smooth" suppressHydrationWarning>
       <body suppressHydrationWarning>
         <FdProcessedIdSanitizer />
         <AppToaster />

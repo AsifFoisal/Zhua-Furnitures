@@ -1,7 +1,7 @@
-.page { padding-top: 100px; padding-bottom: 5rem; min-height: 100vh; background: var(--midnight); }
-.back { display: inline-flex; align-items: center; gap: 4px; font-size: 0.85rem; color: #7B8EA6; text-decoration: none; margin-bottom: 1.5rem; transition: color 150ms; }
-.back:hover { color: #B59241; }
-.title { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: #EAF0F8; margin-bottom: 2.5rem; }
+.page { padding-top: 100px; padding-bottom: 5rem; min-height: 100vh; background: var(--page-background); }
+.back { display: inline-flex; align-items: center; gap: 4px; font-size: 0.85rem; color: var(--text-muted); text-decoration: none; margin-bottom: 1.5rem; transition: color 150ms; }
+.back:hover { color: var(--gold); }
+.title { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--text-primary); margin-bottom: 2.5rem; }
 
 /* Stepper */
 .stepper { display: flex; align-items: center; margin-bottom: 3rem; }
@@ -12,67 +12,67 @@
   display: flex; align-items: center; justify-content: center;
   font-family: 'Outfit', sans-serif; font-size: 0.85rem; font-weight: 700; transition: all 250ms;
 }
-.active { background: #B59241; color: #0F243B; box-shadow: 0 0 16px rgba(181,146,65,0.5); }
-.done { background: rgba(181,146,65,0.15); color: #B59241; border: 1px solid #B59241; }
-.pending { background: rgba(255,255,255,0.05); color: #58708A; border: 1px solid rgba(255,255,255,0.08); }
-.stepLabel { font-family: 'Outfit', sans-serif; font-size: 0.82rem; font-weight: 500; color: #58708A; transition: color 200ms; }
-.stepLabelActive { color: #EAF0F8; font-weight: 600; }
-.stepLine { flex: 1; height: 1px; background: rgba(255,255,255,0.06); margin: 0 1rem; transition: background 300ms; }
-.stepLineDone { background: #B59241; }
+.active { background: var(--gold); color: var(--midnight); box-shadow: 0 0 16px rgba(181,146,65,0.5); }
+.done { background: rgba(181,146,65,0.15); color: var(--gold); border: 1px solid var(--gold); }
+.pending { background: var(--surface-overlay); color: var(--text-muted); border: 1px solid var(--surface-border); }
+.stepLabel { font-family: 'Outfit', sans-serif; font-size: 0.82rem; font-weight: 500; color: var(--text-muted); transition: color 200ms; }
+.stepLabelActive { color: var(--text-primary); font-weight: 600; }
+.stepLine { flex: 1; height: 1px; background: var(--surface-border); margin: 0 1rem; transition: background 300ms; }
+.stepLineDone { background: var(--gold); }
 
 /* Layout */
 .layout { display: grid; grid-template-columns: 1fr 360px; gap: 2.5rem; align-items: start; }
 .left {}
 
 /* Form */
-.formSection { background: #163250; border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 2rem; display: flex; flex-direction: column; gap: 1.25rem; }
+.formSection { background: var(--surface-1); border: 1px solid var(--surface-border); border-radius: 16px; padding: 2rem; display: flex; flex-direction: column; gap: 1.25rem; }
 .sectionHeader { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; }
-.sectionTitle { font-family: 'Playfair Display', serif; font-size: 1.25rem; color: #EAF0F8; }
+.sectionTitle { font-family: 'Playfair Display', serif; font-size: 1.25rem; color: var(--text-primary); }
 .formGrid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 
 /* Delivery Options */
 .deliveryOptions { margin-top: 0.5rem; }
-.optionsTitle { font-family: 'Outfit', sans-serif; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #7B8EA6; margin-bottom: 0.875rem; }
+.optionsTitle { font-family: 'Outfit', sans-serif; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.875rem; }
 .deliveryOptGrid { display: flex; flex-direction: column; gap: 0.625rem; }
-.deliveryOpt { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; cursor: pointer; transition: all 200ms; }
+.deliveryOpt { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; background: var(--surface-overlay); border: 1px solid var(--surface-border); border-radius: 10px; cursor: pointer; transition: all 200ms; }
 .deliveryOptActive { background: rgba(181,146,65,0.07); border-color: rgba(181,146,65,0.3); }
 .radioHidden { display: none; }
-.optLabel { font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 600; color: #EAF0F8; }
-.optDays { font-size: 0.78rem; color: #7B8EA6; margin-top: 2px; }
-.optFee { font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 700; color: #B59241; }
+.optLabel { font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 600; color: var(--text-primary); }
+.optDays { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
+.optFee { font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--gold); }
 
 /* Payment */
 .paymentMethods { display: flex; flex-direction: column; gap: 0.75rem; }
-.paymentOpt { display: flex; align-items: center; gap: 1rem; padding: 1.25rem; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; cursor: pointer; transition: all 200ms; }
+.paymentOpt { display: flex; align-items: center; gap: 1rem; padding: 1.25rem; background: var(--surface-overlay); border: 1px solid var(--surface-border); border-radius: 12px; cursor: pointer; transition: all 200ms; }
 .paymentOptActive { background: rgba(181,146,65,0.07); border-color: rgba(181,146,65,0.3); }
 .paymentOptLeft { flex: 1; }
-.paymentLabel { font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 700; color: #EAF0F8; }
-.paymentDesc { font-size: 0.82rem; color: #A9B7C9; margin-top: 2px; }
-.paymentSub { font-size: 0.75rem; color: #7B8EA6; margin-top: 2px; }
+.paymentLabel { font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--text-primary); }
+.paymentDesc { font-size: 0.82rem; color: var(--text-dim); margin-top: 2px; }
+.paymentSub { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
 .payflex { background: rgba(181,146,65,0.06); border: 1px solid rgba(181,146,65,0.15); border-radius: 10px; padding: 1rem 1.25rem; }
-.payflexTitle { font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 600; color: #B59241; }
-.payflexNote { font-size: 0.78rem; color: #7B8EA6; margin-top: 4px; }
+.payflexTitle { font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 600; color: var(--gold); }
+.payflexNote { font-size: 0.78rem; color: var(--text-muted); margin-top: 4px; }
 
 /* Review */
 .reviewItems { display: flex; flex-direction: column; gap: 0.625rem; }
-.reviewItem { display: flex; justify-content: space-between; font-size: 0.9rem; color: #A9B7C9; padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.reviewItem { display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--text-dim); padding: 0.5rem 0; border-bottom: 1px solid var(--surface-border); }
 .reviewName {}
-.reviewPrice { color: #EAF0F8; font-weight: 600; }
-.reviewTotal { display: flex; justify-content: space-between; font-size: 0.9rem; color: #A9B7C9; padding: 0.75rem 0; }
-.reviewGrand { font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 700; color: #EAF0F8; border-top: 1px solid rgba(255,255,255,0.08); }
-.reviewGrand span:last-child { color: #B59241; }
+.reviewPrice { color: var(--text-primary); font-weight: 600; }
+.reviewTotal { display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--text-dim); padding: 0.75rem 0; }
+.reviewGrand { font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--text-primary); border-top: 1px solid var(--surface-border); }
+.reviewGrand span:last-child { color: var(--gold); }
 
 .stepBtns { display: flex; gap: 0.75rem; align-items: center; }
 
 /* Summary */
-.summary { background: #163250; border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 1.75rem; position: sticky; top: 100px; }
-.summaryTitle { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: #EAF0F8; margin-bottom: 1.25rem; }
-.summaryItem { display: flex; justify-content: space-between; gap: 0.5rem; padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
-.summaryItemName { font-size: 0.82rem; color: #7B8EA6; }
-.summaryItemPrice { font-size: 0.82rem; color: #A9B7C9; flex-shrink: 0; }
-.summaryDivider { height: 1px; background: rgba(255,255,255,0.05); margin: 0.75rem 0; }
-.summaryRow { display: flex; justify-content: space-between; font-size: 0.875rem; color: #A9B7C9; padding: 0.4rem 0; }
-.summaryGrand { font-family: 'Outfit', sans-serif; font-size: 1.05rem; font-weight: 700; color: #EAF0F8; border-top: 1px solid rgba(255,255,255,0.08); margin-top: 0.5rem; padding-top: 0.75rem; }
-.summaryGrand span:last-child { color: #B59241; }
+.summary { background: var(--surface-1); border: 1px solid var(--surface-border); border-radius: 16px; padding: 1.75rem; position: sticky; top: 100px; }
+.summaryTitle { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--text-primary); margin-bottom: 1.25rem; }
+.summaryItem { display: flex; justify-content: space-between; gap: 0.5rem; padding: 0.5rem 0; border-bottom: 1px solid var(--surface-border); }
+.summaryItemName { font-size: 0.82rem; color: var(--text-muted); }
+.summaryItemPrice { font-size: 0.82rem; color: var(--text-dim); flex-shrink: 0; }
+.summaryDivider { height: 1px; background: var(--surface-border); margin: 0.75rem 0; }
+.summaryRow { display: flex; justify-content: space-between; font-size: 0.875rem; color: var(--text-dim); padding: 0.4rem 0; }
+.summaryGrand { font-family: 'Outfit', sans-serif; font-size: 1.05rem; font-weight: 700; color: var(--text-primary); border-top: 1px solid var(--surface-border); margin-top: 0.5rem; padding-top: 0.75rem; }
+.summaryGrand span:last-child { color: var(--gold); }
 
 @media (max-width: 1024px) { .layout { grid-template-columns: 1fr; } .summary { position: static; } .formGrid2 { grid-template-columns: 1fr; } }

@@ -1,7 +1,7 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.72);
+  background: rgba(15, 36, 59, 0.42);
   backdrop-filter: blur(6px);
   z-index: 410;
   display: flex;
@@ -12,10 +12,10 @@
 
 .modal {
   width: min(760px, 100%);
-  background: #163250;
-  border: 1px solid rgba(181, 146, 65, 0.16);
+  background: var(--surface-1);
+  border: 1px solid var(--surface-border);
   border-radius: 16px;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+  box-shadow: var(--shadow-lg);
   overflow: hidden;
 }
 
@@ -24,22 +24,22 @@
   align-items: center;
   gap: 0.75rem;
   padding: 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid var(--surface-border);
 }
 
-.searchIcon { color: #B59241; flex-shrink: 0; }
+.searchIcon { color: var(--gold); flex-shrink: 0; }
 
 .input {
   flex: 1;
   background: transparent;
   border: none;
   outline: none;
-  color: #EAF0F8;
+  color: var(--text-primary);
   font-family: 'Inter', sans-serif;
   font-size: 1rem;
 }
 
-.input::placeholder { color: #7B8EA6; }
+.input::placeholder { color: var(--text-muted); }
 
 .closeBtn {
   width: 34px;
@@ -48,12 +48,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.04);
-  color: #A9B7C9;
+  border: 1px solid var(--surface-border);
+  background: var(--surface-overlay);
+  color: var(--text-dim);
 }
 
-.closeBtn:hover { color: #EAF0F8; }
+.closeBtn:hover { color: var(--text-primary); }
 
 .content {
   max-height: 55vh;
@@ -73,19 +73,19 @@
 }
 
 .result:hover {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(181, 146, 65, 0.06);
   border-color: rgba(181, 146, 65, 0.14);
 }
 
 .resultName {
   font-family: 'Playfair Display', serif;
   font-size: 1rem;
-  color: #EAF0F8;
+  color: var(--text-primary);
 }
 
 .resultMeta {
   font-size: 0.8rem;
-  color: #A9B7C9;
+  color: var(--text-dim);
   margin-top: 2px;
 }
 
@@ -93,12 +93,12 @@
   font-family: 'Outfit', sans-serif;
   font-size: 0.95rem;
   font-weight: 700;
-  color: #B59241;
+  color: var(--gold);
   flex-shrink: 0;
 }
 
 .empty {
   padding: 1.2rem;
-  color: #7B8EA6;
+  color: var(--text-muted);
   font-size: 0.88rem;
 }

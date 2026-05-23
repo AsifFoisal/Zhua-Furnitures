@@ -2,12 +2,12 @@
   min-height: 100vh;
   display: grid;
   grid-template-columns: 260px minmax(0, 1fr);
-  background: linear-gradient(160deg, #0f243b 0%, #132f4d 60%, #163250 100%);
+  background: linear-gradient(160deg, var(--page-background) 0%, var(--surface-3) 60%, var(--surface-2) 100%);
 }
 
 .sidebar {
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(15, 36, 59, 0.86);
+  border-right: 1px solid var(--surface-border);
+  background: var(--surface-overlay);
   backdrop-filter: blur(14px);
   padding: 1rem;
   display: flex;
@@ -36,7 +36,7 @@
   font-family: var(--font-display);
   font-size: 1.2rem;
   font-weight: 700;
-  color: #0f243b;
+  color: var(--midnight);
   background: linear-gradient(140deg, #b59241, #d0af63);
 }
 
@@ -45,12 +45,12 @@
   font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.13em;
-  color: #eaf0f8;
+  color: var(--text-primary);
 }
 
 .brandSub {
   font-size: 0.68rem;
-  color: #a9b7c9;
+  color: var(--text-dim);
 }
 
 .nav {
@@ -65,7 +65,7 @@
   gap: 0.75rem;
   padding: 0.72rem 0.82rem;
   border-radius: 10px;
-  color: #a9b7c9;
+  color: var(--text-dim);
   text-decoration: none;
   border: 1px solid transparent;
   font-family: var(--font-accent);
@@ -74,12 +74,12 @@
 }
 
 .navItem:hover {
-  color: #eaf0f8;
-  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  background: rgba(181, 146, 65, 0.06);
 }
 
 .navItemActive {
-  color: #eaf0f8;
+  color: var(--text-primary);
   background: rgba(181, 146, 65, 0.12);
   border-color: rgba(181, 146, 65, 0.35);
 }
@@ -91,16 +91,16 @@
   justify-content: center;
   gap: 0.5rem;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.03);
-  color: #a9b7c9;
+  border: 1px solid var(--surface-border);
+  background: var(--surface-overlay);
+  color: var(--text-dim);
   padding: 0.65rem;
   font-size: 0.8rem;
   transition: all var(--transition-fast);
 }
 
 .collapseButton:hover {
-  color: #eaf0f8;
+  color: var(--text-primary);
   border-color: rgba(181, 146, 65, 0.3);
 }
 
@@ -117,8 +117,8 @@
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  background: rgba(22, 50, 80, 0.72);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: var(--surface-overlay);
+  border: 1px solid var(--surface-border);
   border-radius: 14px;
   padding: 0.95rem 1rem;
 }
@@ -127,13 +127,13 @@
   font-size: 0.74rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #a9b7c9;
+  color: var(--text-dim);
 }
 
 .title {
   font-family: var(--font-display);
   font-size: 1.4rem;
-  color: #eaf0f8;
+  color: var(--text-primary);
   margin-top: 0.18rem;
 }
 
@@ -147,9 +147,9 @@
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #eaf0f8;
-  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--surface-border);
+  color: var(--text-primary);
+  background: var(--surface-overlay);
   position: relative;
 }
 
@@ -160,15 +160,15 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #b59241;
+  background: var(--gold);
 }
 
 .adminChip {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--surface-border);
+  background: var(--surface-overlay);
   border-radius: 999px;
   padding: 0.32rem 0.7rem 0.32rem 0.32rem;
 }
@@ -188,19 +188,19 @@
 
 .adminName {
   font-size: 0.78rem;
-  color: #eaf0f8;
+  color: var(--text-primary);
   font-weight: 600;
 }
 
 .adminRole {
   font-size: 0.68rem;
-  color: #a9b7c9;
+  color: var(--text-dim);
 }
 
 .signOutButton {
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.05);
-  color: #eaf0f8;
+  border: 1px solid var(--surface-border);
+  background: var(--surface-overlay);
+  color: var(--text-primary);
   border-radius: 999px;
   padding: 0.42rem 0.8rem;
   font-size: 0.76rem;
@@ -209,7 +209,7 @@
 
 .signOutButton:hover {
   border-color: rgba(181, 146, 65, 0.45);
-  color: #b59241;
+  color: var(--gold);
 }
 
 .content {

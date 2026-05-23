@@ -17,9 +17,7 @@
 .gradientLayer1 {
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 15% 50%, rgba(181,146,65,0.09) 0%, transparent 55%),
-              radial-gradient(ellipse at 85% 20%, rgba(181,146,65,0.06) 0%, transparent 50%),
-              linear-gradient(160deg, #0F243B 0%, #163250 50%, #122A45 100%);
+  background: var(--hero-background);
 }
 
 .gradientLayer2 {
@@ -28,15 +26,15 @@
   left: 0;
   right: 0;
   height: 30%;
-  background: linear-gradient(to top, #0F243B, transparent);
+  background: linear-gradient(to top, var(--page-background), transparent);
 }
 
 .gridLines {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
   background-size: 60px 60px;
 }
 
@@ -51,7 +49,7 @@
 .shape1 {
   width: 400px;
   height: 400px;
-  background: rgba(181,146,65,0.06);
+  background: rgba(181,146,65,0.08);
   top: 10%;
   left: -5%;
   animation: float1 8s ease-in-out infinite;
@@ -60,7 +58,7 @@
 .shape2 {
   width: 300px;
   height: 300px;
-  background: rgba(130,80,180,0.04);
+  background: rgba(130,80,180,0.05);
   bottom: 20%;
   right: 10%;
   animation: float2 10s ease-in-out infinite;
@@ -69,7 +67,7 @@
 .shape3 {
   width: 200px;
   height: 200px;
-  background: rgba(181,146,65,0.04);
+  background: rgba(181,146,65,0.05);
   top: 60%;
   left: 30%;
   animation: float3 7s ease-in-out infinite;
@@ -111,7 +109,7 @@
   font-family: 'Outfit', sans-serif;
   font-size: 0.78rem;
   font-weight: 600;
-  color: #B59241;
+  color: var(--gold);
   letter-spacing: 0.05em;
   margin-bottom: 1.5rem;
 }
@@ -121,7 +119,7 @@
   font-size: clamp(3rem, 5.5vw, 5.5rem);
   font-weight: 700;
   line-height: 1.1;
-  color: #EAF0F8;
+  color: var(--text-primary);
   padding-top: 0.06em;
   margin-bottom: 1.5rem;
   letter-spacing: -0.02em;
@@ -137,7 +135,7 @@
 
 .subtext {
   font-size: 1.05rem;
-  color: #A9B7C9;
+  color: var(--text-dim);
   line-height: 1.75;
   max-width: 500px;
   margin-bottom: 2.5rem;
@@ -162,7 +160,7 @@
   font-size: 0.68rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #aab8ca;
+  color: var(--text-muted);
 }
 
 /* Stats */
@@ -170,7 +168,7 @@
   display: flex;
   gap: 2rem;
   padding-top: 2rem;
-  border-top: 1px solid rgba(255,255,255,0.06);
+  border-top: 1px solid var(--surface-border);
   flex-wrap: wrap;
 }
 
@@ -184,14 +182,14 @@
   font-family: 'Playfair Display', serif;
   font-size: 1.5rem;
   font-weight: 700;
-  color: #B59241;
+  color: var(--gold);
 }
 
 .statLabel {
   font-family: 'Outfit', sans-serif;
   font-size: 0.72rem;
   font-weight: 500;
-  color: #7B8EA6;
+  color: var(--text-muted);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -236,8 +234,8 @@
   left: 0;
   right: 0;
   height: 40%;
-  background: linear-gradient(to top, #193654, #234567);
-  border-top: 1px solid rgba(181,146,65,0.1);
+  background: linear-gradient(to top, var(--surface-2), var(--surface-3));
+  border-top: 1px solid var(--surface-border);
 }
 
 .roomSofa {
@@ -251,7 +249,7 @@
 .sofaBody {
   width: 100%;
   height: 35px;
-  background: linear-gradient(135deg, #C8D4E3, #B7C6D8);
+  background: linear-gradient(135deg, var(--surface-1), var(--surface-2));
   border-radius: 4px 4px 0 0;
   position: relative;
 }
@@ -262,7 +260,7 @@
   left: 0;
   right: 0;
   height: 30px;
-  background: linear-gradient(135deg, #C4D1E1, #B4C3D6);
+  background: linear-gradient(135deg, var(--surface-2), var(--surface-3));
   border-radius: 4px 4px 0 0;
   margin-bottom: 2px;
 }
@@ -271,7 +269,7 @@
   display: inline-block;
   width: 44%;
   height: 18px;
-  background: linear-gradient(135deg, #D4DFEC, #C4D1E1);
+  background: linear-gradient(135deg, var(--surface-2), var(--surface-3));
   border-radius: 3px;
   margin: 0 2%;
   position: absolute;
@@ -286,7 +284,7 @@
   left: 10%;
   width: 12%;
   height: 70%;
-  background: linear-gradient(180deg, #5A6F8A 0%, #7A91AD 100%);
+  background: linear-gradient(180deg, var(--warm-gray) 0%, var(--warm-gray-2) 100%);
   border-radius: 0 0 4px 4px;
   opacity: 0.85;
 }
@@ -298,7 +296,7 @@
   transform: translateX(-50%);
   width: 25%;
   height: 8px;
-  background: #7C95B3;
+  background: var(--warm-gray-2);
   border-radius: 2px;
   margin-bottom: -2px;
 }
@@ -354,11 +352,11 @@
 }
 
 .carouselEyebrow {
-  color: #b59241;
+  color: var(--gold);
 }
 
 .carouselCount {
-  color: #a9b7c9;
+  color: var(--text-dim);
 }
 
 .carouselViewport {
@@ -409,7 +407,7 @@
 .carouselFallback {
   font-family: 'Playfair Display', serif;
   font-size: 2.7rem;
-  color: #b59241;
+  color: var(--gold);
 }
 
 .carouselInfo {
@@ -423,20 +421,20 @@
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: #7b8ea6;
+  color: var(--text-muted);
 }
 
 .carouselName {
   font-family: 'Playfair Display', serif;
   font-size: 1.35rem;
-  color: #eaf0f8;
+  color: var(--text-primary);
 }
 
 .carouselPrice {
   font-family: 'Outfit', sans-serif;
   font-size: 1.15rem;
   font-weight: 700;
-  color: #b59241;
+  color: var(--gold);
 }
 
 .carouselControls {
@@ -455,9 +453,9 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(15, 36, 59, 0.7);
-  color: #eaf0f8;
+  border: 1px solid var(--surface-border);
+  background: var(--surface-elevated);
+  color: var(--text-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -472,7 +470,7 @@
 
 .carouselBtn:not(:disabled):hover {
   border-color: rgba(181, 146, 65, 0.4);
-  color: #b59241;
+  color: var(--gold);
 }
 
 .carouselDots {
@@ -485,7 +483,7 @@
   height: 6px;
   border-radius: 50%;
   border: none;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(15,36,59,0.18);
   cursor: pointer;
   transition: all 200ms;
 }
@@ -493,14 +491,14 @@
 .carouselDotActive {
   width: 18px;
   border-radius: 3px;
-  background: #b59241;
+  background: var(--gold);
 }
 
 .carouselEmpty {
   padding: 1rem;
   text-align: center;
   font-size: 0.85rem;
-  color: #a9b7c9;
+  color: var(--text-muted);
 }
 
 /* Scroll hint */

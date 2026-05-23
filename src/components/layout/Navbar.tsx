@@ -8,6 +8,7 @@ import { useCartStore, useSearchStore } from '@/store';
 import { signOutUser } from '@/app/auth/actions';
 import { buildWhatsAppUrl } from '@/lib/whatsapp';
 import { DESIGN_STUDIO_FEATURE } from '@/lib/features';
+import ThemeToggle from '@/components/layout/ThemeToggle';
 import styles from './Navbar.module.css';
 
 interface NavbarAuthUser {
@@ -190,6 +191,7 @@ export default function Navbar() {
 
           {/* Actions */}
           <div className={styles.actions}>
+            <ThemeToggle className={styles.themeBtn} />
             <button className={styles.actionBtn} onClick={openSearch} aria-label="Search">
               <Search size={20} />
             </button>
@@ -275,6 +277,7 @@ export default function Navbar() {
               ))}
             </ul>
             <div className={styles.mobileFooter}>
+              <ThemeToggle className={styles.themeMobileBtn} showLabel />
               <div className={styles.mobileAuthActions}>
                 <Link href={accountHref} className="btn btn-outline btn-sm" onClick={() => setMobileOpen(false)}>
                   {authUser ? 'My Account' : 'Sign In'}

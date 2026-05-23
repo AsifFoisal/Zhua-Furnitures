@@ -1,12 +1,12 @@
 .footer {
-  background: #0F243B;
-  border-top: 1px solid rgba(181, 146, 65, 0.12);
+  background: var(--surface-1);
+  border-top: 1px solid var(--surface-border);
 }
 
 /* Newsletter */
 .newsletter {
-  background: linear-gradient(135deg, #163250 0%, #1E3C5F 100%);
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+  background: var(--panel-background);
+  border-bottom: 1px solid var(--surface-border);
   padding: 3rem 0;
 }
 
@@ -22,7 +22,7 @@
   font-family: 'Playfair Display', serif;
   font-size: 1.4rem;
   font-weight: 600;
-  color: #EAF0F8;
+  color: var(--text-primary);
   margin-top: 0.5rem;
 }
 
@@ -33,11 +33,11 @@
 }
 
 .newsletterInput {
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: var(--surface-overlay);
+  border: 1px solid var(--surface-border);
   border-radius: 999px;
   padding: 0.875rem 1.5rem;
-  color: #EAF0F8;
+  color: var(--text-primary);
   font-family: 'Inter', sans-serif;
   font-size: 0.9rem;
   outline: none;
@@ -47,10 +47,10 @@
 
 .newsletterInput:focus {
   border-color: #B59241;
-  background: rgba(181,146,65,0.05);
+  background: rgba(181,146,65,0.06);
 }
 
-.newsletterInput::placeholder { color: #7B8EA6; }
+.newsletterInput::placeholder { color: var(--text-muted); }
 
 /* Main */
 .main {
@@ -103,20 +103,20 @@
   font-family: 'Outfit', sans-serif;
   font-size: 0.95rem;
   font-weight: 700;
-  color: #EAF0F8;
+  color: var(--text-primary);
   letter-spacing: 0.12em;
 }
 
 .logoSub {
   font-size: 0.65rem;
-  color: #7B8EA6;
+  color: var(--text-muted);
   font-family: 'Inter', sans-serif;
   margin-top: 2px;
 }
 
 .brandDesc {
   font-size: 0.875rem;
-  color: #7B8EA6;
+  color: var(--text-muted);
   line-height: 1.7;
   max-width: 280px;
 }
@@ -130,12 +130,12 @@
   width: 38px;
   height: 38px;
   border-radius: 10px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: var(--surface-overlay);
+  border: 1px solid var(--surface-border);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #7B8EA6;
+  color: var(--text-dim);
   transition: all 200ms;
   text-decoration: none;
 }
@@ -143,7 +143,7 @@
 .socialBtn:hover {
   background: rgba(181,146,65,0.1);
   border-color: rgba(181,146,65,0.25);
-  color: #B59241;
+  color: var(--gold);
 }
 
 /* Columns */
@@ -153,7 +153,7 @@
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #B59241;
+  color: var(--gold);
   margin-bottom: 1.25rem;
 }
 
@@ -166,12 +166,12 @@
 
 .footerLink {
   font-size: 0.875rem;
-  color: #7B8EA6;
+  color: var(--text-muted);
   text-decoration: none;
   transition: color 150ms;
 }
 
-.footerLink:hover { color: #EAF0F8; }
+.footerLink:hover { color: var(--text-primary); }
 
 .footerLinkDisabled {
   opacity: 0.6;
@@ -185,7 +185,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.16em;
-  color: #b59241;
+  color: var(--gold);
 }
 
 .contactInfo {
@@ -200,16 +200,16 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.8rem;
-  color: #7B8EA6;
+  color: var(--text-muted);
   text-decoration: none;
   transition: color 150ms;
 }
 
-.contactItem:hover { color: #B59241; }
+.contactItem:hover { color: var(--gold); }
 
 /* Bottom */
 .bottom {
-  border-top: 1px solid rgba(255,255,255,0.05);
+  border-top: 1px solid var(--surface-border);
   padding: 1.5rem 0;
 }
 

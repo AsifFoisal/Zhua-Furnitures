@@ -24,6 +24,15 @@
   --border: rgba(181, 146, 65, 0.2);
   --border-light: rgba(255,255,255,0.08);
   --glass: rgba(22,50,80,0.85);
+  --page-background: #0F243B;
+  --surface-1: #163250;
+  --surface-2: #1E3C5F;
+  --surface-3: #122A45;
+  --surface-elevated: rgba(15, 36, 59, 0.92);
+  --surface-overlay: rgba(15, 36, 59, 0.72);
+  --surface-border: rgba(255,255,255,0.08);
+  --hero-background: linear-gradient(160deg, #0F243B 0%, #163250 52%, #122A45 100%);
+  --panel-background: linear-gradient(135deg, rgba(22, 50, 80, 0.95), rgba(12, 30, 50, 0.98));
 
   /* — Typography — */
   --font-display: 'Playfair Display', Georgia, serif;
@@ -78,6 +87,53 @@
   --container-lg: 1024px;
   --container-xl: 1280px;
   --container-2xl: 1440px;
+  /* Grid pattern line (adapts per theme) */
+  --grid-line: rgba(255,255,255,0.04);
+}
+
+html {
+  color-scheme: dark;
+}
+
+html[data-theme='light'] {
+  --midnight: #f4f7fb;
+  --charcoal: #ffffff;
+  --charcoal-2: #eef3f9;
+  --warm-gray: #c2cfdd;
+  --warm-gray-2: #6f8399;
+  --gold: #9d7a2f;
+  --gold-light: #b99443;
+  --gold-dim: #7f6324;
+  --ivory: #16293f;
+  --cream: #203449;
+  --cream-2: #31465b;
+  --white: #0f243b;
+  --text-primary: #0f1f32;
+  --text-dim: #34475d;
+  --text-muted: #52657b;
+  --border: rgba(157, 122, 47, 0.2);
+  --border-light: rgba(15, 36, 59, 0.1);
+  --glass: rgba(255, 255, 255, 0.88);
+  --page-background: #f4f7fb;
+  --surface-1: #ffffff;
+  --surface-2: #f0f4fa;
+  --surface-3: #e8eef6;
+  --surface-elevated: rgba(255, 255, 255, 0.96);
+  --surface-overlay: rgba(255, 255, 255, 0.84);
+  --surface-border: rgba(15, 36, 59, 0.08);
+  --hero-background: linear-gradient(160deg, #f8fbfe 0%, #edf3f8 52%, #e4ebf4 100%);
+  --panel-background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(242, 247, 252, 0.98));
+
+  --shadow-sm: 0 2px 8px rgba(15, 36, 59, 0.08);
+  --shadow-md: 0 4px 24px rgba(15, 36, 59, 0.1);
+  --shadow-lg: 0 8px 48px rgba(15, 36, 59, 0.12);
+  --shadow-gold: 0 0 32px rgba(157, 122, 47, 0.14);
+  --shadow-lift: 0 16px 64px rgba(15, 36, 59, 0.14);
+  --grid-line: rgba(15,36,59,0.045);
+}
+
+html[data-theme='light'] {
+  color-scheme: light;
 }
 
 /* ============================================================
@@ -98,7 +154,7 @@ html {
 
 body {
   font-family: var(--font-body);
-  background-color: var(--midnight);
+  background-color: var(--page-background);
   color: var(--text-primary);
   line-height: 1.6;
   min-height: 100vh;
