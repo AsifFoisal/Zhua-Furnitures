@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import { createSupabaseAdminClient } from '@/lib/supabase/admin';
-import { getPublicPayFastMode, hasServiceSupabaseEnv } from '@/lib/supabase/env';
+import { getPublicPayFastMode, hasResendEnv, hasServiceSupabaseEnv } from '@/lib/supabase/env';
 import { getOptionalUser } from '@/lib/auth';
 import { findAuthUserIdByEmail } from '@/lib/order-linking';
 import { validatePromoCode } from '@/lib/promo';
 import { logUserActivity } from '@/lib/user-activity';
+import { sendAdminNewOrderNotification } from '@/lib/order-notifications';
 import { PAYFAST_LIVE_MINIMUM_AMOUNT_CENTS } from '@/lib/payments/payfast';
 import {
   DEFAULT_DELIVERY_ZONES_DB,
@@ -338,6 +339,48 @@ export async function POST(request: Request) {
         orderNumber: order.order_number,
       },
     });
+  }
+
+  if (hasResendEnv) {
+    try {
+      await sendAdminNewOrderNotification({
+        event: 'placement',
+        orderNumber: order.order_number,
+        customerName: delivery.name,
+        customerEmail: normalizedDeliveryEmail,
+        customerPhone: delivery.phone,
+        address: delivery.address,
+        city: delivery.city,
+        province: normalizedProvince,
+        postalCode: delivery.postalCode,
+        deliveryType: normalizedDeliveryType,
+        paymentMethod: gatewayProvider,
+        paymentStatus: 'awaiting_payment',
+        subtotalCents,
+        deliveryFeeCents,
+        discountCents: appliedPromo?.discountCents ?? 0,
+        promoCode: appliedPromo?.code ?? null,
+        totalCents: finalTotalCents,
+        items: normalizedItems.map((item) => ({
+          productName: item.productName,
+          quantity: item.quantity,
+          unitPriceCents: item.unitPriceCents,
+          selectedColor: item.selectedColor,
+          selectedSize: item.selectedSize,
+          selectedFabric: item.selectedFabric,
+          customNote: item.customNote,
+        })),
+      });
+    } catch (notificationError) {
+      console.error('[Orders API] Failed to send admin new-order email.', {
+        orderId: order.id,
+        orderNumber: order.order_number,
+        error:
+          notificationError instanceof Error
+            ? notificationError.message
+            : 'Unknown notification error',
+      });
+    }
   }
 
   return NextResponse.json({

@@ -17,6 +17,9 @@ const yocoSuccessUrl = process.env.YOCO_SUCCESS_URL ?? '';
 const yocoCancelUrl = process.env.YOCO_CANCEL_URL ?? '';
 const resendApiKey = process.env.RESEND_API_KEY ?? '';
 const resendFromEmail = process.env.RESEND_FROM_EMAIL ?? '';
+// Default admin recipient for transactional order notifications. Override via
+// ADMIN_NOTIFICATION_EMAIL; falls back to the storefront inbox.
+const adminNotificationEmail = process.env.ADMIN_NOTIFICATION_EMAIL ?? 'zhuaenterprise@gmail.com';
 const publicPayfastMode = process.env.NEXT_PUBLIC_PAYFAST_MODE ?? 'sandbox';
 const publicYocoMode = process.env.NEXT_PUBLIC_YOCO_MODE ?? 'sandbox';
 
@@ -144,4 +147,8 @@ export function getResendEnv(): { apiKey: string; fromEmail: string } {
     apiKey: resendApiKey,
     fromEmail: resendFromEmail,
   };
+}
+
+export function getAdminNotificationEmail(): string {
+  return adminNotificationEmail.trim().toLowerCase() || 'zhuaenterprise@gmail.com';
 }

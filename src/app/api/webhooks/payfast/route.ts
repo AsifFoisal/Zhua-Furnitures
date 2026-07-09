@@ -1,12 +1,18 @@
 import { NextResponse } from 'next/server';
 import { createSupabaseAdminClient } from '@/lib/supabase/admin';
-import { getPayFastEnv, hasPayFastEnv, hasServiceSupabaseEnv } from '@/lib/supabase/env';
+import {
+  getPayFastEnv,
+  hasPayFastEnv,
+  hasResendEnv,
+  hasServiceSupabaseEnv,
+} from '@/lib/supabase/env';
 import { findAuthUserIdByEmail, linkGuestOrdersToUserByEmail } from '@/lib/order-linking';
 import {
   mapPayFastPaymentStatus,
   verifyPayFastSignature,
 } from '@/lib/payments/payfast';
 import { applyPaidOrderStockDecrement } from '@/lib/inventory';
+import { sendAdminNewOrderNotification } from '@/lib/order-notifications';
 
 export const dynamic = 'force-dynamic';
 
@@ -101,7 +107,7 @@ export async function POST(request: Request) {
   const { data: order, error: orderError } = await supabase
     .from('orders')
     .select(
-      'id, order_number, user_id, customer_email, promo_code_id, promo_discount_cents, delivery_fee_cents, total_cents, payment_status'
+      'id, order_number, user_id, customer_name, customer_email, customer_phone, address, city, province, postal_code, delivery_type, payment_method, gateway_provider, promo_code_id, promo_discount_cents, delivery_fee_cents, total_cents, payment_status'
     )
     .eq('id', orderId)
     .single();
@@ -370,6 +376,77 @@ export async function POST(request: Request) {
         .eq('id', createdEvent.id);
 
       return new NextResponse(errorMessage, { status: 500 });
+    }
+
+    if (hasResendEnv) {
+      try {
+        const { data: orderItems, error: orderItemsError } = await supabase
+          .from('order_items')
+          .select(
+            'product_name, quantity, unit_price_cents, selected_color, selected_size, selected_fabric, custom_note'
+          )
+          .eq('order_id', order.id);
+
+        if (orderItemsError) {
+          throw new Error(orderItemsError.message);
+        }
+
+        let promoCode: string | null = null;
+        if (order.promo_code_id) {
+          const { data: promoRow } = await supabase
+            .from('promo_codes')
+            .select('code')
+            .eq('id', order.promo_code_id)
+            .maybeSingle();
+          promoCode = promoRow?.code ?? null;
+        }
+
+        const items = (orderItems ?? []).map((item) => ({
+          productName: item.product_name,
+          quantity: item.quantity,
+          unitPriceCents: item.unit_price_cents,
+          selectedColor: item.selected_color,
+          selectedSize: item.selected_size,
+          selectedFabric: item.selected_fabric,
+          customNote: item.custom_note,
+        }));
+
+        const subtotalCents = Math.max(
+          0,
+          order.total_cents - order.delivery_fee_cents + order.promo_discount_cents
+        );
+
+        await sendAdminNewOrderNotification({
+          event: 'paid',
+          orderNumber: order.order_number,
+          customerName: order.customer_name,
+          customerEmail: order.customer_email,
+          customerPhone: order.customer_phone,
+          address: order.address,
+          city: order.city,
+          province: order.province,
+          postalCode: order.postal_code,
+          deliveryType: order.delivery_type,
+          paymentMethod: order.gateway_provider || order.payment_method || 'payfast',
+          paymentStatus: 'paid',
+          subtotalCents,
+          deliveryFeeCents: order.delivery_fee_cents,
+          discountCents: order.promo_discount_cents,
+          promoCode,
+          totalCents: order.total_cents,
+          items,
+        });
+      } catch (notificationError) {
+        console.error('[PayFast Webhook] Failed to send admin paid-order email.', {
+          webhookId,
+          orderId: order.id,
+          orderNumber: order.order_number,
+          error:
+            notificationError instanceof Error
+              ? notificationError.message
+              : 'Unknown notification error',
+        });
+      }
     }
   }
 
