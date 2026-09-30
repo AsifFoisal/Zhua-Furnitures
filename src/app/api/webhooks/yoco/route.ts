@@ -8,6 +8,7 @@ import {
   verifyYocoWebhookSignature,
 } from '@/lib/payments/yoco';
 import { applyPaidOrderStockDecrement } from '@/lib/inventory';
+import { processCurtainQuotePaymentWebhook } from '@/lib/quote-payments';
 
 export const dynamic = 'force-dynamic';
 
@@ -228,6 +229,33 @@ export async function POST(request: Request) {
   const { data: order, error: orderError } = await orderLookup;
 
   if (orderError || !order) {
+    // Not an order — curtain quote payments send metadata.orderId set to the
+    // curtain quote id, so check for a quote payment before giving up.
+    const quoteAmount = firstNumber(payload, [
+      ['amount'],
+      ['data', 'amount'],
+      ['data', 'payment_amount'],
+      ['data', 'amount_cents'],
+    ]);
+
+    const quoteResult = await processCurtainQuotePaymentWebhook({
+      supabase,
+      provider: 'yoco',
+      providerStatus,
+      quoteId: isUuid(orderReference) ? orderReference : '',
+      amountCents: quoteAmount ?? 0,
+      paymentReference: firstString(payload, [
+        ['data', 'id'],
+        ['paymentId'],
+        ['data', 'paymentId'],
+      ]) ?? '',
+      webhookEventId: createdEvent.id,
+    });
+
+    if (quoteResult !== 'not_found') {
+      return new NextResponse('OK', { status: 200 });
+    }
+
     console.warn('[Yoco Webhook] Order not found for webhook event.', {
       webhookId,
       orderReference,

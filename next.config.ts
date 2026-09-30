@@ -19,6 +19,12 @@ const nextConfig: NextConfig = {
         destination: 'https://www.zhuafurniture.com/:path*',
         permanent: true,
       },
+      {
+        // Curtain Calculator was merged into the Curtain Customizer.
+        source: '/design-studio/calculator',
+        destination: '/design-studio/curtain-customizer',
+        permanent: true,
+      },
     ];
   },
 };

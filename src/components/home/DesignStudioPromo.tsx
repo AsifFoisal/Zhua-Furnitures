@@ -1,13 +1,12 @@
 'use client';
 import Link from 'next/link';
-import { Wand2, Calculator, Camera, Calendar } from 'lucide-react';
+import { Wand2, Camera, Calendar } from 'lucide-react';
 import { DESIGN_STUDIO_FEATURE } from '@/lib/features';
 import styles from './DesignStudioPromo.module.css';
 
 const tools = [
   { icon: Camera, label: 'Room Visualizer', desc: 'Upload a photo of your room and preview real furniture in place', href: '/design-studio/room-visualizer', color: '#B59241' },
-  { icon: Wand2, label: 'Curtain Customizer', desc: 'Design your perfect curtains with live fabric and style preview', href: '/design-studio/curtain-customizer', color: '#4ECDC4' },
-  { icon: Calculator, label: 'Curtain Calculator', desc: 'Enter your window measurements and get exact fabric quantities', href: '/design-studio/calculator', color: '#B39DDB' },
+  { icon: Wand2, label: 'Curtain Customizer', desc: 'Measure your windows, choose your options, and get an instant estimate', href: '/design-studio/curtain-customizer', color: '#4ECDC4' },
   { icon: Calendar, label: 'Book Installation', desc: 'Schedule professional installation at your preferred time', href: '/book-installation', color: '#FF8A65' },
 ];
 

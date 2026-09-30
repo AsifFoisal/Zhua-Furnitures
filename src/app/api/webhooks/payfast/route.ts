@@ -13,6 +13,7 @@ import {
 } from '@/lib/payments/payfast';
 import { applyPaidOrderStockDecrement } from '@/lib/inventory';
 import { sendAdminNewOrderNotification } from '@/lib/order-notifications';
+import { processCurtainQuotePaymentWebhook } from '@/lib/quote-payments';
 
 export const dynamic = 'force-dynamic';
 
@@ -113,6 +114,22 @@ export async function POST(request: Request) {
     .single();
 
   if (orderError || !order) {
+    // Not an order — curtain quote payments reuse the same PayFast account and
+    // notify URL, with m_payment_id set to the curtain quote id.
+    const quoteResult = await processCurtainQuotePaymentWebhook({
+      supabase,
+      provider: 'payfast',
+      providerStatus,
+      quoteId: orderId,
+      amountCents: toCents(payload.amount ?? '0'),
+      paymentReference: payfastPaymentId,
+      webhookEventId: createdEvent.id,
+    });
+
+    if (quoteResult !== 'not_found') {
+      return new NextResponse('OK', { status: 200 });
+    }
+
     console.warn('[PayFast Webhook] Order not found for webhook event.', {
       webhookId,
       orderId,

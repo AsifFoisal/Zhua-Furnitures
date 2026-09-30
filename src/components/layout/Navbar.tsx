@@ -7,7 +7,7 @@ import { ShoppingBag, Search, Heart, Menu, X, ChevronDown, User, LogOut } from '
 import { useCartStore, useSearchStore } from '@/store';
 import { signOutUser } from '@/app/auth/actions';
 import { buildWhatsAppUrl } from '@/lib/whatsapp';
-import { DESIGN_STUDIO_FEATURE } from '@/lib/features';
+import { DESIGN_STUDIO_FEATURE, isCurtainCustomizerEnabled } from '@/lib/features';
 import ThemeToggle from '@/components/layout/ThemeToggle';
 import styles from './Navbar.module.css';
 
@@ -43,12 +43,11 @@ const navLinks: NavLink[] = [
   },
   {
     label: 'Design Studio',
-    href: '/design-studio',
-    disabled: !DESIGN_STUDIO_FEATURE.enabled,
+    href: '/design-studio/curtain-customizer',
+    disabled: !isCurtainCustomizerEnabled(),
     children: [
       { label: 'Room Visualizer', href: '/design-studio/room-visualizer', desc: 'See furniture in your room', disabled: !DESIGN_STUDIO_FEATURE.enabled },
-      { label: 'Curtain Customizer', href: '/design-studio/curtain-customizer', desc: 'Design your perfect curtains', disabled: !DESIGN_STUDIO_FEATURE.enabled },
-      { label: 'Curtain Calculator', href: '/design-studio/calculator', desc: 'Get exact measurements', disabled: !DESIGN_STUDIO_FEATURE.enabled },
+      { label: 'Curtain Customizer', href: '/design-studio/curtain-customizer', desc: 'Design your perfect curtains', disabled: !isCurtainCustomizerEnabled() },
     ],
   },
   { label: 'Gallery', href: '/gallery' },

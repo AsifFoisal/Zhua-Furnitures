@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import ComingSoonPanel from '@/components/ui/ComingSoonPanel';
-import { DESIGN_STUDIO_FEATURE } from '@/lib/features';
+import { DESIGN_STUDIO_FEATURE, isCurtainCustomizerEnabled } from '@/lib/features';
 
 const tools = [
   {
@@ -10,18 +10,13 @@ const tools = [
   },
   {
     title: 'Curtain Customizer',
-    desc: 'Choose fabric, heading style, lining, and preview instantly.',
+    desc: 'Measure your windows, choose every option, and request a quote.',
     href: '/design-studio/curtain-customizer',
-  },
-  {
-    title: 'Curtain Calculator',
-    desc: 'Calculate fabric metres, estimate total cost, and prepare your quote.',
-    href: '/design-studio/calculator',
   },
 ];
 
 export default function DesignStudioPage() {
-  if (!DESIGN_STUDIO_FEATURE.enabled) {
+  if (!(DESIGN_STUDIO_FEATURE.enabled || isCurtainCustomizerEnabled())) {
     return (
       <ComingSoonPanel
         title="Design Studio Is Getting an Upgrade"
