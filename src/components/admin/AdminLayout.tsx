@@ -151,5 +151,6 @@ export default function AdminLayout({
         <section className={styles.content}>{children}</section>
       </div>
     </div>
+    
   );
 }
