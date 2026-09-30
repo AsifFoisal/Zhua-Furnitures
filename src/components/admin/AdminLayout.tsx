@@ -72,7 +72,6 @@ export default function AdminLayout({
 }) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
-
   const pageTitle = titleMap[pathname] ?? 'Admin';
 
   const today = new Intl.DateTimeFormat('en-ZA', {
