@@ -6,14 +6,11 @@ import Image from 'next/image';
 import { toast } from 'sonner';
 import { MessageCircle, Heart, Star, Mail, Phone, MapPin, ArrowRight } from 'lucide-react';
 import { buildWhatsAppUrl, WHATSAPP_DISPLAY_NUMBER, WHATSAPP_TEL } from '@/lib/whatsapp';
-import { DESIGN_STUDIO_FEATURE, isCurtainCustomizerEnabled } from '@/lib/features';
 import styles from './Footer.module.css';
 
 export default function Footer() {
   const [email, setEmail] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const isDesignStudioDisabled = !DESIGN_STUDIO_FEATURE.enabled;
-  const isCustomizerEnabled = isCurtainCustomizerEnabled();
 
   const submitNewsletter = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -91,7 +88,8 @@ export default function Footer() {
                 />
               </Link>
               <p className={styles.brandDesc}>
-                Premium furniture, curtains & blinds, and interior design services — delivered across all 9 South African provinces.
+                Complete spaces, made for you. ZHUA designs, makes and installs custom furniture,
+                curtains &amp; blinds, WALLZ wall finishes and DECKZ outdoor spaces.
               </p>
               <div className={styles.socials}>
                 <a
@@ -108,56 +106,41 @@ export default function Footer() {
               </div>
             </div>
 
-            {/* Shop */}
+            {/* Explore */}
             <div>
-              <h4 className={styles.colTitle}>Shop</h4>
+              <h4 className={styles.colTitle}>Explore</h4>
               <ul className={styles.linkList}>
-                <li><Link href="/shop/furniture" className={styles.footerLink}>Furniture</Link></li>
-                <li><Link href="/shop/curtains" className={styles.footerLink}>Curtains & Blinds</Link></li>
-                <li><Link href="/shop/accessories" className={styles.footerLink}>Accessories</Link></li>
-                <li><Link href="/shop?badge=new" className={styles.footerLink}>New Arrivals</Link></li>
-                <li><Link href="/shop?badge=sale" className={styles.footerLink}>Sale</Link></li>
+                <li><Link href="/furniture" className={styles.footerLink}>Furniture</Link></li>
+                <li><Link href="/curtains-blinds" className={styles.footerLink}>Curtains &amp; Blinds</Link></li>
+                <li><Link href="/wallz" className={styles.footerLink}>WALLZ</Link></li>
+                <li><Link href="/deckz" className={styles.footerLink}>DECKZ</Link></li>
+                <li><Link href="/design-studio" className={styles.footerLink}>Design Studio</Link></li>
+                <li><Link href="/projects" className={styles.footerLink}>Projects</Link></li>
               </ul>
             </div>
 
-            {/* Design Studio */}
+            {/* Company */}
             <div>
-              <h4 className={styles.colTitle}>Design Studio</h4>
+              <h4 className={styles.colTitle}>Company</h4>
               <ul className={styles.linkList}>
-                <li>
-                  {isDesignStudioDisabled ? (
-                    <span className={`${styles.footerLink} ${styles.footerLinkDisabled}`} aria-disabled="true">
-                      Room Visualizer
-                      <span className={styles.comingSoonNote}>{DESIGN_STUDIO_FEATURE.label}</span>
-                    </span>
-                  ) : (
-                    <Link href="/design-studio/room-visualizer" className={styles.footerLink}>Room Visualizer</Link>
-                  )}
-                </li>
-                <li>
-                  {isCustomizerEnabled ? (
-                    <Link href="/design-studio/curtain-customizer" className={styles.footerLink}>Curtain Customizer</Link>
-                  ) : (
-                    <span className={`${styles.footerLink} ${styles.footerLinkDisabled}`} aria-disabled="true">
-                      Curtain Customizer
-                      <span className={styles.comingSoonNote}>{DESIGN_STUDIO_FEATURE.label}</span>
-                    </span>
-                  )}
-                </li>
-                <li><Link href="/book-installation" className={styles.footerLink}>Book Installation</Link></li>
+                <li><Link href="/about" className={styles.footerLink}>About ZHUA</Link></li>
+                <li><Link href="/contact" className={styles.footerLink}>Contact</Link></li>
+                <li><Link href="/contact" className={styles.footerLink}>Visit Our Factory</Link></li>
                 <li><Link href="/gallery" className={styles.footerLink}>Gallery</Link></li>
+                <li><Link href="/track-order" className={styles.footerLink}>Track Your Order</Link></li>
+                <li><Link href="/policies" className={styles.footerLink}>Policies</Link></li>
               </ul>
             </div>
 
-            {/* Help & Contact */}
+            {/* Services + Contact */}
             <div>
-              <h4 className={styles.colTitle}>Help & Contact</h4>
+              <h4 className={styles.colTitle}>Services</h4>
               <ul className={styles.linkList}>
-                <li><Link href="/track-order" className={styles.footerLink}>Track Your Order</Link></li>
-                <li><Link href="/policies" className={styles.footerLink}>Delivery Policy</Link></li>
-                <li><Link href="/policies" className={styles.footerLink}>Returns & Refunds</Link></li>
-                <li><Link href="/policies" className={styles.footerLink}>Privacy Policy</Link></li>
-                <li><Link href="/contact" className={styles.footerLink}>Contact Us</Link></li>
+                <li><Link href="/furniture" className={styles.footerLink}>Custom Furniture</Link></li>
+                <li><Link href="/curtains-blinds" className={styles.footerLink}>Curtains &amp; Blinds</Link></li>
+                <li><Link href="/wallz" className={styles.footerLink}>Wall Solutions</Link></li>
+                <li><Link href="/deckz" className={styles.footerLink}>Outdoor Spaces</Link></li>
+                <li><Link href="/contact" className={styles.footerLink}>Custom Design</Link></li>
               </ul>
               <div className={styles.contactInfo}>
                 <a href={`tel:${WHATSAPP_TEL}`} className={styles.contactItem}>

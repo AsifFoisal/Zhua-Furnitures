@@ -14,6 +14,7 @@ import {
   MessageCircle,
   Ruler,
   SlidersHorizontal,
+  Layers,
   Settings,
   Bell,
   PanelLeftClose,
@@ -41,6 +42,7 @@ const navItems: NavItem[] = [
   { label: 'Newsletters', href: '/admin/newsletters', icon: FileText },
   { label: 'Gallery', href: '/admin/gallery', icon: Image },
   { label: 'Testimonials', href: '/admin/testimonials', icon: MessageCircle },
+  { label: 'WALLZ & DECKZ', href: '/admin/divisions', icon: Layers },
   { label: 'Content', href: '/admin/content', icon: FileText },
   { label: 'Settings', href: '/admin/settings', icon: Settings },
 ];
@@ -59,6 +61,7 @@ const titleMap: Record<string, string> = {
   '/admin/newsletters': 'Newsletter Subscriptions',
   '/admin/gallery': 'Gallery Management',
   '/admin/testimonials': 'Testimonial Management',
+  '/admin/divisions': 'WALLZ & DECKZ Management',
   '/admin/content': 'Content Management',
   '/admin/settings': 'Settings',
 };

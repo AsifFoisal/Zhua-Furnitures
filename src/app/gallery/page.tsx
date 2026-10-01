@@ -1,39 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-
-interface CloudinaryImageAsset {
-  publicId: string;
-  secureUrl: string;
-  alt: string;
-}
-
-interface GalleryItem {
-  id: string;
-  title: string;
-  location: string;
-  project: string;
-  beforeImage: CloudinaryImageAsset | null;
-  afterImage: CloudinaryImageAsset | null;
-}
+import { useGalleryItems } from '@/lib/use-gallery-items';
 
 export default function GalleryPage() {
-  const [items, setItems] = useState<GalleryItem[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const res = await fetch('/api/gallery', { cache: 'no-store' });
-        const data = (await res.json()) as { items?: GalleryItem[] };
-        setItems(data.items ?? []);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    void load();
-  }, []);
+  const { items, loading } = useGalleryItems();
 
   return (
     <div style={{ padding: '140px 0 6rem', minHeight: '100vh', background: 'var(--midnight)' }}>

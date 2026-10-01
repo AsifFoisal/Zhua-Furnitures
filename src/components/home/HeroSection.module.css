@@ -1,0 +1,126 @@
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.background {
+  position: absolute;
+  inset: -8% 0;
+  z-index: 0;
+}
+
+.scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(100deg, rgba(10, 22, 38, 0.88) 0%, rgba(10, 22, 38, 0.62) 44%, rgba(10, 22, 38, 0.3) 100%),
+    linear-gradient(to top, rgba(15, 36, 59, 0.95) 0%, transparent 38%);
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  padding-top: 7rem;
+  padding-bottom: 5rem;
+  max-width: var(--container-xl);
+}
+
+.eyebrow {
+  font-family: var(--font-accent);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+  margin-bottom: var(--spacing-lg);
+}
+
+.headline {
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 6.4vw, 5.6rem);
+  font-weight: 700;
+  line-height: 1.06;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  max-width: 14ch;
+  margin-bottom: var(--spacing-xl);
+}
+
+.headlineAccent {
+  display: block;
+  color: var(--gold-light);
+  font-style: italic;
+}
+
+.subtext {
+  font-size: clamp(1rem, 1.4vw, 1.2rem);
+  line-height: 1.7;
+  color: var(--cream);
+  max-width: 54ch;
+  margin-bottom: var(--spacing-2xl);
+}
+
+.ctaGroup {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.scrollHint {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--text-dim);
+  font-family: var(--font-accent);
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.scrollLine {
+  width: 1px;
+  height: 44px;
+  background: linear-gradient(to bottom, var(--gold), transparent);
+  animation: heroScrollPulse 2.4s var(--ease-in-out) infinite;
+}
+
+@keyframes heroScrollPulse {
+  0%, 100% { opacity: 0.35; transform: scaleY(0.7); transform-origin: top; }
+  50% { opacity: 1; transform: scaleY(1); transform-origin: top; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scrollLine {
+    animation: none;
+  }
+
+  .background {
+    inset: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .content {
+    padding-top: 6.5rem;
+    padding-bottom: 6rem;
+  }
+
+  .ctaGroup :global(.btn) {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .scrollHint {
+    display: none;
+  }
+}

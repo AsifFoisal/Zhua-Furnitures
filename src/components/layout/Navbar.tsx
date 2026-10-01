@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ShoppingBag, Search, Heart, Menu, X, ChevronDown, User, LogOut } from 'lucide-react';
+import { ShoppingBag, Search, Heart, Menu, X, ChevronDown, User, LogOut, MessageCircle } from 'lucide-react';
 import { useCartStore, useSearchStore } from '@/store';
 import { signOutUser } from '@/app/auth/actions';
 import { buildWhatsAppUrl } from '@/lib/whatsapp';
@@ -31,28 +31,22 @@ type NavLink = {
 };
 
 const navLinks: NavLink[] = [
-  {
-    label: 'Shop',
-    href: '/shop',
-    children: [
-      { label: 'All Products', href: '/shop', desc: 'Browse the full collection' },
-      { label: 'Furniture', href: '/shop/furniture', desc: 'Sofas, beds, tables & more' },
-      { label: 'Curtains & Blinds', href: '/shop/curtains', desc: 'Custom window dressings' },
-      { label: 'Accessories', href: '/shop/accessories', desc: 'Décor & finishing touches' },
-    ],
-  },
+  { label: 'Furniture', href: '/furniture' },
+  { label: 'Curtains & Blinds', href: '/curtains-blinds' },
+  { label: 'WALLZ', href: '/wallz' },
+  { label: 'DECKZ', href: '/deckz' },
   {
     label: 'Design Studio',
     href: '/design-studio/curtain-customizer',
     disabled: !isCurtainCustomizerEnabled(),
     children: [
       { label: 'Room Visualizer', href: '/design-studio/room-visualizer', desc: 'See furniture in your room', disabled: !DESIGN_STUDIO_FEATURE.enabled },
-      { label: 'Curtain Customizer', href: '/design-studio/curtain-customizer', desc: 'Design your perfect curtains', disabled: !isCurtainCustomizerEnabled() },
+      { label: 'Curtain Customizer', href: '/design-studio/curtain-customizer', desc: 'Design & calculate your curtains', disabled: !isCurtainCustomizerEnabled() },
     ],
   },
-  { label: 'Gallery', href: '/gallery' },
-  { label: 'Book Installation', href: '/book-installation' },
+  { label: 'Projects', href: '/projects' },
   { label: 'About', href: '/about' },
+  { label: 'Contact', href: '/contact' },
 ];
 
 export default function Navbar() {
@@ -190,6 +184,15 @@ export default function Navbar() {
 
           {/* Actions */}
           <div className={styles.actions}>
+            <a
+              href={buildWhatsAppUrl()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.actionBtn}
+              aria-label="WhatsApp ZHUA"
+            >
+              <MessageCircle size={20} />
+            </a>
             <ThemeToggle className={styles.themeBtn} />
             <button className={styles.actionBtn} onClick={openSearch} aria-label="Search">
               <Search size={20} />
@@ -216,6 +219,9 @@ export default function Navbar() {
               <ShoppingBag size={20} />
               {mounted && count > 0 && <span className={styles.cartBadge}>{count}</span>}
             </button>
+            <Link href="/contact" className={styles.quoteCta}>
+              Get a Quote
+            </Link>
             <button className={styles.mobileMenuBtn} onClick={() => setMobileOpen(true)} aria-label="Menu">
               <Menu size={22} />
             </button>
@@ -297,7 +303,7 @@ export default function Navbar() {
               <a href={buildWhatsAppUrl()} className="btn btn-whatsapp btn-sm" target="_blank" rel="noopener noreferrer">
                 WhatsApp Us
               </a>
-              <Link href="/contact" className="btn btn-outline btn-sm" onClick={() => setMobileOpen(false)}>Contact</Link>
+              <Link href="/contact" className="btn btn-primary btn-sm" onClick={() => setMobileOpen(false)}>Get a Quote</Link>
             </div>
           </div>
         </div>
