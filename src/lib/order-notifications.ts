@@ -8,7 +8,8 @@ type OrderStatusNotificationInput = {
   customerEmail: string;
   customerName: string;
   orderNumber: string;
-  fulfillmentStatus: 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  fulfillmentStatus?: 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  paymentStatus?: 'paid' | 'partial' | 'failed';
 };
 
 type StatusEmailCopy = {
@@ -19,7 +20,7 @@ type StatusEmailCopy = {
   ctaLabel: string;
 };
 
-const statusCopy: Record<OrderStatusNotificationInput['fulfillmentStatus'], StatusEmailCopy> = {
+const statusCopy: Record<NonNullable<OrderStatusNotificationInput['fulfillmentStatus']>, StatusEmailCopy> = {
   processing: {
     subject: 'Your Zhua Furnitures order is confirmed',
     heading: 'Your order is confirmed',
@@ -50,6 +51,33 @@ const statusCopy: Record<OrderStatusNotificationInput['fulfillmentStatus'], Stat
   },
 };
 
+const paymentStatusCopy: Record<
+  NonNullable<OrderStatusNotificationInput['paymentStatus']>,
+  StatusEmailCopy
+> = {
+  paid: {
+    subject: 'Payment confirmed for your Zhua Furnitures order',
+    heading: 'Your payment has been confirmed',
+    intro: 'We have received your payment and your order is now ready for fulfilment.',
+    body: 'You can follow the latest order progress using the tracking link below.',
+    ctaLabel: 'Track your order',
+  },
+  partial: {
+    subject: 'Partial payment received for your Zhua Furnitures order',
+    heading: 'We have received your partial payment',
+    intro: 'We have received a part of your payment. Your order will proceed once the balance is settled.',
+    body: 'If you believe this is incorrect, reply to this message or contact support with your order number.',
+    ctaLabel: 'Review your order',
+  },
+  failed: {
+    subject: 'Payment issue with your Zhua Furnitures order',
+    heading: 'We could not process your payment',
+    intro: 'Unfortunately, the payment for your order did not go through.',
+    body: 'Please try your payment again or contact support with your order number so we can help.',
+    ctaLabel: 'Review your order',
+  },
+};
+
 const resendClient = hasResendEnv ? new Resend(getResendEnv().apiKey) : null;
 
 function escapeHtml(value: string): string {
@@ -67,7 +95,9 @@ function buildTrackOrderUrl(orderNumber: string): string {
 }
 
 function buildEmailContent(input: OrderStatusNotificationInput): { subject: string; html: string; text: string } {
-  const copy = statusCopy[input.fulfillmentStatus];
+  const copy = input.fulfillmentStatus
+    ? statusCopy[input.fulfillmentStatus]
+    : paymentStatusCopy[input.paymentStatus ?? 'paid'];
   const trackOrderUrl = buildTrackOrderUrl(input.orderNumber);
   const safeCustomerName = escapeHtml(input.customerName || 'Customer');
   const safeOrderNumber = escapeHtml(input.orderNumber);

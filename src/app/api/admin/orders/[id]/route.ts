@@ -147,6 +147,12 @@ export async function PATCH(
   }
 
   const supabase = createSupabaseAdminClient();
+  const { data: existingOrder } = await supabase
+    .from('orders')
+    .select('payment_status, fulfillment_status')
+    .eq('id', id)
+    .maybeSingle();
+
   const { data, error } = await supabase
     .from('orders')
     .update(updateData)
@@ -171,7 +177,16 @@ export async function PATCH(
     });
   }
 
-  if (nextFulfillmentStatus && nextFulfillmentStatus !== 'pending') {
+  const previousPaymentStatus = existingOrder?.payment_status ?? null;
+  const previousFulfillmentStatus = existingOrder?.fulfillment_status ?? null;
+  const nextPaymentStatus = updateData.payment_status ?? null;
+
+  const paymentChanged =
+    nextPaymentStatus !== null && nextPaymentStatus !== previousPaymentStatus;
+  const fulfillmentChanged =
+    nextFulfillmentStatus !== null && nextFulfillmentStatus !== previousFulfillmentStatus;
+
+  if (fulfillmentChanged && nextFulfillmentStatus !== 'pending') {
     try {
       await sendOrderStatusNotification({
         customerEmail: data.customer_email,
@@ -185,6 +200,29 @@ export async function PATCH(
         orderNumber: data.order_number,
         customerEmail: data.customer_email,
         fulfillmentStatus: data.fulfillment_status,
+        error:
+          notificationError instanceof Error ? notificationError.message : 'Unknown notification error',
+      });
+    }
+  }
+
+  if (
+    paymentChanged &&
+    (nextPaymentStatus === 'paid' || nextPaymentStatus === 'partial' || nextPaymentStatus === 'failed')
+  ) {
+    try {
+      await sendOrderStatusNotification({
+        customerEmail: data.customer_email,
+        customerName: data.customer_name,
+        orderNumber: data.order_number,
+        paymentStatus: nextPaymentStatus,
+      });
+    } catch (notificationError) {
+      console.error('[Admin Order Update] Failed to send payment status email.', {
+        orderId: data.id,
+        orderNumber: data.order_number,
+        customerEmail: data.customer_email,
+        paymentStatus: nextPaymentStatus,
         error:
           notificationError instanceof Error ? notificationError.message : 'Unknown notification error',
       });
