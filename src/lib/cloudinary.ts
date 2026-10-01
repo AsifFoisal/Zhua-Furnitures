@@ -7,6 +7,7 @@ const allowedFolders = [
   'zhua/content',
   'zhua/gallery',
   'zhua/testimonials',
+  'zhua/curtain-customizer',
 ] as const;
 
 function isAllowedFolder(folder: string): boolean {

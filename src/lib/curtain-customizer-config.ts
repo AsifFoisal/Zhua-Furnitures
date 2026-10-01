@@ -8,6 +8,11 @@ export type CurtainCustomizerFabric = {
   name: string;
   swatch: string;
   pricePerMetre: number;
+  description: string;
+  // Cloudinary image shown on the customer customizer when the fabric is
+  // selected. Empty strings mean "no photo uploaded yet".
+  imageUrl: string;
+  imagePublicId: string;
 };
 
 export type CurtainCustomizerHeading = {
@@ -82,6 +87,18 @@ function toHexColor(value: unknown, fallback: string): string {
   return /^#[0-9a-fA-F]{3,8}$/.test(str) ? str : fallback;
 }
 
+// Only Cloudinary-hosted URLs are accepted so a tampered config can never point
+// the customer customizer at an arbitrary external image.
+function toCloudinaryImageUrl(value: unknown): string {
+  const str = String(value ?? '').trim();
+  return /^https:\/\/res\.cloudinary\.com\//i.test(str) && !str.includes('..') ? str : '';
+}
+
+function toImagePublicId(value: unknown): string {
+  const str = String(value ?? '').trim();
+  return str && !str.includes('..') ? str : '';
+}
+
 function normalizeList<T>(
   value: unknown,
   fallback: T[],
@@ -112,6 +129,9 @@ export function normalizeCurtainCustomizerConfig(value: unknown): CurtainCustomi
         name,
         swatch: toHexColor(item.swatch, defaults.fabrics[0].swatch),
         pricePerMetre: toPositiveNumber(item.pricePerMetre, 0),
+        description: String(item.description ?? '').trim(),
+        imageUrl: toCloudinaryImageUrl(item.imageUrl),
+        imagePublicId: toImagePublicId(item.imagePublicId),
       };
     }),
     headings: normalizeList<CurtainCustomizerHeading>(raw.headings, defaults.headings, (item, index) => {
@@ -184,14 +204,14 @@ export const DEFAULT_CURTAIN_CUSTOMIZER_CONFIG: CurtainCustomizerConfig = {
   makingChargePerCmDrop: 2.5,
   motorPrice: 2950,
   fabrics: [
-    { id: 'linen', name: 'Linen Blend', swatch: '#D4C4A8', pricePerMetre: 180 },
-    { id: 'velvet', name: 'Premium Velvet', swatch: '#8B6B8B', pricePerMetre: 280 },
-    { id: 'sheer-voile', name: 'Voile Sheer', swatch: '#F0EDE8', pricePerMetre: 120 },
-    { id: 'blockout', name: 'Block-Out', swatch: '#4A4A4A', pricePerMetre: 220 },
-    { id: 'jacquard', name: 'Jacquard', swatch: '#C4A882', pricePerMetre: 350 },
-    { id: 'cotton', name: 'Cotton Canvas', swatch: '#E8D8B8', pricePerMetre: 160 },
-    { id: 'chenille', name: 'Chenille', swatch: '#8B7B6B', pricePerMetre: 240 },
-    { id: 'silk-look', name: 'Faux Silk', swatch: '#C8BAA0', pricePerMetre: 300 },
+    { id: 'linen', name: 'Linen Blend', swatch: '#D4C4A8', pricePerMetre: 180, description: 'Relaxed natural weave with a soft texture — breathable and ideal for everyday living spaces.', imageUrl: '', imagePublicId: '' },
+    { id: 'velvet', name: 'Premium Velvet', swatch: '#8B6B8B', pricePerMetre: 280, description: 'Plush, heavy drape with a rich sheen — excellent for warmth, depth and room darkening.', imageUrl: '', imagePublicId: '' },
+    { id: 'sheer-voile', name: 'Voile Sheer', swatch: '#F0EDE8', pricePerMetre: 120, description: 'Light and airy translucent weave that softens daylight while keeping privacy.', imageUrl: '', imagePublicId: '' },
+    { id: 'blockout', name: 'Block-Out', swatch: '#4A4A4A', pricePerMetre: 220, description: 'Triple-weave fabric that blocks almost all light — perfect for bedrooms and media rooms.', imageUrl: '', imagePublicId: '' },
+    { id: 'jacquard', name: 'Jacquard', swatch: '#C4A882', pricePerMetre: 350, description: 'Woven-in patterns with a subtle lustre — a statement fabric for formal rooms.', imageUrl: '', imagePublicId: '' },
+    { id: 'cotton', name: 'Cotton Canvas', swatch: '#E8D8B8', pricePerMetre: 160, description: 'Crisp, sturdy matte weave that holds structured folds beautifully.', imageUrl: '', imagePublicId: '' },
+    { id: 'chenille', name: 'Chenille', swatch: '#8B7B6B', pricePerMetre: 240, description: 'Soft piled fabric with a velvety hand-feel and excellent insulating qualities.', imageUrl: '', imagePublicId: '' },
+    { id: 'silk-look', name: 'Faux Silk', swatch: '#C8BAA0', pricePerMetre: 300, description: 'Lustrous satin finish with an elegant fluid drape — luxury look without the delicate care.', imageUrl: '', imagePublicId: '' },
   ],
   headings: [
     { id: 'eyelet', name: 'Eyelet', description: 'Clean, modern rings', fullness: 2 },

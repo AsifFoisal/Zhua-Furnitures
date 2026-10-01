@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { Plus, Save, Trash2 } from 'lucide-react';
+import { Plus, Save, Trash2, ImagePlus } from 'lucide-react';
 import {
   DEFAULT_CURTAIN_CUSTOMIZER_CONFIG,
   normalizeCurtainCustomizerConfig,
@@ -23,6 +23,7 @@ export default function CurtainCustomizerAdminPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [uploadingFabricKey, setUploadingFabricKey] = useState<string | null>(null);
 
   useEffect(() => {
     const loadConfig = async () => {
@@ -70,6 +71,102 @@ export default function CurtainCustomizerAdminPage() {
       ...current,
       [list]: [...(current[list] as unknown[]), item],
     }) as CurtainCustomizerConfig);
+  };
+
+  // Best-effort Cloudinary cleanup — a failed delete must never block editing.
+  const destroyFabricImage = async (publicId: string) => {
+    if (!publicId) return;
+    try {
+      await fetch('/api/admin/media/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ publicId }),
+      });
+    } catch {
+      // Leave the asset orphaned rather than surfacing an edit-blocking error.
+    }
+  };
+
+  const uploadFabricImage = async (index: number, file: File) => {
+    const key = `${index}-${config.fabrics[index]?.id ?? ''}`;
+    setUploadingFabricKey(key);
+    setError('');
+
+    try {
+      const signRes = await fetch('/api/admin/media/sign-upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          folder: 'zhua/curtain-customizer',
+          baseName: config.fabrics[index]?.name ?? 'fabric',
+        }),
+      });
+
+      const signData = (await signRes.json()) as {
+        apiKey?: string;
+        timestamp?: number;
+        signature?: string;
+        folder?: string;
+        publicId?: string;
+        uploadUrl?: string;
+        error?: string;
+      };
+
+      if (!signRes.ok || !signData.uploadUrl || !signData.apiKey || !signData.signature || !signData.timestamp) {
+        throw new Error(signData.error ?? 'Could not prepare the image upload.');
+      }
+
+      const uploadBody = new FormData();
+      uploadBody.append('file', file);
+      uploadBody.append('api_key', signData.apiKey);
+      uploadBody.append('timestamp', String(signData.timestamp));
+      uploadBody.append('signature', signData.signature);
+      uploadBody.append('folder', signData.folder ?? 'zhua/curtain-customizer');
+      uploadBody.append('public_id', signData.publicId ?? 'fabric');
+
+      const uploadRes = await fetch(signData.uploadUrl, { method: 'POST', body: uploadBody });
+      const uploadData = (await uploadRes.json()) as {
+        secure_url?: string;
+        public_id?: string;
+        error?: { message?: string };
+      };
+
+      if (!uploadRes.ok || !uploadData.secure_url || !uploadData.public_id) {
+        throw new Error(uploadData.error?.message ?? 'Cloudinary upload failed.');
+      }
+
+      const previous = config.fabrics[index];
+      if (previous?.imagePublicId && previous.imagePublicId !== uploadData.public_id) {
+        void destroyFabricImage(previous.imagePublicId);
+      }
+
+      patchListItem('fabrics', index, {
+        imageUrl: uploadData.secure_url,
+        imagePublicId: uploadData.public_id,
+      });
+      toast.success('Fabric image uploaded. Remember to save the configuration.');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Could not upload the fabric image.';
+      setError(message);
+      toast.error(message);
+    } finally {
+      setUploadingFabricKey(null);
+    }
+  };
+
+  const removeFabricImage = (index: number) => {
+    const fabric = config.fabrics[index];
+    if (!fabric) return;
+    void destroyFabricImage(fabric.imagePublicId);
+    patchListItem('fabrics', index, { imageUrl: '', imagePublicId: '' });
+  };
+
+  const removeFabric = (index: number) => {
+    const fabric = config.fabrics[index];
+    if (fabric?.imagePublicId) {
+      void destroyFabricImage(fabric.imagePublicId);
+    }
+    removeListItem('fabrics', index);
   };
 
   const saveConfig = async () => {
@@ -170,42 +267,127 @@ export default function CurtainCustomizerAdminPage() {
 
           {/* Fabrics */}
           <div className={styles.cardTitle} style={{ marginTop: '1.5rem' }}>Fabrics</div>
-          <div style={{ display: 'grid', gap: '0.5rem' }}>
-            {config.fabrics.map((fabric, index) => (
-              <div key={fabric.id + index} style={{ ...rowStyle, gridTemplateColumns: '48px 1.4fr 0.8fr auto' }}>
-                <input
-                  className={styles.input}
-                  type="color"
-                  value={/^#[0-9a-fA-F]{6}$/.test(fabric.swatch) ? fabric.swatch : '#888888'}
-                  onChange={(e) => patchListItem('fabrics', index, { swatch: e.target.value })}
-                  aria-label={`${fabric.name} swatch colour`}
-                />
-                <input
-                  className={styles.input}
-                  value={fabric.name}
-                  onChange={(e) => patchListItem('fabrics', index, { name: e.target.value })}
-                  aria-label="Fabric name"
-                />
-                <input
-                  className={styles.input}
-                  type="number"
-                  min={0}
-                  value={fabric.pricePerMetre}
-                  onChange={(e) => patchListItem('fabrics', index, { pricePerMetre: numberFromInput(e.target.value) })}
-                  aria-label="Price per metre"
-                />
-                <button
-                  className={styles.ghostButton}
-                  type="button"
-                  aria-label={`Remove ${fabric.name}`}
-                  title={`Remove ${fabric.name}`}
-                  style={{ color: '#ff8a8a', justifyContent: 'center' }}
-                  onClick={() => removeListItem('fabrics', index)}
+          <div style={{ display: 'grid', gap: '0.75rem' }}>
+            {config.fabrics.map((fabric, index) => {
+              const uploadKey = `${index}-${fabric.id}`;
+              const uploading = uploadingFabricKey === uploadKey;
+
+              return (
+                <div
+                  key={fabric.id + index}
+                  style={{
+                    display: 'grid',
+                    gap: '0.6rem',
+                    padding: '0.75rem',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    borderRadius: 10,
+                    background: 'rgba(255,255,255,0.02)',
+                  }}
                 >
-                  <Trash2 size={15} />
-                </button>
-              </div>
-            ))}
+                  <div style={{ ...rowStyle, gridTemplateColumns: '56px 1.4fr 0.8fr auto' }}>
+                    {fabric.imageUrl ? (
+                      <img
+                        src={fabric.imageUrl}
+                        alt={`${fabric.name} swatch photo`}
+                        style={{
+                          width: 56,
+                          height: 56,
+                          objectFit: 'cover',
+                          borderRadius: 8,
+                          border: '1px solid rgba(255,255,255,0.1)',
+                        }}
+                      />
+                    ) : (
+                      <div
+                        aria-hidden
+                        style={{
+                          width: 56,
+                          height: 56,
+                          borderRadius: 8,
+                          background: /^#[0-9a-fA-F]{6}$/.test(fabric.swatch) ? fabric.swatch : '#888888',
+                          border: '1px solid rgba(255,255,255,0.1)',
+                        }}
+                      />
+                    )}
+                    <input
+                      className={styles.input}
+                      value={fabric.name}
+                      onChange={(e) => patchListItem('fabrics', index, { name: e.target.value })}
+                      aria-label="Fabric name"
+                    />
+                    <input
+                      className={styles.input}
+                      type="number"
+                      min={0}
+                      value={fabric.pricePerMetre}
+                      onChange={(e) => patchListItem('fabrics', index, { pricePerMetre: numberFromInput(e.target.value) })}
+                      aria-label="Price per metre"
+                    />
+                    <button
+                      className={styles.ghostButton}
+                      type="button"
+                      aria-label={`Remove ${fabric.name}`}
+                      title={`Remove ${fabric.name}`}
+                      style={{ color: '#ff8a8a', justifyContent: 'center' }}
+                      onClick={() => removeFabric(index)}
+                    >
+                      <Trash2 size={15} />
+                    </button>
+                  </div>
+                  <input
+                    className={styles.input}
+                    value={fabric.description}
+                    placeholder="Short description shown to customers when this fabric is selected"
+                    onChange={(e) => patchListItem('fabrics', index, { description: e.target.value })}
+                    aria-label="Fabric description"
+                  />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+                    <label
+                      className={styles.ghostButton}
+                      style={{ cursor: uploading ? 'wait' : 'pointer', opacity: uploading ? 0.6 : 1 }}
+                    >
+                      <input
+                        type="file"
+                        accept="image/*"
+                        hidden
+                        disabled={uploading}
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) void uploadFabricImage(index, file);
+                          e.target.value = '';
+                        }}
+                      />
+                      <ImagePlus size={14} /> {uploading ? 'Uploading...' : fabric.imageUrl ? 'Replace Image' : 'Upload Image'}
+                    </label>
+                    {fabric.imageUrl ? (
+                      <button
+                        className={styles.ghostButton}
+                        type="button"
+                        style={{ color: '#ff8a8a' }}
+                        onClick={() => removeFabricImage(index)}
+                      >
+                        <Trash2 size={14} /> Remove Image
+                      </button>
+                    ) : (
+                      <span className={styles.label}>Optional photo — shown with the description when customers select this fabric.</span>
+                    )}
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                    <span className={styles.label} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+                      Swatch colour
+                    </span>
+                    <input
+                      className={styles.input}
+                      type="color"
+                      value={/^#[0-9a-fA-F]{6}$/.test(fabric.swatch) ? fabric.swatch : '#888888'}
+                      onChange={(e) => patchListItem('fabrics', index, { swatch: e.target.value })}
+                      aria-label={`${fabric.name} swatch colour`}
+                      style={{ width: 44, height: 28, padding: 2 }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
             <div>
               <button
                 className={styles.ghostButton}
@@ -216,13 +398,19 @@ export default function CurtainCustomizerAdminPage() {
                     name: 'New Fabric',
                     swatch: '#888888',
                     pricePerMetre: 0,
+                    description: '',
+                    imageUrl: '',
+                    imagePublicId: '',
                   })
                 }
               >
                 <Plus size={14} /> Add Fabric
               </button>
             </div>
-            <p className={styles.label}>Prices are per metre. The swatch colour is shown on the customer&apos;s fabric chips.</p>
+            <p className={styles.label}>
+              Prices are per metre. The swatch colour is used on the customer&apos;s fabric chips; the optional photo
+              and description appear when a customer selects the fabric.
+            </p>
           </div>
 
           {/* Colours */}

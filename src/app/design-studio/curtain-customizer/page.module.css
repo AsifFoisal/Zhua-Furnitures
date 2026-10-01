@@ -14,6 +14,14 @@
 .fabricChip:hover, .fabricChipActive { background: rgba(181,146,65,0.07); border-color: rgba(181,146,65,0.25); color: #EAF0F8; }
 .fabricSwatch { width: 18px; height: 18px; border-radius: 4px; flex-shrink: 0; }
 
+/* Selected-fabric preview: photo (or swatch) + short admin-managed description */
+.fabricPreview { margin-top: 0.875rem; display: flex; gap: 0.875rem; align-items: center; background: rgba(255,255,255,0.03); border: 1px solid rgba(181,146,65,0.22); border-radius: 10px; padding: 0.75rem; animation: fabricPreviewIn 220ms ease; }
+.fabricPreviewImg { width: 96px; height: 96px; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
+.fabricPreviewSwatch { width: 96px; height: 96px; border-radius: 8px; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.08); }
+.fabricPreviewCopy strong { font-family: 'Outfit', sans-serif; font-size: 0.85rem; font-weight: 600; color: #EAF0F8; }
+.fabricPreviewCopy p { margin: 5px 0 0; font-size: 0.76rem; color: #A9B7C9; line-height: 1.55; }
+@keyframes fabricPreviewIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
 .colorRow { display: flex; gap: 0.625rem; flex-wrap: wrap; }
 .colorDot { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: all 200ms; box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
 .colorDotActive { border-color: #B59241; transform: scale(1.15); box-shadow: 0 0 0 2px rgba(181,146,65,0.3); }

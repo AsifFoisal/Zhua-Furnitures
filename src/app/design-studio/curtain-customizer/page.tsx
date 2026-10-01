@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useMemo, useState } from 'react';
+import Image from 'next/image';
 import { formatPrice } from '@/lib/data';
 import { toast } from 'sonner';
 import { CheckCircle2, MessageCircle, Send } from 'lucide-react';
@@ -354,11 +355,35 @@ export default function CurtainCustomizerPage() {
                     <button key={f.id} type="button"
                       className={`${styles.fabricChip} ${f.id === selectedFabric.id ? styles.fabricChipActive : ''}`}
                       onClick={() => setFabricId(f.id)}>
-                      <div className={styles.fabricSwatch} style={{ background: f.swatch }} />
+                      {f.imageUrl ? (
+                        <Image src={f.imageUrl} alt="" width={18} height={18}
+                          className={styles.fabricSwatch} style={{ objectFit: 'cover' }} />
+                      ) : (
+                        <div className={styles.fabricSwatch} style={{ background: f.swatch }} />
+                      )}
                       <span>{f.name}</span>
                     </button>
                   ))}
                 </div>
+                {selectedFabric.imageUrl || selectedFabric.description ? (
+                  <div className={styles.fabricPreview} key={selectedFabric.id}>
+                    {selectedFabric.imageUrl ? (
+                      <Image
+                        src={selectedFabric.imageUrl}
+                        alt={selectedFabric.description ? `${selectedFabric.name} fabric` : `${selectedFabric.name} fabric sample`}
+                        width={112}
+                        height={112}
+                        className={styles.fabricPreviewImg}
+                      />
+                    ) : (
+                      <div className={styles.fabricPreviewSwatch} style={{ background: selectedFabric.swatch }} />
+                    )}
+                    <div className={styles.fabricPreviewCopy}>
+                      <strong>{selectedFabric.name} — {formatPrice(selectedFabric.pricePerMetre)}/m</strong>
+                      {selectedFabric.description ? <p>{selectedFabric.description}</p> : null}
+                    </div>
+                  </div>
+                ) : null}
               </div>
 
               {/* Colour */}
