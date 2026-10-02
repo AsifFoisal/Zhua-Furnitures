@@ -23,33 +23,33 @@ export default async function WallzPage() {
       note="WALLZ offerings are growing — tell us what you're envisioning and we'll confirm what's possible for your space."
       visual={homeImagery.divisionWallz}
       ctas={[
-        { label: 'Explore WALLZ Possibilities', href: '/contact' },
-        { label: 'Request a Quote', href: '/contact', variant: 'outline' },
+        { label: 'Request a Quote', href: '/contact' },
+        { label: 'Book a Site Measurement', href: '/book-installation', variant: 'outline' },
       ]}
       highlights={[
         {
-          title: 'TV Feature Walls',
-          description: 'Make the media wall the centrepiece of the room.',
+          title: 'Feature Walls',
+          description: 'Statement walls that anchor the room and set the tone.',
+        },
+        {
+          title: 'TV & Media Walls',
+          description: 'Media walls with clean integration, shelving and finishes built around your screen.',
         },
         {
           title: 'Slat Walls',
-          description: 'Warm, rhythmic linear panelling for living spaces.',
+          description: 'Warm, rhythmic linear panelling for living spaces and bedrooms.',
         },
         {
           title: 'Decorative Wall Panels',
           description: 'Patterned and textured panels with depth and character.',
         },
         {
-          title: 'Wood-Look Cladding',
-          description: 'The warmth of timber looks, applied with precision.',
+          title: 'Accent Walls',
+          description: 'Single walls, done properly — texture and colour that change the whole room.',
         },
         {
-          title: 'Accent & Headboard Walls',
-          description: 'Single walls that change the whole feel of a room.',
-        },
-        {
-          title: 'Commercial Installations',
-          description: 'Wall solutions for offices, hospitality and retail.',
+          title: 'Custom Wall Finishes',
+          description: 'Cladding, panelling and finishes tailored to your space, installed by our team.',
         },
       ]}
     >

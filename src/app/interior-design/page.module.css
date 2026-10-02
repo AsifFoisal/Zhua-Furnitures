@@ -1,0 +1,70 @@
+.packagesSection {
+  background: var(--surface-3);
+}
+
+.packagesHead {
+  max-width: 62ch;
+  margin-bottom: var(--spacing-2xl);
+}
+
+.packagesHead h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-weight: 600;
+  margin: var(--spacing-sm) 0 var(--spacing-md);
+}
+
+.packagesHead p {
+  color: var(--text-dim);
+  line-height: 1.7;
+  font-size: 0.98rem;
+}
+
+.packagesGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-lg);
+}
+
+.packageCard {
+  padding: var(--spacing-xl) var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  background: var(--charcoal);
+  transition: all var(--transition-slow);
+}
+
+.packageCard:hover {
+  border-color: var(--border);
+  transform: translateY(-3px);
+}
+
+.packageStep {
+  display: inline-block;
+  font-family: var(--font-accent);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  margin-bottom: 0.6rem;
+}
+
+.packageCard h3 {
+  font-family: var(--font-display);
+  font-size: 1.08rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.4rem;
+}
+
+.packageCard p {
+  color: var(--text-dim);
+  font-size: 0.88rem;
+  line-height: 1.65;
+}
+
+@media (max-width: 900px) {
+  .packagesGrid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -33,18 +33,24 @@ type NavLink = {
 const navLinks: NavLink[] = [
   { label: 'Furniture', href: '/furniture' },
   { label: 'Curtains & Blinds', href: '/curtains-blinds' },
-  { label: 'WALLZ', href: '/wallz' },
-  { label: 'DECKZ', href: '/deckz' },
   {
-    label: 'Design Studio',
-    href: '/design-studio/curtain-customizer',
-    disabled: !isCurtainCustomizerEnabled(),
+    label: 'Interior Design',
+    href: '/interior-design',
     children: [
       { label: 'Room Visualizer', href: '/design-studio/room-visualizer', desc: 'See furniture in your room', disabled: !DESIGN_STUDIO_FEATURE.enabled },
       { label: 'Curtain Customizer', href: '/design-studio/curtain-customizer', desc: 'Design & calculate your curtains', disabled: !isCurtainCustomizerEnabled() },
     ],
   },
-  { label: 'Projects', href: '/projects' },
+  {
+    label: 'Wallz & Deckz',
+    href: '/wallz-deckz',
+    children: [
+      { label: 'WALLZ — Feature Walls', href: '/wallz', desc: 'Panelling, slats & wall finishes' },
+      { label: 'DECKZ — Outdoor Decking', href: '/deckz', desc: 'Decks, patios & outdoor platforms' },
+      { label: 'Before & After Projects', href: '/projects', desc: 'Recent ZHUA installations' },
+      { label: 'Book a Site Measurement', href: '/book-installation', desc: 'We measure, quote & install' },
+    ],
+  },
   { label: 'About', href: '/about' },
   { label: 'Contact', href: '/contact' },
 ];

@@ -22,33 +22,33 @@ export default async function DeckzPage() {
       description="Custom decking and outdoor spaces designed for entertaining, relaxing and living — built to the same standard we bring to every ZHUA interior."
       visual={homeImagery.divisionDeckz}
       ctas={[
-        { label: 'Explore DECKZ Possibilities', href: '/contact' },
-        { label: 'Request a Quote', href: '/contact', variant: 'outline' },
+        { label: 'Request a Quote', href: '/contact' },
+        { label: 'Book a Site Measurement', href: '/book-installation', variant: 'outline' },
       ]}
       highlights={[
         {
-          title: 'Residential Decking',
-          description: 'Custom decks sized and shaped around your home.',
+          title: 'Wooden Decking',
+          description: 'Timber decks built for South African weather, sealed and finished to last.',
         },
         {
-          title: 'Pool Decks',
-          description: 'Durable, barefoot-friendly surfaces around water.',
+          title: 'Composite Decking',
+          description: 'Low-maintenance composite boards with the look of wood and none of the upkeep.',
         },
         {
-          title: 'Entertainment Areas',
-          description: 'Purpose-built spaces for hosting and gathering.',
+          title: 'Outdoor Platforms',
+          description: 'Raised platforms and levelled surfaces that make awkward spaces usable.',
         },
         {
-          title: 'Patio Decking',
-          description: 'Turn covered patios into true outdoor rooms.',
+          title: 'Patio & Deck Areas',
+          description: 'Patios and deck zones designed around dining, lounging and entertaining.',
         },
         {
-          title: 'Balcony Decking',
-          description: 'Warm underfoot finishes for elevated outdoor corners.',
+          title: 'Custom Deck Designs',
+          description: 'Decks shaped around your home — pool surrounds, balconies, entertainment areas.',
         },
         {
-          title: 'Outdoor Seating Areas',
-          description: 'Built-in seating and layouts that invite you to stay.',
+          title: 'Built-In Seating & Finishes',
+          description: 'Integrated seating, lighting and finishes that complete the outdoor room.',
         },
       ]}
     >
