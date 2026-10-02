@@ -348,9 +348,20 @@ export default function CurtainCustomizerPage() {
               </div>
 
               {/* Fabric */}
-              <div className={styles.group}>
+              <div className={styles.fabricGroup}>
                 <h3 className={styles.groupTitle}>Fabric <span className={styles.priceTag}>{formatPrice(selectedFabric.pricePerMetre)}/m</span></h3>
-                <div className={styles.fabricGrid}>
+                {/* Mobile: fabric picker as a dropdown, shown first */}
+                <select
+                  className={`${styles.fabricSelect} ${styles.mobileOnly}`}
+                  value={selectedFabric.id}
+                  aria-label="Select fabric"
+                  onChange={(e) => setFabricId(e.target.value)}
+                >
+                  {fabrics.map((f) => (
+                    <option key={f.id} value={f.id}>{f.name} — {formatPrice(f.pricePerMetre)}/m</option>
+                  ))}
+                </select>
+                <div className={`${styles.fabricGrid} ${styles.desktopOnly}`}>
                   {fabrics.map((f) => (
                     <button key={f.id} type="button"
                       className={`${styles.fabricChip} ${f.id === selectedFabric.id ? styles.fabricChipActive : ''}`}
@@ -365,25 +376,23 @@ export default function CurtainCustomizerPage() {
                     </button>
                   ))}
                 </div>
-                {selectedFabric.imageUrl || selectedFabric.description ? (
-                  <div className={styles.fabricPreview} key={selectedFabric.id}>
-                    {selectedFabric.imageUrl ? (
-                      <Image
-                        src={selectedFabric.imageUrl}
-                        alt={selectedFabric.description ? `${selectedFabric.name} fabric` : `${selectedFabric.name} fabric sample`}
-                        width={112}
-                        height={112}
-                        className={styles.fabricPreviewImg}
-                      />
-                    ) : (
-                      <div className={styles.fabricPreviewSwatch} style={{ background: selectedFabric.swatch }} />
-                    )}
-                    <div className={styles.fabricPreviewCopy}>
-                      <strong>{selectedFabric.name} — {formatPrice(selectedFabric.pricePerMetre)}/m</strong>
-                      {selectedFabric.description ? <p>{selectedFabric.description}</p> : null}
-                    </div>
+                <div className={styles.fabricPreview} key={selectedFabric.id}>
+                  {selectedFabric.imageUrl ? (
+                    <Image
+                      src={selectedFabric.imageUrl}
+                      alt={selectedFabric.description ? `${selectedFabric.name} fabric` : `${selectedFabric.name} fabric sample`}
+                      width={112}
+                      height={112}
+                      className={styles.fabricPreviewImg}
+                    />
+                  ) : (
+                    <div className={styles.fabricPreviewSwatch} style={{ background: selectedFabric.swatch }} />
+                  )}
+                  <div className={styles.fabricPreviewCopy}>
+                    <strong>{selectedFabric.name} — {formatPrice(selectedFabric.pricePerMetre)}/m</strong>
+                    {selectedFabric.description ? <p>{selectedFabric.description}</p> : null}
                   </div>
-                ) : null}
+                </div>
               </div>
 
               {/* Colour */}

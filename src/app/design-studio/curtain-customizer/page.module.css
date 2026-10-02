@@ -1,6 +1,9 @@
 .page { padding-top: 100px; padding-bottom: 5rem; min-height: 100vh; background: var(--midnight); }
 .header { margin-bottom: 2.5rem; }
 .workspace { display: grid; grid-template-columns: 420px 1fr; gap: 2rem; align-items: start; }
+/* Grid tracks are 1fr but children keep min-width:auto by default — without this,
+   the nowrap CTA buttons force the whole track (and page) wider than the viewport. */
+.workspace > * { min-width: 0; }
 
 /* Panel */
 .panel { background: #163250; border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 1.75rem; position: sticky; top: 100px; display: flex; flex-direction: column; gap: 1.5rem; max-height: calc(100vh - 120px); overflow-y: auto; }
@@ -10,6 +13,12 @@
 .priceTag { background: rgba(181,146,65,0.1); color: #B59241; padding: 2px 8px; border-radius: 999px; font-size: 0.7rem; margin-left: 8px; letter-spacing: 0; text-transform: none; }
 
 .fabricGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+
+/* Mobile-only fabric dropdown (hidden on desktop, where the chip grid shows) */
+.mobileOnly { display: none; }
+.fabricSelect { width: 100%; appearance: none; -webkit-appearance: none; font-family: 'Outfit', sans-serif; font-size: 0.85rem; color: #EAF0F8; background: rgba(255,255,255,0.04) url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23B59241' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 0.875rem center; border: 1px solid rgba(181,146,65,0.3); border-radius: 8px; padding: 0.75rem 2.25rem 0.75rem 0.875rem; cursor: pointer; }
+.fabricSelect:focus { outline: none; border-color: rgba(181,146,65,0.6); }
+.fabricSelect option { background: #163250; color: #EAF0F8; }
 .fabricChip { display: flex; align-items: center; gap: 0.5rem; padding: 0.625rem 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; cursor: pointer; transition: all 150ms; font-size: 0.78rem; color: #A9B7C9; }
 .fabricChip:hover, .fabricChipActive { background: rgba(181,146,65,0.07); border-color: rgba(181,146,65,0.25); color: #EAF0F8; }
 .fabricSwatch { width: 18px; height: 18px; border-radius: 4px; flex-shrink: 0; }
@@ -42,7 +51,8 @@
 .priceTotal { font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 700; color: #EAF0F8; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.5rem; margin-top: 0.25rem; }
 .priceTotal span:last-child { color: #B59241; }
 
-.ctaGroup { display: flex; gap: 0.75rem; }
+.ctaGroup { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+.ctaGroup > * { min-width: 0; }
 
 /* Estimate disclaimer */
 .disclaimer { margin-top: 1.25rem; background: rgba(181,146,65,0.08); border: 1px solid rgba(181,146,65,0.25); border-radius: 10px; padding: 0.875rem 1.125rem; font-size: 0.82rem; color: #A9B7C9; line-height: 1.6; max-width: 720px; }
@@ -64,4 +74,29 @@
 .step p { margin: 0; color: #A9B7C9; font-size: 0.85rem; line-height: 1.5; }
 
 @media (max-width: 1024px) { .workspace { grid-template-columns: 1fr; } .panel { position: static; max-height: none; } }
-@media (max-width: 560px) { .fieldGrid { grid-template-columns: 1fr; } .headingGrid { grid-template-columns: 1fr; } }
+@media (max-width: 560px) {
+  .page { padding-top: 90px; padding-bottom: 3.5rem; }
+  .header { margin-bottom: 1.75rem; }
+
+  .panel { padding: 1.25rem; gap: 1.25rem; }
+  .priceSummary, .quoteForm { padding: 1.25rem; }
+  .successCard { padding: 1.75rem 1.25rem; }
+
+  /* Stack the enquiry CTAs full-width; let button text wrap instead of overflowing */
+  .ctaGroup { flex-direction: column; }
+  .ctaGroup > * { width: 100%; white-space: normal; text-align: center; }
+
+  /* 16px+ input font prevents iOS Safari from auto-zooming on focus */
+  .panel :global(.form-input), .quoteForm :global(.form-input) { font-size: 1rem; }
+
+  .fieldGrid { grid-template-columns: 1fr; }
+  .headingGrid { grid-template-columns: 1fr; }
+  .fabricPreview { gap: 0.75rem; }
+  .fabricPreviewImg, .fabricPreviewSwatch { width: 72px; height: 72px; }
+
+  /* Mobile: fabric selection moves to the top of the panel as a dropdown,
+     with its image/details directly below, ahead of measurements & the rest. */
+  .mobileOnly { display: block; }
+  .desktopOnly { display: none; }
+  .fabricGroup { order: -1; }
+}
