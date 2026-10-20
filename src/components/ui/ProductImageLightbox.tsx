@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import styles from './ProductImageLightbox.module.css';
 
@@ -80,7 +81,9 @@ export default function ProductImageLightbox({
   const currentImage = images[safeIndex];
   const hasMultipleImages = images.length > 1;
 
-  return (
+  // Render through a portal: transformed ancestors (e.g. .scroll-reveal) turn
+  // position:fixed into a page-relative box and push the dialog off-screen.
+  return createPortal(
     <div className={styles.overlay} role="presentation" onClick={onClose}>
       <div
         className={styles.dialog}
@@ -155,6 +158,7 @@ export default function ProductImageLightbox({
           </div>
         ) : null}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

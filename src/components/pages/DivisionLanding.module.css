@@ -1,0 +1,160 @@
+.page {
+  padding-top: 96px;
+}
+
+.hero {
+  padding: var(--spacing-3xl) 0 var(--spacing-4xl);
+  background: var(--hero-background);
+}
+
+.heroGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: var(--spacing-3xl);
+  align-items: center;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  margin: var(--spacing-md) 0 var(--spacing-lg);
+}
+
+.description {
+  color: var(--text-dim);
+  line-height: 1.75;
+  font-size: 1rem;
+  max-width: 54ch;
+}
+
+.note {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  margin-top: var(--spacing-md);
+  max-width: 54ch;
+}
+
+.ctaGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-2xl);
+}
+
+.heroVisual {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-lg);
+}
+
+.heroVisual > div {
+  height: 100%;
+}
+
+.highlightsSection {
+  background: var(--surface-3);
+}
+
+.highlightsTitle {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+  font-weight: 600;
+  margin-bottom: var(--spacing-2xl);
+}
+
+.highlightsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-lg);
+}
+
+.highlightCard {
+  padding: var(--spacing-xl) var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  background: var(--charcoal);
+  transition: all var(--transition-slow);
+}
+
+.highlightCard:hover {
+  border-color: var(--border);
+  transform: translateY(-3px);
+}
+
+.highlightCard h3 {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.4rem;
+}
+
+.highlightCard p {
+  color: var(--text-dim);
+  font-size: 0.88rem;
+  line-height: 1.65;
+}
+
+.quoteBand {
+  background: var(--page-background);
+}
+
+.quoteInner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-xl);
+  padding: var(--spacing-2xl);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border);
+  background:
+    radial-gradient(ellipse at 85% 50%, rgba(181, 146, 65, 0.1) 0%, transparent 55%),
+    var(--charcoal);
+}
+
+.quoteTitle {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.quoteText {
+  color: var(--text-dim);
+  font-size: 0.95rem;
+}
+
+.quoteActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+@media (max-width: 900px) {
+  .heroGrid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-2xl);
+  }
+
+  .highlightsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .ctaGroup :global(.btn),
+  .quoteActions :global(.btn) {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .quoteInner {
+    padding: var(--spacing-xl);
+  }
+}

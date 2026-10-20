@@ -1,0 +1,85 @@
+.section {
+  background: var(--surface-3);
+}
+
+.header {
+  text-align: center;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-lg);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-2xl) var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  background: var(--charcoal);
+  transition: all var(--transition-slow);
+}
+
+.card:hover {
+  border-color: var(--border);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lift);
+}
+
+.iconWrap {
+  width: 54px;
+  height: 54px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold-light);
+  background: rgba(181, 146, 65, 0.1);
+  border: 1px solid rgba(181, 146, 65, 0.25);
+  margin-bottom: var(--spacing-sm);
+}
+
+.cardTitle {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.cardCopy {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  line-height: 1.65;
+  flex: 1;
+}
+
+.cardCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: var(--spacing-md);
+  font-family: var(--font-accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  transition: gap var(--transition-base), color var(--transition-base);
+}
+
+.card:hover .cardCta {
+  gap: 0.65rem;
+  color: var(--gold-light);
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

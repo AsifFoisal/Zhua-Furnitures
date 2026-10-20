@@ -1,12 +1,12 @@
 'use client';
 import styles from './HowItWorks.module.css';
-import { Search, Palette, Truck, CheckCircle } from 'lucide-react';
+import { MessageCircle, Palette, Hammer, Truck } from 'lucide-react';
 
 const steps = [
-  { icon: Search, number: '01', title: 'Browse & Discover', desc: 'Explore thousands of premium furniture, curtains, and home accessories curated by our design team.', color: '#B59241' },
-  { icon: Palette, number: '02', title: 'Customise', desc: 'Use our Design Studio to visualize pieces in your room, customise fabrics, colors, and sizes.', color: '#4ECDC4' },
-  { icon: CheckCircle, number: '03', title: 'Order & Pay', desc: 'Secure checkout with PayFast, Yoco (coming soon), or Payflex — including Buy Now Pay Later options.', color: '#B39DDB' },
-  { icon: Truck, number: '04', title: 'Delivered & Installed', desc: 'We deliver across all 9 provinces. Book professional installation — we handle everything.', color: '#FF8A65' },
+  { icon: MessageCircle, number: '01', title: 'Tell Us Your Vision', desc: 'Send us your requirements, photos or measurements.', color: '#B59241' },
+  { icon: Palette, number: '02', title: 'Choose Your Design', desc: 'Select furniture, fabric, finishes and materials.', color: '#4ECDC4' },
+  { icon: Hammer, number: '03', title: 'We Make It', desc: 'Our team manufactures and customises your pieces.', color: '#B39DDB' },
+  { icon: Truck, number: '04', title: 'We Deliver & Install', desc: 'We bring everything together in your space.', color: '#FF8A65' },
 ];
 
 export default function HowItWorks() {
@@ -14,9 +14,9 @@ export default function HowItWorks() {
     <section className={`section ${styles.section}`}>
       <div className="container">
         <div className="section-header" style={{ textAlign: 'center' }}>
-          <span className="label-accent">Simple Process</span>
+          <span className="label-accent">How ZHUA Works</span>
           <div className="gold-divider" style={{ margin: '0.75rem auto 1rem' }} />
-          <h2 className="heading-xl">How It Works</h2>
+          <h2 className="heading-xl">From Idea to Installation</h2>
         </div>
 
         <div className={styles.grid}>
