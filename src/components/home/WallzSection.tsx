@@ -5,13 +5,12 @@ import ImagePlaceholder from '@/components/ui/ImagePlaceholder';
 import styles from './DivisionSplit.module.css';
 
 const services = [
-  'TV feature walls',
+  'Feature walls',
+  'TV & media walls',
   'Slat walls',
   'Decorative wall panels',
-  'Wood-look cladding',
   'Accent walls',
-  'Headboard walls',
-  'Commercial wall installations',
+  'Custom wall finishes',
 ];
 
 export default function WallzSection() {

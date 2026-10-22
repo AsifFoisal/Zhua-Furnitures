@@ -12,11 +12,51 @@ const featured = {
 };
 
 const tiles = [
-  { title: 'Modular Sofas', visual: tileSlot('Modular ZHUA sofa configuration', 'living', 'Modular sofas') },
-  { title: 'Beds & Headboards', visual: tileSlot('Custom ZHUA bed and headboard', 'bedroom', 'Beds & headboards') },
-  { title: 'Dining', visual: tileSlot('ZHUA dining table and chairs', 'dining', 'Dining') },
-  { title: 'TV Units', visual: tileSlot('Custom ZHUA TV unit', 'cabinetry', 'TV units') },
-  { title: 'Cabinets & Storage', visual: tileSlot('Custom ZHUA cabinets and storage', 'cabinetry', 'Cabinets & storage') },
+  {
+    title: 'Modular Sofas',
+    visual: tileSlot(
+      'Modern sofa with cushions in a styled lounge',
+      'living',
+      'Modular sofas',
+      '/images/zhua/tile-sofa-orange.jpg',
+    ),
+  },
+  {
+    title: 'Beds & Headboards',
+    visual: tileSlot(
+      'Minimal bedroom with an upholstered bed and layered bedding',
+      'bedroom',
+      'Beds & headboards',
+      '/images/zhua/tile-bedroom-minimal.jpg',
+    ),
+  },
+  {
+    title: 'Dining',
+    visual: tileSlot(
+      'Dining room with a timber table and green upholstered chairs',
+      'dining',
+      'Dining',
+      '/images/zhua/tile-dining-green.jpg',
+    ),
+  },
+  {
+    title: 'TV Units',
+    visual: tileSlot(
+      'Built-in TV wall with floating shelves and framed art',
+      'cabinetry',
+      'TV units',
+      '/images/zhua/wallz-tv-unit-wall.jpg',
+    ),
+  },
+  {
+    title: 'Cabinets & Storage',
+    visual: tileSlot(
+      'Cabinetry and storage unit in a styled room',
+      'cabinetry',
+      'Cabinets & storage',
+      '/images/zhua/tile-cabinets-storage.jpg',
+    ),
+  },
 ];
 
 const moreLinks = ['Outdoor Furniture', 'Reupholstery'];
