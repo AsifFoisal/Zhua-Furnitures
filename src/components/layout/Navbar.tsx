@@ -7,7 +7,7 @@ import { ShoppingBag, Search, Heart, Menu, X, ChevronDown, User, LogOut, Message
 import { useCartStore, useSearchStore } from '@/store';
 import { signOutUser } from '@/app/auth/actions';
 import { buildWhatsAppUrl } from '@/lib/whatsapp';
-import { DESIGN_STUDIO_FEATURE, isCurtainCustomizerEnabled } from '@/lib/features';
+import { DESIGN_STUDIO_FEATURE } from '@/lib/features';
 import ThemeToggle from '@/components/layout/ThemeToggle';
 import styles from './Navbar.module.css';
 
@@ -33,14 +33,6 @@ type NavLink = {
 const navLinks: NavLink[] = [
   { label: 'Furniture', href: '/furniture' },
   { label: 'Curtains & Blinds', href: '/curtains-blinds' },
-  {
-    label: 'Interior Design',
-    href: '/interior-design',
-    children: [
-      { label: 'Room Visualizer', href: '/design-studio/room-visualizer', desc: 'See furniture in your room', disabled: !DESIGN_STUDIO_FEATURE.enabled },
-      { label: 'Curtain Customizer', href: '/design-studio/curtain-customizer', desc: 'Design & calculate your curtains', disabled: !isCurtainCustomizerEnabled() },
-    ],
-  },
   {
     label: 'Wallz & Deckz',
     href: '/wallz-deckz',
