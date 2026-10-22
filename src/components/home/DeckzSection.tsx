@@ -5,12 +5,11 @@ import ImagePlaceholder from '@/components/ui/ImagePlaceholder';
 import styles from './DivisionSplit.module.css';
 
 const services = [
-  'Residential decking',
-  'Pool decks',
-  'Entertainment areas',
-  'Patio decking',
-  'Balcony decking',
-  'Outdoor seating areas',
+  'Wooden decking',
+  'Composite decking',
+  'Outdoor platforms',
+  'Patio & deck areas',
+  'Custom deck designs',
 ];
 
 export default function DeckzSection() {

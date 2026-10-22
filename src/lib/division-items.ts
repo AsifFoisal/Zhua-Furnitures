@@ -39,23 +39,86 @@ function isTableMissingError(error: { code?: string; message?: string } | null):
  * Demo content shown on the landing pages until the division_items migration
  * has been applied (and whenever the table exists but has no published rows).
  * Once the table is live, admin edits in /admin/divisions take over.
+ *
+ * Demo images are local stock placeholders so the pages render with real
+ * photography before the first admin upload; DB items use Cloudinary assets.
  */
 export const demoDivisionItems: Record<Division, Omit<DivisionItem, 'id' | 'division' | 'displayOrder'>[]> = {
   wallz: [
-    { title: 'Sandton Lounge Slat Wall', description: 'Warm timber-look slat panelling behind a custom ZHUA media unit.', category: 'Slat walls', image: null },
-    { title: 'Bryanston TV Feature Wall', description: 'Full-height feature wall with an integrated TV niche and concealed lighting.', category: 'TV feature walls', image: null },
-    { title: 'Fourways Headboard Wall', description: 'Panelled headboard wall framing a custom ZHUA bed.', category: 'Headboard walls', image: null },
-    { title: 'Umhlanga Dining Accent Wall', description: 'Fluted decorative panels that anchor the dining area.', category: 'Accent walls', image: null },
-    { title: 'Rosebank Office Reception Wall', description: 'Commercial wall installation for a reception welcome area.', category: 'Commercial installations', image: null },
-    { title: 'Midrand Restaurant Cladding', description: 'Durable wood-look cladding for a hospitality space.', category: 'Wood-look cladding', image: null },
+    {
+      title: 'Sandton Lounge Slat Wall',
+      description: 'Warm timber-look slat panelling behind a custom ZHUA media unit.',
+      category: 'Slat walls',
+      image: { publicId: 'demo/wallz-slat-partition', secureUrl: '/images/zhua/showcase-wallz-slat-partition.jpg', alt: 'Slat wall panelling behind a dining area' },
+    },
+    {
+      title: 'Bryanston TV Feature Wall',
+      description: 'Full-height feature wall with an integrated TV niche and concealed lighting.',
+      category: 'TV & media walls',
+      image: { publicId: 'demo/wallz-media-wall', secureUrl: '/images/zhua/wallz-media-wall-warm.jpg', alt: 'Warm media wall with a built-in TV niche' },
+    },
+    {
+      title: 'Fourways Headboard Wall',
+      description: 'Panelled headboard wall framing a custom ZHUA bed.',
+      category: 'Headboard walls',
+      image: { publicId: 'demo/wallz-headboard', secureUrl: '/images/zhua/showcase-wallz-headboard.jpg', alt: 'Bedroom with a panelled headboard wall' },
+    },
+    {
+      title: 'Umhlanga Dining Accent Wall',
+      description: 'Fluted decorative panels that anchor the dining area.',
+      category: 'Accent walls',
+      image: { publicId: 'demo/wallz-accent', secureUrl: '/images/zhua/showcase-wallz-accent.jpg', alt: 'Accent wall in a styled lounge' },
+    },
+    {
+      title: 'Rosebank Office Reception Wall',
+      description: 'Commercial wall installation for a reception welcome area.',
+      category: 'Custom wall finishes',
+      image: { publicId: 'demo/wallz-reception', secureUrl: '/images/zhua/showcase-wallz-formal.jpg', alt: 'Wall panelling and built-ins in a formal reception space' },
+    },
+    {
+      title: 'Midrand Restaurant Cladding',
+      description: 'Durable wood-look cladding for a hospitality space.',
+      category: 'Custom wall finishes',
+      image: { publicId: 'demo/wallz-cladding', secureUrl: '/images/zhua/showcase-wallz-builtins.jpg', alt: 'Wood-look wall cladding with built-in cabinetry' },
+    },
   ],
   deckz: [
-    { title: 'Sandton Entertainment Deck', description: 'Multi-level deck with built-in seating for weekend entertaining.', category: 'Entertainment areas', image: null },
-    { title: 'Centurion Pool Deck', description: 'Barefoot-friendly decking wrapped around the pool.', category: 'Pool decks', image: null },
-    { title: 'Pretoria East Patio Deck', description: 'Covered patio converted into a true outdoor living room.', category: 'Patio decking', image: null },
-    { title: 'Ballito Balcony Deck', description: 'Elevated balcony with warm underfoot decking and sea views.', category: 'Balcony decking', image: null },
-    { title: 'Johannesburg Roof Terrace', description: 'Built-in benches and planters for a city terrace.', category: 'Outdoor seating areas', image: null },
-    { title: 'Hartbeespoort Lakeside Deck', description: 'Residential deck stepping down toward the water.', category: 'Residential decking', image: null },
+    {
+      title: 'Sandton Entertainment Deck',
+      description: 'Multi-level deck with built-in seating for weekend entertaining.',
+      category: 'Patio & deck areas',
+      image: { publicId: 'demo/deckz-terrace', secureUrl: '/images/zhua/showcase-deckz-terrace.jpg', alt: 'Outdoor terrace deck with pool and lounge seating' },
+    },
+    {
+      title: 'Centurion Pool Deck',
+      description: 'Barefoot-friendly decking wrapped around the pool.',
+      category: 'Custom deck designs',
+      image: { publicId: 'demo/deckz-pool', secureUrl: '/images/zhua/showcase-deckz-pool.jpg', alt: 'Pool deck wrapping around a modern swimming pool' },
+    },
+    {
+      title: 'Pretoria East Patio Deck',
+      description: 'Covered patio converted into a true outdoor living room.',
+      category: 'Patio & deck areas',
+      image: { publicId: 'demo/deckz-patio', secureUrl: '/images/zhua/showcase-deckz-patio.jpg', alt: 'Covered patio with decking and outdoor lounge furniture' },
+    },
+    {
+      title: 'Ballito Balcony Deck',
+      description: 'Elevated balcony with warm underfoot decking and sea views.',
+      category: 'Outdoor platforms',
+      image: { publicId: 'demo/deckz-balcony', secureUrl: '/images/zhua/showcase-deckz-balcony.jpg', alt: 'Elevated balcony deck with outdoor seating' },
+    },
+    {
+      title: 'Johannesburg Roof Terrace',
+      description: 'Built-in benches and planters for a city terrace.',
+      category: 'Outdoor platforms',
+      image: { publicId: 'demo/deckz-roof', secureUrl: '/images/zhua/showcase-deckz-garden.jpg', alt: 'Outdoor platform and garden paving at a modern home' },
+    },
+    {
+      title: 'Hartbeespoort Lakeside Deck',
+      description: 'Residential deck stepping down toward the water.',
+      category: 'Wooden & composite decking',
+      image: { publicId: 'demo/deckz-residential', secureUrl: '/images/zhua/showcase-deckz-residential.jpg', alt: 'Residential deck and lawn leading to the water' },
+    },
   ],
 };
 

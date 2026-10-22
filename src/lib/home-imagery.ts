@@ -43,51 +43,68 @@ const outdoorTones: [string, string] = ['#152B3E', '#2C445A'];
 
 export const homeImagery = {
   hero: {
-    alt: 'Complete ZHUA living space with custom sofa, sheer curtains and a feature wall',
+    src: '/images/zhua/hero-complete-living.jpg',
+    alt: 'Modern living room with a timber slat feature wall and modular sofa',
     placeholder: { motif: 'room', caption: 'ZHUA complete living space', tones: deepTones },
   },
   divisionFurniture: {
-    alt: 'Styled ZHUA lounge with a custom modular sofa',
+    src: '/images/zhua/furniture-lounge.jpg',
+    alt: 'Styled lounge with sofa, armchairs and a gallery wall',
     placeholder: { motif: 'living', caption: 'ZHUA furniture', tones: spaceTones },
   },
   divisionCurtains: {
-    alt: 'Floor-to-ceiling ZHUA curtains dressing a large window',
+    src: '/images/zhua/curtains-window-living.jpg',
+    alt: 'Bright living room with full-height window treatments',
     placeholder: { motif: 'window', caption: 'ZHUA curtains & blinds', tones: warmTones },
   },
   divisionWallz: {
-    alt: 'ZHUA WALLZ feature wall with decorative slat panelling',
+    src: '/images/zhua/wallz-slat-wall-dark.jpg',
+    alt: 'Feature wall with timber slat panelling and integrated lighting',
     placeholder: { motif: 'wall', caption: 'ZHUA WALLZ', tones: deepTones },
   },
   divisionDeckz: {
-    alt: 'ZHUA DECKZ outdoor entertainment deck at dusk',
+    src: '/images/zhua/deckz-pool-deck-dusk.jpg',
+    alt: 'Pool deck at dusk with outdoor lounge seating',
     placeholder: { motif: 'deck', caption: 'ZHUA DECKZ', tones: outdoorTones },
   },
   furnitureFeatured: {
-    alt: 'Statement ZHUA modular sofa in a styled living room',
+    src: '/images/zhua/furniture-featured-sofa.jpg',
+    alt: 'Open-plan lounge with a large modular sofa',
     placeholder: { motif: 'living', caption: 'Sofas & lounges', tones: spaceTones },
   },
   curtainsVisual: {
-    alt: 'Layered sheer and blockout ZHUA curtains in a finished room',
+    src: '/images/zhua/curtains-sheer-living.jpg',
+    alt: 'Sheer curtains dressing a bright living-room window',
     placeholder: { motif: 'window', caption: 'Made-to-measure curtains', tones: warmTones },
   },
   wallzVisual: {
-    alt: 'ZHUA WALLZ feature wall transforming a lounge',
+    src: '/images/zhua/wallz-media-wall-warm.jpg',
+    alt: 'Warm media wall with a built-in TV niche in a lounge',
     placeholder: { motif: 'wall', caption: 'Feature walls & panelling', tones: deepTones },
   },
   deckzVisual: {
-    alt: 'ZHUA DECKZ entertainment area with custom outdoor seating',
+    src: '/images/zhua/deckz-pool-deck-day.jpg',
+    alt: 'Pool deck and covered outdoor living area',
     placeholder: { motif: 'outdoor', caption: 'Outdoor living', tones: outdoorTones },
   },
   completeRoom: {
-    alt: 'Complete room showing ZHUA furniture, curtains, WALLZ feature wall and DECKZ outdoor space',
+    src: '/images/zhua/complete-room.jpg',
+    alt: 'Complete living room with custom sofa, wall finishes and window treatments',
     placeholder: { motif: 'room', caption: 'One room, four ZHUA solutions', tones: deepTones },
   },
   finalCta: {
-    alt: 'Architectural ZHUA interior at dusk',
+    src: '/images/zhua/final-cta-architecture.jpg',
+    alt: 'Architectural home exterior with timber and dark cladding',
     placeholder: { motif: 'room', caption: 'Your space, next', tones: ['#0A1830', '#122A45'] },
   },
 } satisfies Record<string, ImagerySlot>;
 
-export function tileSlot(alt: string, motif: ImageryMotif, caption: string, tones?: [string, string]): ImagerySlot {
-  return { alt, placeholder: { motif, caption, tones: tones ?? warmTones } };
+export function tileSlot(
+  alt: string,
+  motif: ImageryMotif,
+  caption: string,
+  src?: string,
+  tones?: [string, string],
+): ImagerySlot {
+  return { src, alt, placeholder: { motif, caption, tones: tones ?? warmTones } };
 }
