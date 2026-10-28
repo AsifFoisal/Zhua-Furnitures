@@ -12,7 +12,7 @@ export default function CurtainsBlindsPage() {
   return (
     <DivisionLanding
       eyebrow="ZHUA Curtains & Blinds"
-      title="Dress Your Windows"
+      title={<>Dress Your <span className="heading-accent">Windows</span></>}
       description="Made-to-measure curtains and blinds, professionally measured, manufactured and installed. You don't have to know exactly what you need — we guide you through the whole process."
       visual={homeImagery.divisionCurtains}
       ctas={[

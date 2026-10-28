@@ -2,6 +2,13 @@ import { DEFAULT_DELIVERY_ZONES } from './delivery';
 
 // Mock product data for Zhua Furniture
 
+export interface ProductColor {
+  name: string;
+  hex: string;
+  /** Images of this product in this specific colour/finish. */
+  images?: string[];
+}
+
 export interface Product {
   id: string;
   slug: string;
@@ -16,7 +23,7 @@ export interface Product {
   description: string;
   longDescription: string;
   images: string[];
-  colors: { name: string; hex: string }[];
+  colors: ProductColor[];
   sizes?: string[];
   fabrics?: string[];
   inStock: boolean;
@@ -45,7 +52,11 @@ export const products: Product[] = [
     badge: 'sale',
     description: 'Premium L-shaped sectional with deep-seated comfort and modular configuration.',
     longDescription: 'The Oslo Sectional is the centrepiece your living room deserves. Crafted with kiln-dried hardwood frame and wrapped in premium Italian bouclé fabric, this sofa is built to last a lifetime. The modular design allows you to rearrange sections to suit your space.',
-    images: ['/images/sofa-1.jpg', '/images/sofa-2.jpg', '/images/sofa-3.jpg'],
+    images: [
+      '/images/zhua/furniture-featured-sofa.jpg',
+      '/images/zhua/hero-complete-living.jpg',
+      '/images/zhua/furniture-lounge.jpg',
+    ],
     colors: [
       { name: 'Stone Bouclé', hex: '#C8BCA8' },
       { name: 'Mocha Velvet', hex: '#6B4F3A' },
@@ -71,7 +82,7 @@ export const products: Product[] = [
     badge: 'new',
     description: 'Solid white oak dining table with natural grain detail and blackened steel legs.',
     longDescription: 'The Nordic Dining Table brings Scandinavian minimalism to your dining space. Each table is made from solid white oak, hand-selected for its natural grain patterns. The blackened steel base provides a striking contrast.',
-    images: ['/images/table-1.jpg', '/images/table-2.jpg'],
+    images: ['/images/zhua/tile-dining-green.jpg', '/images/zhua/complete-room.jpg'],
     colors: [
       { name: 'Natural Oak', hex: '#C8A96E' },
       { name: 'Smoked Oak', hex: '#72614A' },
@@ -96,7 +107,7 @@ export const products: Product[] = [
     badge: 'bestseller',
     description: 'Premium block-out curtains in rich desert tones. Available custom to any dimension.',
     longDescription: 'The Sahara Eyelet Curtains offer 100% light blocking performance without compromising on style. Made from heavyweight woven fabric with a thermal lining.',
-    images: ['/images/curtain-1.jpg', '/images/curtain-2.jpg'],
+    images: ['/images/zhua/curtains-window-living.jpg', '/images/zhua/curtains-sheer-living.jpg'],
     colors: [
       { name: 'Desert Sand', hex: '#C4A882' },
       { name: 'Rust Terracotta', hex: '#B85C38' },
@@ -123,7 +134,7 @@ export const products: Product[] = [
     badge: 'new',
     description: 'Flowing wave-headed sheers for a soft, modern look in any room.',
     longDescription: 'The Wave Sheer Panels create a beautiful, flowing effect when drawn. The S-fold heading allows for uniform folds that maintain their shape.',
-    images: ['/images/sheer-1.jpg', '/images/sheer-2.jpg'],
+    images: ['/images/zhua/curtains-sheer-living.jpg', '/images/zhua/curtains-window-living.jpg'],
     colors: [
       { name: 'Pure White', hex: '#F5F5F0' },
       { name: 'Warm Cream', hex: '#F0E8D5' },
@@ -149,7 +160,7 @@ export const products: Product[] = [
     badge: 'sale',
     description: 'Clean, modern roller blind with whisper-quiet mechanism and precision fit.',
     longDescription: 'The Luxe Roller Blind delivers clean lines and precision control. The whisper-quiet spring or chain mechanism ensures smooth operation every time.',
-    images: ['/images/blind-1.jpg', '/images/blind-2.jpg'],
+    images: ['/images/zhua/curtains-window-living.jpg', '/images/zhua/complete-room.jpg'],
     colors: [
       { name: 'White', hex: '#FFFFFF' },
       { name: 'Pearl Grey', hex: '#C8C8C8' },
@@ -175,7 +186,7 @@ export const products: Product[] = [
     badge: 'new',
     description: 'Statement upholstered bed frame with tufted headboard and solid wood base.',
     longDescription: 'The Palazzo Bed Frame makes a statement without saying a word. The towering tufted headboard is upholstered in premium performance velvet, and the solid wood base ensures decades of durability.',
-    images: ['/images/bed-1.jpg', '/images/bed-2.jpg'],
+    images: ['/images/zhua/tile-bedroom-minimal.jpg', '/images/zhua/complete-room.jpg'],
     colors: [
       { name: 'Champagne Velvet', hex: '#C8A96E' },
       { name: 'Deep Teal', hex: '#1B4F5E' },
@@ -200,7 +211,7 @@ export const products: Product[] = [
     reviewCount: 45,
     description: 'Sculptural arc lamp with marble base and brushed brass finish.',
     longDescription: 'The Arco Arc Floor Lamp is a design classic reimagined. The natural marble base provides weight and elegance, while the brushed brass arm adds warmth.',
-    images: ['/images/lamp-1.jpg', '/images/lamp-2.jpg'],
+    images: ['/images/zhua/complete-room.jpg', '/images/zhua/furniture-lounge.jpg'],
     colors: [
       { name: 'Brass + White Marble', hex: '#C9A84C' },
       { name: 'Matte Black + Black Marble', hex: '#1A1A1A' },
@@ -222,7 +233,7 @@ export const products: Product[] = [
     badge: 'bestseller',
     description: 'Travertine-top coffee table with blackened steel base — artful and functional.',
     longDescription: 'The Atlas Coffee Table is a statement piece for the modern living room. Each travertine top is unique, with natural veining that makes it one-of-a-kind.',
-    images: ['/images/coffee-table-1.jpg', '/images/coffee-table-2.jpg'],
+    images: ['/images/zhua/furniture-lounge.jpg', '/images/zhua/tile-sofa-orange.jpg'],
     colors: [
       { name: 'Ivory Travertine', hex: '#E8DCC8' },
       { name: 'Walnut + Brass', hex: '#6B4F2A' },

@@ -31,7 +31,7 @@ export default function DesignStudioPage() {
     <div style={{ padding: '140px 0 6rem', minHeight: '100vh', background: 'var(--midnight)' }}>
       <div className="container">
         <span className="label-accent">Design Studio</span>
-        <h1 className="heading-xl" style={{ color: '#EAF0F8', margin: '1rem 0 1.25rem' }}>Plan Your Space With Interactive Tools</h1>
+        <h1 className="heading-xl" style={{ color: '#EAF0F8', margin: '1rem 0 1.25rem' }}>Plan Your Space With <span className="heading-accent">Interactive Tools</span></h1>
 
         <div style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))' }}>
           {tools.map((tool) => (

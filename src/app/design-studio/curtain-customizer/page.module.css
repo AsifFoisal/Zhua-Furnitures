@@ -9,14 +9,14 @@
 .panel { background: #163250; border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 1.75rem; position: sticky; top: 100px; display: flex; flex-direction: column; gap: 1.5rem; max-height: calc(100vh - 120px); overflow-y: auto; }
 
 .group {}
-.groupTitle { font-family: 'Outfit', sans-serif; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #7B8EA6; margin-bottom: 0.875rem; }
+.groupTitle { font-family: var(--font-accent); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #7B8EA6; margin-bottom: 0.875rem; }
 .priceTag { background: rgba(181,146,65,0.1); color: #B59241; padding: 2px 8px; border-radius: 999px; font-size: 0.7rem; margin-left: 8px; letter-spacing: 0; text-transform: none; }
 
 .fabricGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
 
 /* Mobile-only fabric dropdown (hidden on desktop, where the chip grid shows) */
 .mobileOnly { display: none; }
-.fabricSelect { width: 100%; appearance: none; -webkit-appearance: none; font-family: 'Outfit', sans-serif; font-size: 0.85rem; color: #EAF0F8; background: rgba(255,255,255,0.04) url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23B59241' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 0.875rem center; border: 1px solid rgba(181,146,65,0.3); border-radius: 8px; padding: 0.75rem 2.25rem 0.75rem 0.875rem; cursor: pointer; }
+.fabricSelect { width: 100%; appearance: none; -webkit-appearance: none; font-family: var(--font-accent); font-size: 0.85rem; color: #EAF0F8; background: rgba(255,255,255,0.04) url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23B59241' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 0.875rem center; border: 1px solid rgba(181,146,65,0.3); border-radius: 8px; padding: 0.75rem 2.25rem 0.75rem 0.875rem; cursor: pointer; }
 .fabricSelect:focus { outline: none; border-color: rgba(181,146,65,0.6); }
 .fabricSelect option { background: #163250; color: #EAF0F8; }
 .fabricChip { display: flex; align-items: center; gap: 0.5rem; padding: 0.625rem 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; cursor: pointer; transition: all 150ms; font-size: 0.78rem; color: #A9B7C9; }
@@ -27,7 +27,7 @@
 .fabricPreview { margin-top: 0.875rem; display: flex; gap: 0.875rem; align-items: center; background: rgba(255,255,255,0.03); border: 1px solid rgba(181,146,65,0.22); border-radius: 10px; padding: 0.75rem; animation: fabricPreviewIn 220ms ease; }
 .fabricPreviewImg { width: 96px; height: 96px; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
 .fabricPreviewSwatch { width: 96px; height: 96px; border-radius: 8px; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.08); }
-.fabricPreviewCopy strong { font-family: 'Outfit', sans-serif; font-size: 0.85rem; font-weight: 600; color: #EAF0F8; }
+.fabricPreviewCopy strong { font-family: var(--font-accent); font-size: 0.85rem; font-weight: 600; color: #EAF0F8; }
 .fabricPreviewCopy p { margin: 5px 0 0; font-size: 0.76rem; color: #A9B7C9; line-height: 1.55; }
 @keyframes fabricPreviewIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 
@@ -38,17 +38,17 @@
 .headingGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
 .headingChip { padding: 0.75rem 1rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; cursor: pointer; transition: all 150ms; text-align: left; }
 .headingChip:hover, .headingChipActive { background: rgba(181,146,65,0.07); border-color: rgba(181,146,65,0.25); }
-.headingName { font-family: 'Outfit', sans-serif; font-size: 0.85rem; font-weight: 600; color: #EAF0F8; }
+.headingName { font-family: var(--font-accent); font-size: 0.85rem; font-weight: 600; color: #EAF0F8; }
 .headingDesc { font-size: 0.72rem; color: #58708A; margin-top: 2px; }
 
 .pillRow { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-.pill { padding: 0.45rem 0.875rem; border-radius: 999px; font-family: 'Outfit', sans-serif; font-size: 0.78rem; font-weight: 500; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07); color: #A9B7C9; cursor: pointer; transition: all 150ms; }
+.pill { padding: 0.45rem 0.875rem; border-radius: 999px; font-family: var(--font-accent); font-size: 0.78rem; font-weight: 500; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07); color: #A9B7C9; cursor: pointer; transition: all 150ms; }
 .pill:hover { color: #EAF0F8; border-color: rgba(181,146,65,0.2); }
 .pillActive { background: rgba(181,146,65,0.1); border-color: rgba(181,146,65,0.35); color: #B59241; font-weight: 600; }
 
 .priceSummary { background: #163250; border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; }
 .priceRow { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.82rem; color: #7B8EA6; }
-.priceTotal { font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 700; color: #EAF0F8; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.5rem; margin-top: 0.25rem; }
+.priceTotal { font-family: var(--font-accent); font-size: 1rem; font-weight: 700; color: #EAF0F8; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.5rem; margin-top: 0.25rem; }
 .priceTotal span:last-child { color: #B59241; }
 
 .ctaGroup { display: flex; gap: 0.75rem; flex-wrap: wrap; }
@@ -70,7 +70,7 @@
 .successCard { background: #163250; border: 1px solid rgba(181,146,65,0.25); border-radius: 16px; padding: 2.5rem; max-width: 720px; display: flex; flex-direction: column; gap: 1.25rem; text-align: center; align-items: center; }
 .successSteps { display: grid; gap: 0.75rem; width: 100%; text-align: left; margin: 0.5rem 0; }
 .step { display: flex; align-items: center; gap: 0.875rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 0.75rem 1rem; }
-.step span { width: 28px; height: 28px; flex-shrink: 0; border-radius: 50%; background: rgba(181,146,65,0.15); color: #B59241; font-family: 'Outfit', sans-serif; font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; }
+.step span { width: 28px; height: 28px; flex-shrink: 0; border-radius: 50%; background: rgba(181,146,65,0.15); color: #B59241; font-family: var(--font-accent); font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; }
 .step p { margin: 0; color: #A9B7C9; font-size: 0.85rem; line-height: 1.5; }
 
 @media (max-width: 1024px) { .workspace { grid-template-columns: 1fr; } .panel { position: static; max-height: none; } }

@@ -18,7 +18,7 @@ export default function CurtainsBlindsSection() {
         <div className={styles.top}>
           <div className={styles.intro}>
             <span className="label-accent">Curtains &amp; Blinds</span>
-            <h2 className="heading-xl">Dress Your Windows</h2>
+            <h2 className="heading-xl">Dress Your <span className="heading-accent">Windows</span></h2>
             <p className={styles.lede}>
               Made-to-measure curtains and blinds, professionally measured, manufactured and
               installed. You don&apos;t have to know exactly what you need — ZHUA guides you

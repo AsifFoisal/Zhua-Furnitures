@@ -1,11 +1,20 @@
 import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
+import { Playfair_Display } from 'next/font/google';
 import './globals.css';
 import ClientChrome from '@/components/layout/ClientChrome';
 import AppToaster from '@/components/ui/AppToaster';
 import FdProcessedIdSanitizer from '@/components/layout/FdProcessedIdSanitizer';
 import { getCanonicalSiteUrl } from '@/lib/site-url';
 import { THEME_STORAGE_KEY } from '@/lib/theme';
+
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800', '900'],
+  style: ['normal', 'italic'],
+  display: 'swap',
+  variable: '--font-playfair',
+});
 
 const canonicalSiteUrl = getCanonicalSiteUrl();
 
@@ -71,7 +80,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const themeMode = themeCookie === 'light' ? 'light' : 'dark';
 
   return (
-    <html lang="en-ZA" data-theme={themeMode} data-scroll-behavior="smooth" suppressHydrationWarning>
+    <html
+      lang="en-ZA"
+      data-theme={themeMode}
+      data-scroll-behavior="smooth"
+      className={playfair.variable}
+      suppressHydrationWarning
+    >
       <body suppressHydrationWarning>
         <FdProcessedIdSanitizer />
         <AppToaster />

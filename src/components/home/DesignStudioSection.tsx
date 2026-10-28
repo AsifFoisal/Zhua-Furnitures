@@ -54,7 +54,7 @@ export default function DesignStudioSection() {
       <div className="container">
         <div className={`section-header ${styles.header}`}>
           <span className="label-accent">ZHUA Design Studio</span>
-          <h2 className="heading-xl">Design Before You Buy</h2>
+          <h2 className="heading-xl">Design Before You <span className="heading-accent">Buy</span></h2>
           <p className={styles.lede}>
             See it. Configure it. Measure it. Then make it yours. ZHUA combines design,
             technology, manufacturing and installation.

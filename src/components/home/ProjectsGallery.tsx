@@ -47,7 +47,7 @@ export default function ProjectsGallery() {
         <div className={styles.header}>
           <div className="section-header" style={{ marginBottom: 0 }}>
             <span className="label-accent">Projects</span>
-            <h2 className="heading-xl">See ZHUA in Real Spaces</h2>
+            <h2 className="heading-xl">See ZHUA in <span className="heading-accent">Real Spaces</span></h2>
           </div>
           <Link href="/projects" className={styles.viewAll}>
             View all projects <ArrowRight size={15} />

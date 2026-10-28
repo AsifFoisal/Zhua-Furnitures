@@ -63,7 +63,7 @@ export default async function QuotePaymentPage({
     <div style={pageStyle}>
       <div className="container" style={{ maxWidth: 720 }}>
         <span className="label-accent">Curtain Quote Payment</span>
-        <h1 className="heading-xl" style={{ color: '#EAF0F8', margin: '1rem 0 1.5rem' }}>Pay Your Quotation</h1>
+        <h1 className="heading-xl" style={{ color: '#EAF0F8', margin: '1rem 0 1.5rem' }}>Pay Your <span className="heading-accent">Quotation</span></h1>
 
         {!hasServiceSupabaseEnv || !ref || !token ? (
           <Notice

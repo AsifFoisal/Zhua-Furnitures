@@ -68,7 +68,7 @@ export default function ShopPage() {
       <div className={styles.hero}>
         <div className="container">
           <span className="label-accent">Our Collection</span>
-          <h1 className={`heading-xl ${styles.heroTitle}`}>Shop All Products</h1>
+          <h1 className={`heading-xl ${styles.heroTitle}`}>Shop All <span className="heading-accent">Products</span></h1>
           <p className={styles.heroDesc}>Premium furniture, curtains, blinds, and home accessories — delivered anywhere in South Africa</p>
         </div>
       </div>

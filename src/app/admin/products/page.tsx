@@ -24,6 +24,7 @@ interface CloudinaryImageAsset {
 interface AdminProductColor {
   name: string;
   hex: string;
+  images: CloudinaryImageAsset[];
 }
 
 interface AdminProductRow {
@@ -89,6 +90,38 @@ function toSafeColorHex(value: unknown): string {
   return raw.toUpperCase();
 }
 
+function normalizeColorImages(value: unknown): CloudinaryImageAsset[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .map((entry): CloudinaryImageAsset | null => {
+      if (!entry || typeof entry !== 'object') {
+        return null;
+      }
+
+      const item = entry as Record<string, unknown>;
+      const publicId = typeof item.publicId === 'string' ? item.publicId.trim() : '';
+      const secureUrl = typeof item.secureUrl === 'string' ? item.secureUrl.trim() : '';
+      if (!publicId || !secureUrl) {
+        return null;
+      }
+
+      return {
+        publicId,
+        secureUrl,
+        alt: typeof item.alt === 'string' ? item.alt : '',
+        width: typeof item.width === 'number' ? item.width : undefined,
+        height: typeof item.height === 'number' ? item.height : undefined,
+        format: typeof item.format === 'string' ? item.format : undefined,
+        bytes: typeof item.bytes === 'number' ? item.bytes : undefined,
+        createdAt: typeof item.createdAt === 'string' ? item.createdAt : undefined,
+      };
+    })
+    .filter((entry): entry is CloudinaryImageAsset => entry !== null);
+}
+
 function normalizeProductColors(value: unknown): AdminProductColor[] {
   if (!Array.isArray(value)) {
     return [];
@@ -109,6 +142,7 @@ function normalizeProductColors(value: unknown): AdminProductColor[] {
       return {
         name,
         hex: toSafeColorHex(item.hex),
+        images: normalizeColorImages(item.images),
       };
     })
     .filter((entry): entry is AdminProductColor => entry !== null);
@@ -142,7 +176,7 @@ const defaultNewProduct: ProductPatchPayload = {
   widthCm: '',
   depthCm: '',
   heightCm: '',
-  colors: [{ name: '', hex: DEFAULT_COLOR_HEX }],
+  colors: [{ name: '', hex: DEFAULT_COLOR_HEX, images: [] }],
   sizes: [],
   fabrics: [],
 };
@@ -244,24 +278,169 @@ function buildSavePayload(product: AdminProductRow) {
   };
 }
 
+function validateImageFiles(files: File[]): string | null {
+  if (files.some((file) => !file.type.startsWith('image/'))) {
+    return 'Only image files are allowed.';
+  }
+
+  if (files.some((file) => file.size > 10 * 1024 * 1024)) {
+    return 'Max file size is 10MB.';
+  }
+
+  return null;
+}
+
+async function uploadImageAsset(file: File, baseName: string): Promise<CloudinaryImageAsset> {
+  const validationError = validateImageFiles([file]);
+  if (validationError) {
+    throw new Error(validationError);
+  }
+
+  const signRes = await fetch('/api/admin/media/sign-upload', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      folder: 'zhua/products',
+      baseName,
+    }),
+  });
+
+  const signData = (await signRes.json()) as {
+    cloudName?: string;
+    apiKey?: string;
+    timestamp?: number;
+    signature?: string;
+    folder?: string;
+    publicId?: string;
+    uploadUrl?: string;
+    error?: string;
+  };
+
+  if (
+    !signRes.ok ||
+    !signData.uploadUrl ||
+    !signData.apiKey ||
+    !signData.signature ||
+    !signData.timestamp
+  ) {
+    throw new Error(signData.error ?? 'Could not prepare upload.');
+  }
+
+  const uploadBody = new FormData();
+  uploadBody.append('file', file);
+  uploadBody.append('api_key', signData.apiKey);
+  uploadBody.append('timestamp', String(signData.timestamp));
+  uploadBody.append('signature', signData.signature);
+  uploadBody.append('folder', signData.folder ?? 'zhua/products');
+  uploadBody.append('public_id', signData.publicId ?? 'asset');
+
+  const uploadRes = await fetch(signData.uploadUrl, {
+    method: 'POST',
+    body: uploadBody,
+  });
+
+  const uploadData = (await uploadRes.json()) as {
+    secure_url?: string;
+    public_id?: string;
+    width?: number;
+    height?: number;
+    format?: string;
+    bytes?: number;
+    error?: { message?: string };
+  };
+
+  if (!uploadRes.ok || !uploadData.secure_url || !uploadData.public_id) {
+    throw new Error(uploadData.error?.message ?? 'Cloudinary upload failed.');
+  }
+
+  return {
+    publicId: uploadData.public_id,
+    secureUrl: uploadData.secure_url,
+    alt: baseName,
+    width: uploadData.width,
+    height: uploadData.height,
+    format: uploadData.format,
+    bytes: uploadData.bytes,
+    createdAt: new Date().toISOString(),
+  };
+}
+
 interface ProductColorFieldsProps {
   colors: AdminProductColor[];
   onChange: (colors: AdminProductColor[]) => void;
+  uploadBaseName: string;
+  galleryImages?: CloudinaryImageAsset[];
 }
 
-function ProductColorFields({ colors, onChange }: ProductColorFieldsProps) {
-  const rows = colors.length > 0 ? colors : [{ name: '', hex: DEFAULT_COLOR_HEX }];
+function ProductColorFields({
+  colors,
+  onChange,
+  uploadBaseName,
+  galleryImages = [],
+}: ProductColorFieldsProps) {
+  const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
+  const rows = colors.length > 0 ? colors : [{ name: '', hex: DEFAULT_COLOR_HEX, images: [] }];
 
   const updateRow = (index: number, patch: Partial<AdminProductColor>) => {
     onChange(rows.map((row, rowIndex) => (rowIndex === index ? { ...row, ...patch } : row)));
   };
 
   const addRow = () => {
-    onChange([...rows, { name: '', hex: DEFAULT_COLOR_HEX }]);
+    onChange([...rows, { name: '', hex: DEFAULT_COLOR_HEX, images: [] }]);
   };
 
   const removeRow = (index: number) => {
     onChange(rows.filter((_, rowIndex) => rowIndex !== index));
+  };
+
+  const removeImage = (index: number, publicId: string) => {
+    updateRow(index, {
+      images: (rows[index]?.images ?? []).filter((image) => image.publicId !== publicId),
+    });
+  };
+
+  const toggleGalleryImage = (index: number, image: CloudinaryImageAsset) => {
+    const images = rows[index]?.images ?? [];
+    const isAttached = images.some((entry) => entry.publicId === image.publicId);
+
+    updateRow(index, {
+      images: isAttached
+        ? images.filter((entry) => entry.publicId !== image.publicId)
+        : [...images, image],
+    });
+  };
+
+  const uploadColorImages = async (index: number, files: FileList) => {
+    const list = Array.from(files);
+    if (list.length === 0) {
+      return;
+    }
+
+    const validationError = validateImageFiles(list);
+    if (validationError) {
+      toast.error(validationError);
+      return;
+    }
+
+    setUploadingIndex(index);
+    try {
+      const assets: CloudinaryImageAsset[] = [];
+      for (const file of list) {
+        assets.push(await uploadImageAsset(file, uploadBaseName.trim() || 'product'));
+      }
+
+      onChange(
+        rows.map((row, rowIndex) =>
+          rowIndex === index
+            ? { ...row, images: [...(row.images ?? []), ...assets] }
+            : row
+        )
+      );
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Could not upload image.');
+    } finally {
+      setUploadingIndex(null);
+    }
   };
 
   return (
@@ -271,41 +450,172 @@ function ProductColorFields({ colors, onChange }: ProductColorFieldsProps) {
           key={index}
           style={{
             display: 'grid',
-            gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 180px) auto',
-            gap: '0.5rem',
-            alignItems: 'center',
+            gap: '0.45rem',
+            padding: '0.6rem',
+            border: '1px solid rgba(148, 163, 184, 0.25)',
+            borderRadius: '10px',
           }}
         >
-          <input
-            className={styles.input}
-            placeholder="Color name"
-            value={color.name}
-            onChange={(event) => updateRow(index, { name: event.target.value })}
-          />
-          <div style={{ display: 'grid', gridTemplateColumns: '50px minmax(0, 1fr)', gap: '0.4rem' }}>
-            <input
-              className={styles.input}
-              type="color"
-              aria-label={`Select swatch color ${index + 1}`}
-              value={toSafeColorHex(color.hex)}
-              onChange={(event) => updateRow(index, { hex: event.target.value })}
-              style={{ minHeight: '40px', padding: '0.15rem' }}
-            />
-            <input
-              className={styles.input}
-              placeholder="#B59241"
-              value={color.hex}
-              onChange={(event) => updateRow(index, { hex: event.target.value })}
-            />
-          </div>
-          <button
-            className={styles.ghostButton}
-            type="button"
-            onClick={() => removeRow(index)}
-            disabled={rows.length === 1}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 180px) auto',
+              gap: '0.5rem',
+              alignItems: 'center',
+            }}
           >
-            Remove
-          </button>
+            <input
+              className={styles.input}
+              placeholder="Color name"
+              value={color.name}
+              onChange={(event) => updateRow(index, { name: event.target.value })}
+            />
+            <div style={{ display: 'grid', gridTemplateColumns: '50px minmax(0, 1fr)', gap: '0.4rem' }}>
+              <input
+                className={styles.input}
+                type="color"
+                aria-label={`Select swatch color ${index + 1}`}
+                value={toSafeColorHex(color.hex)}
+                onChange={(event) => updateRow(index, { hex: event.target.value })}
+                style={{ minHeight: '40px', padding: '0.15rem' }}
+              />
+              <input
+                className={styles.input}
+                placeholder="#B59241"
+                value={color.hex}
+                onChange={(event) => updateRow(index, { hex: event.target.value })}
+              />
+            </div>
+            <button
+              className={styles.ghostButton}
+              type="button"
+              onClick={() => removeRow(index)}
+              disabled={rows.length === 1}
+            >
+              Remove
+            </button>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap' }}>
+            {(color.images ?? []).map((image) => (
+              <div key={image.publicId} style={{ position: 'relative' }}>
+                <img
+                  src={image.secureUrl}
+                  alt={`${color.name || 'Colour'} preview`}
+                  style={{
+                    width: '52px',
+                    height: '52px',
+                    objectFit: 'cover',
+                    borderRadius: '6px',
+                    border: '1px solid rgba(148, 163, 184, 0.4)',
+                    display: 'block',
+                  }}
+                />
+                <button
+                  type="button"
+                  aria-label={`Remove ${color.name || 'colour'} image`}
+                  onClick={() => removeImage(index, image.publicId)}
+                  style={{
+                    position: 'absolute',
+                    top: '-6px',
+                    right: '-6px',
+                    width: '18px',
+                    height: '18px',
+                    borderRadius: '50%',
+                    border: 'none',
+                    background: '#1F2937',
+                    color: '#FFFFFF',
+                    fontSize: '12px',
+                    lineHeight: 1,
+                    cursor: 'pointer',
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+            <label
+              className={styles.ghostButton}
+              style={{ cursor: uploadingIndex === index ? 'wait' : 'pointer' }}
+            >
+              {uploadingIndex === index ? 'Uploading...' : 'Add colour image'}
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                style={{ display: 'none' }}
+                disabled={uploadingIndex !== null}
+                onChange={(event) => {
+                  const files = event.currentTarget.files;
+                  if (files) {
+                    void uploadColorImages(index, files);
+                  }
+                  event.currentTarget.value = '';
+                }}
+              />
+            </label>
+            <span style={{ fontSize: '0.72rem', opacity: 0.65 }}>
+              Shown on the product page when this colour is selected.
+            </span>
+          </div>
+
+          {galleryImages.length > 0 ? (
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                flexWrap: 'wrap',
+                borderTop: '1px dashed rgba(148, 163, 184, 0.3)',
+                paddingTop: '0.45rem',
+              }}
+            >
+              <span style={{ fontSize: '0.72rem', opacity: 0.65 }}>Attach from gallery:</span>
+              {galleryImages.map((image) => {
+                const isAttached = (color.images ?? []).some(
+                  (entry) => entry.publicId === image.publicId
+                );
+
+                return (
+                  <button
+                    key={image.publicId}
+                    type="button"
+                    onClick={() => toggleGalleryImage(index, image)}
+                    aria-pressed={isAttached}
+                    aria-label={
+                      isAttached
+                        ? `Detach gallery image from ${color.name || 'colour'}`
+                        : `Attach gallery image to ${color.name || 'colour'}`
+                    }
+                    title={isAttached ? 'Attached - click to detach' : 'Click to attach'}
+                    style={{
+                      padding: 0,
+                      border: isAttached
+                        ? '2px solid #B59241'
+                        : '2px solid rgba(148, 163, 184, 0.35)',
+                      borderRadius: '6px',
+                      background: 'none',
+                      cursor: 'pointer',
+                      lineHeight: 0,
+                    }}
+                  >
+                    <img
+                      src={image.secureUrl}
+                      alt=""
+                      style={{
+                        width: '44px',
+                        height: '44px',
+                        objectFit: 'cover',
+                        borderRadius: '4px',
+                        opacity: isAttached ? 1 : 0.6,
+                        display: 'block',
+                      }}
+                    />
+                  </button>
+                );
+              })}
+            </div>
+          ) : null}
         </div>
       ))}
       <div>
@@ -384,6 +694,11 @@ export default function ProductsAdminPage() {
   const [error, setError] = useState('');
   const [savingId, setSavingId] = useState<string | null>(null);
   const [uploadingId, setUploadingId] = useState<string | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<{
+    productId: string;
+    done: number;
+    total: number;
+  } | null>(null);
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
   const [editDraft, setEditDraft] = useState<AdminProductRow | null>(null);
   const [newProduct, setNewProduct] = useState<ProductPatchPayload>(defaultNewProduct);
@@ -528,7 +843,10 @@ export default function ProductsAdminPage() {
     setEditDraft(
       normalizeProductRow({
         ...product,
-        colors: product.colors.map((color) => ({ ...color })),
+        colors: product.colors.map((color) => ({
+          ...color,
+          images: (color.images ?? []).map((image) => ({ ...image })),
+        })),
         sizes: [...product.sizes],
         fabrics: [...product.fabrics],
         images: product.images.map((image) => ({ ...image })),
@@ -563,18 +881,8 @@ export default function ProductsAdminPage() {
     setEditDraft(null);
   };
 
-  const uploadProductImage = async (productId: string, file: File) => {
-    if (!file) {
-      return;
-    }
-
-    if (!file.type.startsWith('image/')) {
-      setError('Only image files are allowed.');
-      return;
-    }
-
-    if (file.size > 10 * 1024 * 1024) {
-      setError('Max file size is 10MB.');
+  const uploadProductImages = async (productId: string, files: File[]) => {
+    if (files.length === 0) {
       return;
     }
 
@@ -584,81 +892,35 @@ export default function ProductsAdminPage() {
       return;
     }
 
+    const validationError = validateImageFiles(files);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
     setUploadingId(productId);
+    setUploadProgress({ productId, done: 0, total: files.length });
     setError('');
 
     try {
-      const signRes = await fetch('/api/admin/media/sign-upload', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          folder: 'zhua/products',
-          baseName: target.name,
-        }),
-      });
+      const assets: CloudinaryImageAsset[] = [];
 
-      const signData = (await signRes.json()) as {
-        cloudName?: string;
-        apiKey?: string;
-        timestamp?: number;
-        signature?: string;
-        folder?: string;
-        publicId?: string;
-        uploadUrl?: string;
-        error?: string;
-      };
-
-      if (!signRes.ok || !signData.uploadUrl || !signData.apiKey || !signData.signature || !signData.timestamp) {
-        throw new Error(signData.error ?? 'Could not prepare upload.');
+      for (const file of files) {
+        assets.push(await uploadImageAsset(file, target.name));
+        setUploadProgress({ productId, done: assets.length, total: files.length });
       }
 
-      const uploadBody = new FormData();
-      uploadBody.append('file', file);
-      uploadBody.append('api_key', signData.apiKey);
-      uploadBody.append('timestamp', String(signData.timestamp));
-      uploadBody.append('signature', signData.signature);
-      uploadBody.append('folder', signData.folder ?? 'zhua/products');
-      uploadBody.append('public_id', signData.publicId ?? 'asset');
-
-      const uploadRes = await fetch(signData.uploadUrl, {
-        method: 'POST',
-        body: uploadBody,
-      });
-
-      const uploadData = (await uploadRes.json()) as {
-        secure_url?: string;
-        public_id?: string;
-        width?: number;
-        height?: number;
-        format?: string;
-        bytes?: number;
-        error?: { message?: string };
-      };
-
-      if (!uploadRes.ok || !uploadData.secure_url || !uploadData.public_id) {
-        throw new Error(uploadData.error?.message ?? 'Cloudinary upload failed.');
-      }
-
-      const nextImages: CloudinaryImageAsset[] = [
-        ...target.images,
-        {
-          publicId: uploadData.public_id,
-          secureUrl: uploadData.secure_url,
-          alt: target.name,
-          width: uploadData.width,
-          height: uploadData.height,
-          format: uploadData.format,
-          bytes: uploadData.bytes,
-          createdAt: new Date().toISOString(),
-        },
-      ];
-
-      await updateProduct(productId, { images: nextImages }, 'Product image uploaded successfully.');
+      await updateProduct(
+        productId,
+        { images: [...target.images, ...assets] },
+        `${assets.length} product image${assets.length === 1 ? '' : 's'} uploaded successfully.`
+      );
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Could not upload image.';
       setError(message);
     } finally {
       setUploadingId(null);
+      setUploadProgress(null);
     }
   };
 
@@ -912,6 +1174,7 @@ export default function ProductsAdminPage() {
             <ProductColorFields
               colors={newProduct.colors}
               onChange={(colors) => setNewProduct((prev) => ({ ...prev, colors }))}
+              uploadBaseName={newProduct.name || 'product'}
             />
           </div>
           <div className={styles.formRow} style={{ gridColumn: '1 / -1' }}>
@@ -1313,15 +1576,21 @@ export default function ProductsAdminPage() {
                         {editingProductId === product.id ? 'Editing...' : 'Edit'}
                       </button>
                       <label className={styles.ghostButton} style={{ cursor: uploadingId === product.id ? 'wait' : 'pointer' }}>
-                        {uploadingId === product.id ? 'Uploading...' : 'Upload'}
+                        {uploadingId === product.id
+                          ? uploadProgress && uploadProgress.total > 1
+                            ? `Uploading ${uploadProgress.done}/${uploadProgress.total}...`
+                            : 'Uploading...'
+                          : 'Upload'}
                         <input
                           type="file"
                           accept="image/*"
+                          multiple
                           style={{ display: 'none' }}
+                          disabled={uploadingId !== null}
                           onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) {
-                              void uploadProductImage(product.id, file);
+                            const files = Array.from(e.currentTarget.files ?? []);
+                            if (files.length > 0) {
+                              void uploadProductImages(product.id, files);
                             }
                             e.currentTarget.value = '';
                           }}
@@ -1563,6 +1832,8 @@ export default function ProductsAdminPage() {
                     onChange={(colors) =>
                       setEditDraft((prev) => (prev ? { ...prev, colors } : prev))
                     }
+                    uploadBaseName={editDraft.name || 'product'}
+                    galleryImages={editDraft.images}
                   />
                 </div>
 

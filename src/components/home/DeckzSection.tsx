@@ -18,7 +18,7 @@ export default function DeckzSection() {
       <div className={`container ${styles.grid} ${styles.gridReverse}`}>
         <div className={styles.contentCol}>
           <span className="label-accent">DECKZ by ZHUA</span>
-          <h2 className="heading-xl">Take Your Living Outdoors</h2>
+          <h2 className="heading-xl">Take Your Living <span className="heading-accent">Outdoors</span></h2>
           <p className={styles.lede}>
             Custom decking and outdoor spaces designed for entertaining, relaxing and living —
             extending the ZHUA standard of craft beyond your walls.

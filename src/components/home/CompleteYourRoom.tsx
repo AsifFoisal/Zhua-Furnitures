@@ -44,7 +44,7 @@ export default function CompleteYourRoom() {
       <div className="container">
         <div className={`section-header ${styles.header}`}>
           <span className="label-accent">Complete Your Room</span>
-          <h2 className="heading-xl">Build the Room. Not Just the Product.</h2>
+          <h2 className="heading-xl">Build the Room. Not Just the <span className="heading-accent">Product.</span></h2>
           <p className={styles.lede}>
             One project. Multiple solutions. One ZHUA team. Explore how the four divisions come
             together in a single space.

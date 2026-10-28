@@ -106,7 +106,7 @@
   background: rgba(181,146,65,0.08);
   border: 1px solid rgba(181,146,65,0.2);
   border-radius: 999px;
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-accent);
   font-size: 0.78rem;
   font-weight: 600;
   color: var(--gold);
@@ -115,7 +115,7 @@
 }
 
 .headline {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-display);
   font-size: clamp(3rem, 5.5vw, 5.5rem);
   font-weight: 700;
   line-height: 1.1;
@@ -179,14 +179,14 @@
 }
 
 .statValue {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-display);
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--gold);
 }
 
 .statLabel {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-accent);
   font-size: 0.72rem;
   font-weight: 500;
   color: var(--text-muted);
@@ -343,7 +343,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-accent);
   font-size: 0.72rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -405,7 +405,7 @@
 }
 
 .carouselFallback {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-display);
   font-size: 2.7rem;
   color: var(--gold);
 }
@@ -417,7 +417,7 @@
 }
 
 .carouselMeta {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-accent);
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.12em;
@@ -425,13 +425,13 @@
 }
 
 .carouselName {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-display);
   font-size: 1.35rem;
   color: var(--text-primary);
 }
 
 .carouselPrice {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-accent);
   font-size: 1.15rem;
   font-weight: 700;
   color: var(--gold);
@@ -530,7 +530,7 @@
 }
 
 .scrollHint span {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-accent);
   font-size: 0.68rem;
   font-weight: 500;
   color: #3A5673;

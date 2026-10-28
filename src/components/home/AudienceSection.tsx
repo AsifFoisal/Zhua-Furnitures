@@ -32,7 +32,7 @@ export default function AudienceSection() {
       <div className="container">
         <div className={`section-header ${styles.header}`}>
           <span className="label-accent">Who We Work With</span>
-          <h2 className="heading-xl">Spaces Made for Every Project</h2>
+          <h2 className="heading-xl">Spaces Made for <span className="heading-accent">Every Project</span></h2>
         </div>
 
         <div className={styles.grid}>

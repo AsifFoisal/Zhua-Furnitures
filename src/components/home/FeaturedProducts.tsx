@@ -65,7 +65,7 @@ export default function FeaturedProducts() {
           <div>
             <span className="label-accent">Handpicked for You</span>
             <div className="gold-divider" style={{ margin: '0.75rem 0 1rem' }} />
-            <h2 className="heading-xl">Featured Collection</h2>
+            <h2 className="heading-xl"><span className="heading-accent">Featured</span> Collection</h2>
           </div>
           <Link href="/shop" className="btn btn-outline btn-sm">
             View All <ArrowRight size={15} />

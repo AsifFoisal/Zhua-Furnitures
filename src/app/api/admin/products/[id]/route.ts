@@ -66,6 +66,7 @@ function toSafeStringArray(value: unknown): string[] {
 type ProductColor = {
   name: string;
   hex: string;
+  images?: ReturnType<typeof normalizeCloudinaryImageAssets>;
 };
 
 function toSafeColorHex(value: unknown): string {
@@ -94,9 +95,12 @@ function normalizeProductColors(value: unknown): ProductColor[] {
         return null;
       }
 
+      const images = normalizeCloudinaryImageAssets(item.images);
+
       return {
         name,
         hex: toSafeColorHex(item.hex),
+        ...(images.length > 0 ? { images } : {}),
       };
     })
     .filter((entry): entry is ProductColor => entry !== null);

@@ -3,7 +3,7 @@ export default function AboutPage() {
     <div style={{ padding: '140px 0 6rem', minHeight: '100vh', background: 'var(--midnight)' }}>
       <div className="container" style={{ maxWidth: '900px' }}>
         <span className="label-accent">About Zhua Furniture</span>
-        <h1 className="heading-xl" style={{ color: '#EAF0F8', margin: '1rem 0 1.25rem' }}>South Africa&apos;s Premium Home Solutions Platform</h1>
+        <h1 className="heading-xl" style={{ color: '#EAF0F8', margin: '1rem 0 1.25rem' }}>South Africa&apos;s <span className="heading-accent">Premium</span> Home Solutions Platform</h1>
         <p style={{ color: '#A9B7C9', fontSize: '1.02rem', lineHeight: 1.8, marginBottom: '2rem' }}>
           Zhua Furniture was built to make premium home transformations accessible across all 9 provinces. We combine curated furniture, custom curtains and blinds, and design-led services to help you create spaces that feel timeless, intentional, and deeply personal.
         </p>
