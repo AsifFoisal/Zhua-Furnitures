@@ -54,7 +54,7 @@ export default function OneSpaceOneZhua() {
       <div className="container">
         <div className={`section-header ${styles.header}`}>
           <span className="label-accent">One Space. One ZHUA.</span>
-          <h2 className="heading-xl">Complete spaces, made for you.</h2>
+          <h2 className="heading-xl">Complete <span className="heading-accent">spaces</span>, made for you.</h2>
           <p className={styles.lede}>
             From the furniture you sit on to the walls around you, ZHUA helps you create a space
             that feels complete. Four divisions, one team, one standard of craft.

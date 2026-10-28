@@ -30,7 +30,7 @@ export default function PoliciesPage() {
     <div style={{ padding: '140px 0 6rem', minHeight: '100vh', background: 'var(--midnight)' }}>
       <div className="container" style={{ maxWidth: '920px' }}>
         <span className="label-accent">Policies</span>
-        <h1 className="heading-xl" style={{ color: '#EAF0F8', margin: '1rem 0 1.25rem' }}>Shipping, Returns & Privacy</h1>
+        <h1 className="heading-xl" style={{ color: '#EAF0F8', margin: '1rem 0 1.25rem' }}>Shipping, Returns &amp; <span className="heading-accent">Privacy</span></h1>
         <div style={{ display: 'grid', gap: '1rem' }}>
           {sections.map((section) => (
             <section key={section.title} style={{ background: '#163250', border: '1px solid rgba(181,146,65,0.18)', borderRadius: 14, padding: '1.1rem' }}>

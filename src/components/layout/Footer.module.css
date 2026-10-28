@@ -19,7 +19,7 @@
 }
 
 .newsletterTitle {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-display);
   font-size: 1.4rem;
   font-weight: 600;
   color: var(--text-primary);
@@ -38,7 +38,7 @@
   border-radius: 999px;
   padding: 0.875rem 1.5rem;
   color: var(--text-primary);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 0.9rem;
   outline: none;
   width: 280px;
@@ -92,7 +92,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-display);
   font-size: 1.4rem;
   font-weight: 800;
   color: #0F243B;
@@ -100,7 +100,7 @@
 }
 
 .logoName {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-accent);
   font-size: 0.95rem;
   font-weight: 700;
   color: var(--text-primary);
@@ -110,7 +110,7 @@
 .logoSub {
   font-size: 0.65rem;
   color: var(--text-muted);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   margin-top: 2px;
 }
 
@@ -148,7 +148,7 @@
 
 /* Columns */
 .colTitle {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-accent);
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.18em;
@@ -180,7 +180,7 @@
 
 .comingSoonNote {
   margin-left: 0.5rem;
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-accent);
   font-size: 0.6rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -237,7 +237,7 @@
   padding: 4px 10px;
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 6px;
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-accent);
   font-size: 0.68rem;
   font-weight: 700;
   color: #3A5673;

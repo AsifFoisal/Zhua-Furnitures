@@ -10,7 +10,7 @@ export default function GalleryPage() {
       <div className="container">
         <span className="label-accent">Gallery</span>
         <h1 className="heading-xl" style={{ color: '#EAF0F8', margin: '1rem 0 1.25rem' }}>
-          Before & After Transformations
+          Before &amp; After <span className="heading-accent">Transformations</span>
         </h1>
 
         {loading ? <p style={{ color: '#A9B7C9' }}>Loading gallery...</p> : null}

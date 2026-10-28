@@ -67,7 +67,7 @@ export default function Testimonials() {
             <span className="label-accent">Real Clients, Real Rooms</span>
             <div className="gold-divider" style={{ margin: '0.75rem 0 1rem' }} />
             <h2 className="heading-xl" style={{ color: '#EAF0F8', marginBottom: '2rem' }}>
-              What Our Clients Say
+              What Our <span className="heading-accent">Clients Say</span>
             </h2>
             <div className={styles.thumbs}>
               {testimonials.map((t, i) => (

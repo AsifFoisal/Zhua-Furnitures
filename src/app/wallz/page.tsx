@@ -18,7 +18,7 @@ export default async function WallzPage() {
   return (
     <DivisionLanding
       eyebrow="WALLZ by ZHUA"
-      title="Give Your Walls a New Identity"
+      title={<>Give Your Walls a <span className="heading-accent">New Identity</span></>}
       description="Feature walls, decorative panelling and wall finishes designed to transform ordinary spaces into statement spaces."
       note="WALLZ offerings are growing — tell us what you're envisioning and we'll confirm what's possible for your space."
       visual={homeImagery.divisionWallz}

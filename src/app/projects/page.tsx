@@ -43,7 +43,7 @@ export default function ProjectsPage() {
     <div className={styles.page}>
       <div className="container">
         <span className="label-accent">Projects</span>
-        <h1 className={styles.title}>ZHUA in Real Spaces</h1>
+        <h1 className={styles.title}>ZHUA in <span className="heading-accent">Real Spaces</span></h1>
         <p className={styles.lede}>
           Completed transformations across furniture, curtains &amp; blinds, WALLZ and DECKZ — the
           result of one team handling the whole space.

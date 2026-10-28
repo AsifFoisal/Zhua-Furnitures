@@ -28,7 +28,7 @@ export default function WallzSection() {
 
         <div className={styles.contentCol}>
           <span className="label-accent">WALLZ by ZHUA</span>
-          <h2 className="heading-xl">Give Your Walls a New Identity</h2>
+          <h2 className="heading-xl">Give Your Walls a <span className="heading-accent">New Identity</span></h2>
           <p className={styles.lede}>
             Feature walls, decorative panelling and wall finishes designed to transform ordinary
             spaces into statement spaces.

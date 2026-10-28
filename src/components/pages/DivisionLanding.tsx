@@ -15,7 +15,7 @@ export interface DivisionCta {
 
 interface DivisionLandingProps {
   eyebrow: string;
-  title: string;
+  title: ReactNode;
   description: string;
   visual: ImagerySlot;
   highlights: { title: string; description: string }[];

@@ -60,7 +60,7 @@ export default function InteriorDesignPage() {
   return (
     <DivisionLanding
       eyebrow="Interior Design by ZHUA"
-      title="The Whole Room, Designed as One"
+      title={<>The Whole Room, Designed as <span className="heading-accent">One</span></>}
       description="Interior design at ZHUA covers the complete look and feel of your space — layout, furniture, fabrics, window treatments, lighting and decor — planned together so everything works as one room."
       note="WALLZ feature walls and DECKZ outdoor spaces can be coordinated as part of your complete interior project — one team, one timeline, one standard of finish."
       visual={homeImagery.completeRoom}

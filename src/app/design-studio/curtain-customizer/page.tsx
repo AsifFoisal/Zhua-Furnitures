@@ -243,7 +243,7 @@ export default function CurtainCustomizerPage() {
       <div className="container-wide">
         <div className={styles.header}>
           <span className="label-accent">Design Studio</span>
-          <h1 className="heading-xl" style={{ color: '#EAF0F8', margin: '0.75rem 0 0.5rem' }}>Curtain Customizer</h1>
+          <h1 className="heading-xl" style={{ color: '#EAF0F8', margin: '0.75rem 0 0.5rem' }}>Curtain <span className="heading-accent">Customizer</span></h1>
           <p style={{ color: '#A9B7C9' }}>
             Enter your window measurements, choose your options, and see an estimated price update live — then
             submit an enquiry and we&apos;ll confirm the final quotation.

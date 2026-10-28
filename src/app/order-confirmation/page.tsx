@@ -328,7 +328,7 @@ export default async function OrderConfirmationPage({
           <CheckCircle size={40} color="#4ECDC4" />
         </div>
         <span className="label-accent">Order Received</span>
-        <h1 className="heading-xl" style={{ color: '#EAF0F8', margin: '1rem 0', fontSize: '2.5rem' }}>We Are Verifying Your Payment</h1>
+        <h1 className="heading-xl" style={{ color: '#EAF0F8', margin: '1rem 0', fontSize: '2.5rem' }}>We Are Verifying Your <span className="heading-accent">Payment</span></h1>
         <p style={{ color: '#A9B7C9', fontSize: '1rem', lineHeight: 1.7, marginBottom: '2rem' }}>
           Your order <strong style={{ color: '#B59241' }}>{orderNum}</strong> has been created. We&apos;ll confirm payment and continue fulfillment as soon as your gateway response is received.
         </p>
@@ -380,7 +380,7 @@ export default async function OrderConfirmationPage({
           ].map(({ icon: Icon, label, status, color }) => (
             <div key={label} style={{ padding: '1.25rem', background: '#163250', border: `1px solid ${color}30`, borderRadius: 12 }}>
               <Icon size={24} color={color} style={{ marginBottom: '0.5rem' }} />
-              <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.85rem', fontWeight: 600, color: color === '#3A5673' ? '#58708A' : '#EAF0F8' }}>{label}</div>
+              <div style={{ fontFamily: 'var(--font-accent)', fontSize: '0.85rem', fontWeight: 600, color: color === '#3A5673' ? '#58708A' : '#EAF0F8' }}>{label}</div>
               <div style={{ fontSize: '0.72rem', color: color === '#B59241' ? '#B59241' : '#3A5673', marginTop: 2 }}>{status}</div>
             </div>
           ))}

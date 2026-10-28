@@ -9,7 +9,7 @@ const categories = [
     id: 'furniture',
     label: 'Furniture',
     desc: 'Sofas, beds, tables & storage — crafted for longevity',
-    href: '/shop/furniture',
+    href: '/furniture',
     image: '/images/categories/furniture-luxury.svg',
     imageAlt: 'Premium furniture setting with sofa and warm interior tones',
     gradient: 'linear-gradient(135deg, #2A1F14 0%, #3D2E1C 100%)',
@@ -44,7 +44,7 @@ export default function CategoryCards() {
         <div className="section-header" style={{ textAlign: 'center' }}>
           <span className="label-accent">Collections</span>
           <div className="gold-divider" style={{ margin: '0.75rem auto 1rem' }} />
-          <h2 className="heading-xl">Shop by Category</h2>
+          <h2 className="heading-xl">Shop by <span className="heading-accent">Category</span></h2>
         </div>
 
         <div className={styles.grid}>

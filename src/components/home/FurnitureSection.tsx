@@ -7,7 +7,7 @@ import styles from './FurnitureSection.module.css';
 const featured = {
   title: 'Sofas & Lounges',
   description: 'Statement pieces made around how you actually live.',
-  href: '/shop/furniture',
+  href: '/furniture#collection',
   visual: homeImagery.furnitureFeatured,
 };
 
@@ -68,16 +68,13 @@ export default function FurnitureSection() {
         <div className={styles.header}>
           <div className="section-header">
             <span className="label-accent">Furniture</span>
-            <h2 className="heading-xl">Furniture Made Around You</h2>
+            <h2 className="heading-xl">Furniture Made <span className="heading-accent">Around You</span></h2>
           </div>
           <p className={styles.lede}>
             From statement modular sofas to dining furniture, beds, TV units and custom cabinetry,
             we create furniture around your space, style and needs.
           </p>
           <div className={styles.actions}>
-            <Link href="/shop/furniture" className="btn btn-primary">
-              Shop Furniture <ArrowRight size={16} />
-            </Link>
             <Link href="/contact" className="btn btn-outline">
               Custom Furniture
             </Link>
@@ -93,14 +90,14 @@ export default function FurnitureSection() {
                 <h3>{featured.title}</h3>
                 <p>{featured.description}</p>
                 <span className={styles.cta}>
-                  Shop now <ArrowRight size={15} />
+                  View the collection <ArrowRight size={15} />
                 </span>
               </div>
             </div>
           </Link>
 
           {tiles.map((tile) => (
-            <Link key={tile.title} href="/shop/furniture" className={styles.tile}>
+            <Link key={tile.title} href="/furniture#collection" className={styles.tile}>
               <div className={styles.tileVisual}>
                 <ImagePlaceholder slot={tile.visual} showCaption={false} />
                 <div className={styles.visualScrim} />
@@ -113,7 +110,7 @@ export default function FurnitureSection() {
         <div className={styles.more}>
           <span className={styles.moreLabel}>Also made by ZHUA</span>
           {moreLinks.map((label) => (
-            <Link key={label} href="/shop/furniture" className={styles.moreLink}>
+            <Link key={label} href="/furniture#collection" className={styles.moreLink}>
               {label} <ArrowRight size={13} />
             </Link>
           ))}

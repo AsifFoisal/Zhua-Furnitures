@@ -24,7 +24,7 @@ export default function RoomVisualizerPage() {
       <ComingSoonPanel
         title="Room Visualizer Is Almost Ready"
         message={DESIGN_STUDIO_FEATURE.message}
-        primaryCta={{ label: 'Shop Furniture', href: '/shop/furniture' }}
+        primaryCta={{ label: 'Explore Furniture', href: '/furniture' }}
         secondaryCta={{ label: 'See the Gallery', href: '/gallery' }}
       />
     );
@@ -54,10 +54,11 @@ function RoomVisualizerWorkspace() {
       ctx.fillStyle = '#1E3C5F';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = '#3A5673';
-      ctx.font = '18px Outfit, sans-serif';
+      const bodyFont = getComputedStyle(document.body).fontFamily || 'Playfair Display, serif';
+      ctx.font = `18px ${bodyFont}`;
       ctx.textAlign = 'center';
       ctx.fillText('Upload a room photo to get started', canvas.width / 2, canvas.height / 2 - 10);
-      ctx.font = '14px Outfit, sans-serif';
+      ctx.font = `14px ${bodyFont}`;
       ctx.fillStyle = '#58708A';
       ctx.fillText('Then drag furniture overlays onto your room', canvas.width / 2, canvas.height / 2 + 20);
     }
@@ -148,7 +149,7 @@ function RoomVisualizerWorkspace() {
         <div className={styles.header}>
           <div>
             <span className="label-accent">Design Studio</span>
-            <h1 className="heading-xl" style={{ color: '#EAF0F8', margin: '0.75rem 0 0.5rem' }}>Room Visualizer</h1>
+            <h1 className="heading-xl" style={{ color: '#EAF0F8', margin: '0.75rem 0 0.5rem' }}>Room <span className="heading-accent">Visualizer</span></h1>
             <p style={{ color: '#A9B7C9' }}>Upload your room photo, then drag furniture and curtain overlays to preview your design.</p>
           </div>
           <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'flex-start' }}>

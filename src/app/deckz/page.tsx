@@ -18,7 +18,7 @@ export default async function DeckzPage() {
   return (
     <DivisionLanding
       eyebrow="DECKZ by ZHUA"
-      title="Take Your Living Outdoors"
+      title={<>Take Your Living <span className="heading-accent">Outdoors</span></>}
       description="Custom decking and outdoor spaces designed for entertaining, relaxing and living — built to the same standard we bring to every ZHUA interior."
       visual={homeImagery.divisionDeckz}
       ctas={[

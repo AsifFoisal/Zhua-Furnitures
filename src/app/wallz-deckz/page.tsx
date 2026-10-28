@@ -90,7 +90,7 @@ export default function WallzDeckzPage() {
           <div className={styles.heroCopy}>
             <span className="label-accent">WALLZ &amp; DECKZ by ZHUA</span>
             <h1 className={styles.title}>
-              Walls &amp; Decks, Built In
+              Walls &amp; Decks, <span className="heading-accent">Built In</span>
             </h1>
             <p className={styles.description}>
               The construction side of a complete ZHUA space: feature walls, panelling and custom

@@ -37,7 +37,7 @@
   color: #EAF0F8;
   padding: 0.5rem 0.875rem;
   border-radius: 8px;
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-accent);
   font-size: 0.8rem;
   font-weight: 500;
   white-space: nowrap;

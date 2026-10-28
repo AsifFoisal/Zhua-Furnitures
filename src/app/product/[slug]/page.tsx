@@ -1,12 +1,25 @@
 'use client';
+
 import { useEffect, useState } from 'react';
-import { products, formatPrice } from '@/lib/data';
-import { useCartStore } from '@/store';
-import { toast } from 'sonner';
-import { ShoppingBag, Heart, Star, ChevronLeft, ChevronRight, Truck, Shield, RotateCcw, MessageCircle, Check, ZoomIn } from 'lucide-react';
 import Link from 'next/link';
-import { useWishlistStore } from '@/store';
 import { useParams } from 'next/navigation';
+import {
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Hammer,
+  Heart,
+  MessageCircle,
+  RotateCcw,
+  Shield,
+  ShoppingBag,
+  Star,
+  Truck,
+  ZoomIn,
+} from 'lucide-react';
+import { toast } from 'sonner';
+import { formatPrice, products, type Product } from '@/lib/data';
+import { useCartStore, useWishlistStore } from '@/store';
 import { useStorefrontProducts } from '@/lib/use-storefront-products';
 import { DEFAULT_DELIVERY_ZONES, type DeliveryZone } from '@/lib/delivery';
 import { buildWhatsAppUrl } from '@/lib/whatsapp';
@@ -19,16 +32,55 @@ type RelatedImagePreviewState = {
   index: number;
 };
 
+const badgeLabels: Record<NonNullable<Product['badge']>, string> = {
+  bestseller: 'Bestseller',
+  custom: 'Made to order',
+  new: 'New arrival',
+  sale: 'On sale',
+};
+
 function toPreviewImages(images: string[]): string[] {
   return images.filter((image) => typeof image === 'string' && image.trim().length > 0);
+}
+
+/** Ask Cloudinary for a right-sized derivative; leave local assets untouched. */
+function imageUrl(url: string, width: number): string {
+  if (!url.includes('/image/upload/')) {
+    return url;
+  }
+
+  return url.replace('/image/upload/', `/image/upload/w_${width},q_auto,f_auto/`);
+}
+
+function categoryHref(category: Product['category']): string {
+  if (category === 'furniture') {
+    return '/furniture';
+  }
+
+  return `/shop/${category}`;
+}
+
+function categoryLabel(category: Product['category']): string {
+  if (category === 'furniture') {
+    return 'Furniture';
+  }
+
+  if (category === 'curtains') {
+    return 'Curtains & blinds';
+  }
+
+  return 'Accessories';
 }
 
 export default function ProductPage() {
   const { products: liveProducts } = useStorefrontProducts();
   const routeParams = useParams<{ slug: string }>();
   const slug = routeParams?.slug ?? '';
-  const product = liveProducts.find((entry) => entry.slug === slug) || liveProducts[0] || products[0];
-  const colorOptions = product.colors.length > 0 ? product.colors : [{ name: 'Default', hex: '#B59241' }];
+  const product =
+    liveProducts.find((entry) => entry.slug === slug) || liveProducts[0] || products[0];
+
+  const colorOptions =
+    product.colors.length > 0 ? product.colors : [{ name: 'Default', hex: '#B59241' }];
   const sizeOptions = Array.isArray(product.sizes)
     ? product.sizes.filter((entry) => typeof entry === 'string' && entry.trim().length > 0)
     : [];
@@ -44,8 +96,10 @@ export default function ProductPage() {
   const [deliveryZones, setDeliveryZones] = useState<DeliveryZone[]>(DEFAULT_DELIVERY_ZONES);
   const [imgIndex, setImgIndex] = useState(0);
   const [isMainLightboxOpen, setIsMainLightboxOpen] = useState(false);
-  const [relatedImagePreview, setRelatedImagePreview] = useState<RelatedImagePreviewState | null>(null);
+  const [relatedImagePreview, setRelatedImagePreview] =
+    useState<RelatedImagePreviewState | null>(null);
   const [added, setAdded] = useState(false);
+
   const { addItem } = useCartStore();
   const { toggle, has } = useWishlistStore();
 
@@ -79,7 +133,7 @@ export default function ProductPage() {
 
         setDeliveryZones(data.delivery.zones);
       } catch {
-        // Keep fallback delivery defaults.
+        // Keep the built-in delivery defaults.
       }
     };
 
@@ -109,7 +163,13 @@ export default function ProductPage() {
       return;
     }
 
-    addItem({ product, quantity, selectedColor: selectedColor.name, selectedSize: activeSize, selectedFabric: activeFabric });
+    addItem({
+      product,
+      quantity,
+      selectedColor: selectedColor.name,
+      selectedSize: activeSize,
+      selectedFabric: activeFabric,
+    });
     toast.success(`${product.name} added to cart.`);
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
@@ -123,10 +183,24 @@ export default function ProductPage() {
   const depthCm = Number(product.dimensions?.depthCm ?? 0);
   const heightCm = Number(product.dimensions?.heightCm ?? 0);
   const hasPhysicalSpecs = weightKg > 0 || widthCm > 0 || depthCm > 0 || heightCm > 0;
-  const galleryImages = product.images.length > 0 ? product.images : [];
+  const colorImages = Array.isArray(selectedColor.images)
+    ? toPreviewImages(selectedColor.images)
+    : [];
+  const galleryImages = colorImages.length > 0 ? colorImages : product.images;
   const galleryPreviewImages = toPreviewImages(galleryImages);
-  const imgCount = galleryImages.length > 0 ? galleryImages.length : 3;
+  const imgCount = galleryImages.length;
   const safeImgIndex = Math.min(imgIndex, Math.max(0, imgCount - 1));
+  const saving =
+    product.originalPrice && product.originalPrice > product.price
+      ? product.originalPrice - product.price
+      : 0;
+  const story = product.longDescription?.trim() ? product.longDescription : null;
+  const AvailabilityIcon = !product.inStock ? Shield : product.isCustomizable ? Hammer : Truck;
+  const availabilityNote = !product.inStock
+    ? 'Currently out of stock. Talk to us about the next production run.'
+    : product.isCustomizable
+      ? 'Made to order in our Johannesburg workshop.'
+      : 'Ready to deliver across South Africa.';
 
   const openRelatedImagePreview = (
     relatedProductName: string,
@@ -151,175 +225,288 @@ export default function ProductPage() {
   return (
     <div className={styles.page}>
       <div className="container">
-        {/* Breadcrumb */}
-        <nav className={styles.breadcrumb}>
-          <Link href="/">Home</Link> / <Link href="/shop">Shop</Link> / <Link href={`/shop/${product.category}`}>{product.subcategory}</Link> / <span>{product.name}</span>
-        </nav>
+        <header className={styles.masthead}>
+          <nav className={styles.breadcrumb} aria-label="Breadcrumb">
+            <Link href="/">Home</Link>
+            <span aria-hidden="true">/</span>
+            <Link href={categoryHref(product.category)}>{categoryLabel(product.category)}</Link>
+            <span aria-hidden="true">/</span>
+            <span className={styles.breadcrumbCurrent}>{product.name}</span>
+          </nav>
+          <p className={styles.mastheadNote}>
+            <AvailabilityIcon size={14} aria-hidden="true" />
+            {availabilityNote}
+          </p>
+        </header>
 
-        <div className={styles.grid}>
-          {/* Gallery */}
-          <div className={styles.gallery}>
-            <div className={styles.mainImage} style={{ background: `linear-gradient(135deg, ${selectedColor.hex}15, ${selectedColor.hex}08)` }}>
-              <div className={styles.mainImageInner}>
+        <div className={styles.shell}>
+          <section
+            className={`${styles.gallery} ${imgCount <= 1 ? styles.galleryNoThumbs : ''}`}
+            aria-label="Product images"
+          >
+            {imgCount > 1 ? (
+              <div className={styles.thumbs} role="group" aria-label="Choose product image">
+                {galleryImages.map((image, index) => (
+                  <button
+                    key={`${image}-${index}`}
+                    type="button"
+                    className={`${styles.thumb} ${index === safeImgIndex ? styles.thumbActive : ''}`}
+                    onClick={() => setImgIndex(index)}
+                    aria-label={`Show image ${index + 1} of ${imgCount}`}
+                    aria-pressed={index === safeImgIndex}
+                  >
+                    <img
+                      src={imageUrl(image, 240)}
+                      alt=""
+                      className={styles.thumbImage}
+                      loading="lazy"
+                    />
+                  </button>
+                ))}
+              </div>
+            ) : null}
+
+            <div className={styles.stage}>
+              <div className={styles.stageTop}>
+                <span className={styles.stageTag}>{selectedColor.name}</span>
+              </div>
+
+              <div className={styles.stageFrame}>
                 {galleryImages[safeImgIndex] ? (
                   <button
                     type="button"
-                    className={styles.mainImageOpenButton}
+                    className={styles.stageButton}
                     onClick={() => setIsMainLightboxOpen(true)}
                     aria-label="Open product image fullscreen"
                   >
                     <img
-                      src={galleryImages[safeImgIndex]}
+                      key={safeImgIndex}
+                      src={imageUrl(galleryImages[safeImgIndex], 1400)}
                       alt={`${product.name} image ${safeImgIndex + 1}`}
-                      className={styles.productImage}
+                      className={styles.stageImage}
                     />
                   </button>
                 ) : (
                   <ProductHeroSVG category={product.category} color={selectedColor.hex} />
                 )}
               </div>
-              {galleryImages[safeImgIndex] ? (
-                <button
-                  type="button"
-                  className={styles.mainImageZoomTrigger}
-                  onClick={() => setIsMainLightboxOpen(true)}
-                  aria-label="Zoom product image"
-                >
-                  <ZoomIn size={18} />
-                </button>
-              ) : null}
-              <button className={styles.galleryNav} onClick={() => setImgIndex(Math.max(0, safeImgIndex - 1))} style={{ left: '0.875rem' }}><ChevronLeft size={18} /></button>
-              <button className={styles.galleryNav} onClick={() => setImgIndex(Math.min(imgCount - 1, safeImgIndex + 1))} style={{ right: '0.875rem' }}><ChevronRight size={18} /></button>
-              <div className={styles.galleryDots}>
-                {[...Array(imgCount)].map((_, i) => (
-                  <button key={i} className={`${styles.galleryDot} ${i === safeImgIndex ? styles.galleryDotActive : ''}`} onClick={() => setImgIndex(i)} />
-                ))}
+
+              <div className={styles.stageFooter}>
+                <span className={styles.stageCount}>
+                  {imgCount > 0
+                    ? `${String(safeImgIndex + 1).padStart(2, '0')} / ${String(imgCount).padStart(2, '0')}`
+                    : 'ZHUA Furniture'}
+                </span>
+                <div className={styles.stageControls}>
+                  {imgCount > 1 ? (
+                    <>
+                      <button
+                        type="button"
+                        className={styles.stageControl}
+                        onClick={() => setImgIndex(Math.max(0, safeImgIndex - 1))}
+                        aria-label="Previous image"
+                        disabled={safeImgIndex === 0}
+                      >
+                        <ChevronLeft size={17} />
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.stageControl}
+                        onClick={() => setImgIndex(Math.min(imgCount - 1, safeImgIndex + 1))}
+                        aria-label="Next image"
+                        disabled={safeImgIndex === imgCount - 1}
+                      >
+                        <ChevronRight size={17} />
+                      </button>
+                    </>
+                  ) : null}
+                  {galleryImages[safeImgIndex] ? (
+                    <button
+                      type="button"
+                      className={styles.stageControl}
+                      onClick={() => setIsMainLightboxOpen(true)}
+                      aria-label="Zoom image"
+                    >
+                      <ZoomIn size={16} />
+                    </button>
+                  ) : null}
+                </div>
               </div>
             </div>
-            <div className={styles.thumbnails}>
-              {[...Array(imgCount)].map((_, i) => (
-                <button key={i} className={`${styles.thumb} ${i === safeImgIndex ? styles.thumbActive : ''}`} onClick={() => setImgIndex(i)}>
-                  {galleryImages[i] ? (
-                    <img
-                      src={galleryImages[i]}
-                      alt={`${product.name} thumbnail ${i + 1}`}
-                      className={styles.productImage}
-                    />
-                  ) : (
-                    <div style={{ width: '100%', height: '100%', background: `${selectedColor.hex}20` }} />
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
+          </section>
 
-          {/* Info */}
-          <div className={styles.info}>
-            {product.badge && (
-              <span className={`badge badge-${product.badge}`}>
-                {product.badge === 'bestseller' ? '🏆 Bestseller' : product.badge}
-              </span>
-            )}
-            <h1 className={styles.name}>{product.name}</h1>
-            <p className={styles.subcategory}>{product.subcategory}</p>
+          <section className={styles.info} aria-labelledby="product-title">
+            <div className={styles.metaLine}>
+              <span className={styles.metaCategory}>{product.subcategory || 'Furniture'}</span>
+              {product.badge ? (
+                <span className={styles.badge}>{badgeLabels[product.badge] ?? product.badge}</span>
+              ) : null}
+              {product.isCustomizable ? (
+                <span className={styles.metaCustom}>Made to your specification</span>
+              ) : null}
+            </div>
+
+            <h1 id="product-title" className={styles.name}>
+              {product.name}
+            </h1>
 
             <div className={styles.ratingRow}>
-              <div className={styles.stars}>
-                {[...Array(5)].map((_, i) => <Star key={i} size={14} fill={i < Math.floor(product.rating) ? '#B59241' : 'none'} color="#B59241" />)}
-              </div>
-              <span className={styles.ratingNum}>{product.rating}</span>
-              <Link href="#reviews" className={styles.ratingLink}>({product.reviewCount} reviews)</Link>
+              {product.reviewCount > 0 ? (
+                <>
+                  <div className={styles.stars} aria-hidden="true">
+                    {[...Array(5)].map((_, index) => (
+                      <Star
+                        key={index}
+                        size={13}
+                        fill={index < Math.floor(product.rating) ? 'currentColor' : 'none'}
+                      />
+                    ))}
+                  </div>
+                  <span className={styles.ratingNum}>{Number(product.rating || 0).toFixed(1)}</span>
+                  <Link href="/reviews" className={styles.ratingLink}>
+                    {product.reviewCount} reviews
+                  </Link>
+                </>
+              ) : (
+                <Link href="/reviews" className={styles.ratingLink}>
+                  Be the first to review
+                </Link>
+              )}
             </div>
 
             <div className={styles.priceBlock}>
               <span className={styles.price}>{formatPrice(product.price)}</span>
-              {product.originalPrice && <span className={styles.originalPrice}>{formatPrice(product.originalPrice)}</span>}
+              {product.originalPrice ? (
+                <span className={styles.originalPrice}>{formatPrice(product.originalPrice)}</span>
+              ) : null}
+              {saving > 0 ? <span className={styles.saving}>Save {formatPrice(saving)}</span> : null}
             </div>
 
             <p className={styles.desc}>{product.description}</p>
 
-            {/* Color */}
-            <div className={styles.optionGroup}>
-              <label className={styles.optionLabel}>Color: <strong className={styles.optionValue}>{selectedColor.name}</strong></label>
-              <div className={styles.colorSwatches}>
-                {colorOptions.map(c => (
-                  <button
-                    key={c.name}
-                    className={`${styles.colorSwatch} ${c.name === selectedColor.name ? styles.colorSwatchActive : ''}`}
-                    style={{ background: c.hex }}
-                    onClick={() => setSelectedColorName(c.name)}
-                    title={c.name}
-                  />
-                ))}
+            <div className={styles.config}>
+              <div className={styles.field} role="group" aria-labelledby="colour-label">
+                <span id="colour-label" className={styles.fieldLabel}>
+                  Colour <em className={styles.fieldValue}>{selectedColor.name}</em>
+                </span>
+                <div className={styles.swatches}>
+                  {colorOptions.map((color) => (
+                    <button
+                      key={color.name}
+                      type="button"
+                      className={`${styles.swatch} ${
+                        color.name === selectedColor.name ? styles.swatchActive : ''
+                      }`}
+                      style={{ background: color.hex }}
+                      onClick={() => {
+                        if (color.name !== selectedColor.name) {
+                          setImgIndex(0);
+                        }
+                        setSelectedColorName(color.name);
+                      }}
+                      aria-label={`Select ${color.name}`}
+                      aria-pressed={color.name === selectedColor.name}
+                      title={color.name}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
 
-            {/* Size */}
-            <div className={styles.optionGroup}>
-              <label className={styles.optionLabel}>Size: <strong className={styles.optionValue}>{hasSizeOptions ? activeSize : 'Not specified'}</strong></label>
-              <div className={styles.sizePills}>
+              <div className={styles.field} role="group" aria-labelledby="size-label">
+                <span id="size-label" className={styles.fieldLabel}>
+                  Size <em className={styles.fieldValue}>{hasSizeOptions ? activeSize : 'Not specified'}</em>
+                </span>
                 {hasSizeOptions ? (
-                  sizeOptions.map((s) => (
-                    <button key={s} className={`${styles.sizePill} ${s === activeSize ? styles.sizePillActive : ''}`} onClick={() => setSelectedSize(s)}>{s}</button>
-                  ))
-                ) : (
-                  <button className={`${styles.sizePill} ${styles.sizePillDisabled}`} disabled>Not specified</button>
-                )}
+                  <div className={styles.options}>
+                    {sizeOptions.map((size) => (
+                      <button
+                        key={size}
+                        type="button"
+                        className={`${styles.option} ${
+                          size === activeSize ? styles.optionActive : ''
+                        }`}
+                        onClick={() => setSelectedSize(size)}
+                        aria-pressed={size === activeSize}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
               </div>
-            </div>
 
-            {/* Fabric */}
-            <div className={styles.optionGroup}>
-              <label className={styles.optionLabel}>Fabric: <strong className={styles.optionValue}>{hasFabricOptions ? activeFabric : 'Not specified'}</strong></label>
-              <div className={styles.sizePills}>
+              <div className={styles.field} role="group" aria-labelledby="fabric-label">
+                <span id="fabric-label" className={styles.fieldLabel}>
+                  Fabric <em className={styles.fieldValue}>{hasFabricOptions ? activeFabric : 'Not specified'}</em>
+                </span>
                 {hasFabricOptions ? (
-                  fabricOptions.map((f) => (
-                    <button key={f} className={`${styles.sizePill} ${f === activeFabric ? styles.sizePillActive : ''}`} onClick={() => setSelectedFabric(f)}>{f}</button>
-                  ))
-                ) : (
-                  <button className={`${styles.sizePill} ${styles.sizePillDisabled}`} disabled>Not specified</button>
-                )}
+                  <div className={styles.options}>
+                    {fabricOptions.map((fabric) => (
+                      <button
+                        key={fabric}
+                        type="button"
+                        className={`${styles.option} ${
+                          fabric === activeFabric ? styles.optionActive : ''
+                        }`}
+                        onClick={() => setSelectedFabric(fabric)}
+                        aria-pressed={fabric === activeFabric}
+                      >
+                        {fabric}
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+
+              <div className={styles.field}>
+                <span className={styles.fieldLabel}>Quantity</span>
+                <div className={styles.qtyControl}>
+                  <button
+                    type="button"
+                    className={styles.qtyBtn}
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    disabled={isOutOfStock}
+                    aria-label="Decrease quantity"
+                  >
+                    −
+                  </button>
+                  <span className={styles.qty}>{quantity}</span>
+                  <button
+                    type="button"
+                    className={styles.qtyBtn}
+                    onClick={() => setQuantity(quantity + 1)}
+                    disabled={isOutOfStock}
+                    aria-label="Increase quantity"
+                  >
+                    +
+                  </button>
+                </div>
               </div>
             </div>
 
-            {/* Quantity */}
-            <div className={styles.optionGroup}>
-              <label className={styles.optionLabel}>Quantity</label>
-              <div className={styles.qtyControl}>
-                <button
-                  className={styles.qtyBtn}
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  disabled={isOutOfStock}
-                >
-                  −
-                </button>
-                <span className={styles.qty}>{quantity}</span>
-                <button
-                  className={styles.qtyBtn}
-                  onClick={() => setQuantity(quantity + 1)}
-                  disabled={isOutOfStock}
-                >
-                  +
-                </button>
-              </div>
-            </div>
-
-            {/* CTA */}
-            <div className={styles.ctaGroup}>
+            <div className={styles.purchase}>
               <button
-                className={`btn btn-primary btn-lg ${styles.cartBtn}`}
+                type="button"
+                className={styles.addBtn}
                 onClick={handleAddToCart}
                 disabled={isOutOfStock}
               >
                 {isOutOfStock ? (
-                  <><ShoppingBag size={18} /> Out of Stock</>
+                  <>
+                    <ShoppingBag size={18} /> Out of stock
+                  </>
                 ) : added ? (
-                  <><Check size={18} /> Added!</>
+                  <>
+                    <Check size={18} /> Added to cart
+                  </>
                 ) : (
-                  <><ShoppingBag size={18} /> Add to Cart</>
+                  <>
+                    <ShoppingBag size={18} /> Add to cart
+                  </>
                 )}
               </button>
               <button
+                type="button"
                 className={`${styles.wishBtn} ${has(product.id) ? styles.wishBtnActive : ''}`}
                 onClick={async () => {
                   const alreadyWishlisted = has(product.id);
@@ -330,113 +517,224 @@ export default function ProductPage() {
                       : `${product.name} added to wishlist.`
                   );
                 }}
+                aria-label={
+                  has(product.id)
+                    ? `Remove ${product.name} from wishlist`
+                    : `Add ${product.name} to wishlist`
+                }
+                aria-pressed={has(product.id)}
               >
-                <Heart size={20} fill={has(product.id) ? 'currentColor' : 'none'} />
+                <Heart size={19} fill={has(product.id) ? 'currentColor' : 'none'} />
               </button>
             </div>
 
             <a
-              href={buildWhatsAppUrl(`Hi! I'm interested in the ${product.name}. Can you help me?`)}
+              href={buildWhatsAppUrl(
+                `Hi! I'm interested in the ${product.name}. Can you help me?`
+              )}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn btn-whatsapp"
-              style={{ display: 'flex', justifyContent: 'center', marginTop: '0.5rem' }}
+              className={styles.quoteLink}
             >
-              <MessageCircle size={16} /> Get a WhatsApp Quote
+              <MessageCircle size={16} /> Request a WhatsApp quote
             </a>
 
-            {/* Payment */}
             <div className={styles.paymentRow}>
-              {['PayFast', 'Yoco', 'Payflex BNPL'].map(p => <span key={p} className={styles.payBadge}>{p}</span>)}
-            </div>
-
-            {/* Delivery Estimator */}
-            <div className={styles.deliveryBox}>
-              <div className={styles.deliveryHeader}><Truck size={16} /> Delivery Estimate</div>
-              <select className="form-select" value={province} onChange={e => setProvince(e.target.value)}>
-                <option value="">Select your province</option>
-                {deliveryZones.map((zone) => <option key={zone.id} value={zone.id}>{zone.name}</option>)}
-              </select>
-              {delivery && (
-                <div className={styles.deliveryDetails}>
-                  <div className={styles.deliveryOption}>
-                    <span>Standard</span>
-                    <span>{delivery.standardDays} days · {delivery.standardFee === 0 ? 'FREE' : formatPrice(delivery.standardFee)}</span>
-                  </div>
-                  <div className={styles.deliveryOption}>
-                    <span>Express</span>
-                    <span>{delivery.expressDays} days · {formatPrice(delivery.expressFee)}</span>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Trust icons */}
-            <div className={styles.trustIcons}>
-              {[{ icon: Shield, label: '1-Year Warranty' }, { icon: RotateCcw, label: '30-Day Returns' }, { icon: Truck, label: 'SA-Wide Delivery' }].map(({ icon: I, label }) => (
-                <div key={label} className={styles.trustItem}><I size={14} color="#B59241" /> <span>{label}</span></div>
+              <span className={styles.payLabel}>Pay with</span>
+              {['PayFast', 'Yoco', 'Payflex'].map((provider) => (
+                <span key={provider} className={styles.payBadge}>
+                  {provider}
+                </span>
               ))}
             </div>
 
-            {/* Features */}
-            <div className={styles.features}>
-              <h4 className={styles.featuresTitle}>What&apos;s Included</h4>
-              <ul>
-                {product.features.map(f => <li key={f} className={styles.featureItem}><Check size={13} color="#B59241" /> {f}</li>)}
-              </ul>
+            <div className={styles.ledger}>
+              <div className={styles.block}>
+                <h2 className={styles.blockTitle}>Delivery</h2>
+                <p className={styles.blockNote}>
+                  {product.isCustomizable ? 'Made to order.' : 'Ready to dispatch.'}
+                  {product.deliveryDays ? ` Estimated ${product.deliveryDays}.` : ''}
+                </p>
+                <label className={styles.selectLabel} htmlFor="delivery-province">
+                  Delivery province
+                </label>
+                <select
+                  id="delivery-province"
+                  className={styles.select}
+                  value={province}
+                  onChange={(event) => setProvince(event.target.value)}
+                >
+                  <option value="">Select your province</option>
+                  {deliveryZones.map((zone) => (
+                    <option key={zone.id} value={zone.id}>
+                      {zone.name}
+                    </option>
+                  ))}
+                </select>
+                {delivery ? (
+                  <div className={styles.deliveryRows}>
+                    <div className={styles.deliveryRow}>
+                      <span>Standard</span>
+                      <span>
+                        {delivery.standardDays} days,{' '}
+                        {delivery.standardFee === 0 ? 'free' : formatPrice(delivery.standardFee)}
+                      </span>
+                    </div>
+                    <div className={styles.deliveryRow}>
+                      <span>Express</span>
+                      <span>
+                        {delivery.expressDays} days, {formatPrice(delivery.expressFee)}
+                      </span>
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+
+              {product.features.length > 0 ? (
+                <div className={styles.block}>
+                  <h2 className={styles.blockTitle}>What&apos;s included</h2>
+                  <ul className={styles.featureList}>
+                    {product.features.map((feature) => (
+                      <li key={feature} className={styles.featureItem}>
+                        <Check size={13} aria-hidden="true" /> {feature}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+
+              {hasPhysicalSpecs ? (
+                <div className={styles.block}>
+                  <h2 className={styles.blockTitle}>Specifications</h2>
+                  <dl className={styles.specList}>
+                    {weightKg > 0 ? (
+                      <div className={styles.specRow}>
+                        <dt>Weight</dt>
+                        <dd>{weightKg} kg</dd>
+                      </div>
+                    ) : null}
+                    {widthCm > 0 || depthCm > 0 || heightCm > 0 ? (
+                      <div className={styles.specRow}>
+                        <dt>Dimensions</dt>
+                        <dd>
+                          {widthCm} × {depthCm} × {heightCm} cm
+                        </dd>
+                      </div>
+                    ) : null}
+                  </dl>
+                </div>
+              ) : null}
             </div>
 
-            {hasPhysicalSpecs ? (
-              <div className={styles.features}>
-                <h4 className={styles.featuresTitle}>Physical Specs</h4>
-                <ul>
-                  {weightKg > 0 ? (
-                    <li className={styles.featureItem}><Check size={13} color="#B59241" /> Weight: {weightKg} kg</li>
-                  ) : null}
-                  {(widthCm > 0 || depthCm > 0 || heightCm > 0) ? (
-                    <li className={styles.featureItem}>
-                      <Check size={13} color="#B59241" /> Dimensions (cm): W {widthCm} × D {depthCm} × H {heightCm}
-                    </li>
-                  ) : null}
-                </ul>
-              </div>
-            ) : null}
-          </div>
+            <div className={styles.trustRow}>
+              <span>
+                <Shield size={14} aria-hidden="true" /> 1-year warranty
+              </span>
+              <span>
+                <RotateCcw size={14} aria-hidden="true" /> 30-day returns
+              </span>
+              <span>
+                <Truck size={14} aria-hidden="true" /> Delivery across South Africa
+              </span>
+            </div>
+          </section>
         </div>
 
-        {/* Related */}
-        <div className={styles.related}>
-          <h2 className="heading-lg" style={{ color: '#EAF0F8', marginBottom: '2rem' }}>You Might Also Like</h2>
-          <div className={styles.relatedGrid}>
-            {related.map(p => (
-              <Link key={p.id} href={`/product/${p.slug}`} className={styles.relatedCard}>
-                <div className={styles.relatedImg} style={{ background: `${p.colors[0].hex}20` }}>
-                  {p.images[0] ? (
-                    <button
-                      type="button"
-                      className={styles.relatedZoomTrigger}
-                      onClick={(event) => openRelatedImagePreview(p.name, p.images, event)}
-                      aria-label={`Preview ${p.name} image`}
-                    >
-                      <ZoomIn size={16} />
-                    </button>
-                  ) : null}
-                  {p.images[0] ? (
-                    <img
-                      src={p.images[0]}
-                      alt={p.name}
-                      className={styles.productImage}
-                    />
-                  ) : (
-                    <ProductHeroSVG category={p.category} color={p.colors[0].hex} />
-                  )}
+        {story ? (
+          <section className={styles.story} aria-labelledby="story-title">
+            <div className={styles.storyCopy}>
+              <h2 id="story-title" className={styles.storyTitle}>
+                Built around the room it lives in.
+              </h2>
+              <p className={styles.storyText}>{story}</p>
+            </div>
+            <dl className={styles.storySpecs}>
+              <div>
+                <dt>Lead time</dt>
+                <dd>{product.deliveryDays || 'Made to order'}</dd>
+              </div>
+              <div>
+                <dt>Customisation</dt>
+                <dd>
+                  {product.isCustomizable
+                    ? 'Sizes, fabrics and finishes on request'
+                    : 'As shown'}
+                </dd>
+              </div>
+              <div>
+                <dt>Delivery</dt>
+                <dd>All nine provinces</dd>
+              </div>
+              {weightKg > 0 ? (
+                <div>
+                  <dt>Weight</dt>
+                  <dd>{weightKg} kg</dd>
                 </div>
-                <h4 className={styles.relatedName}>{p.name}</h4>
-                <span className={styles.relatedPrice}>{formatPrice(p.price)}</span>
+              ) : null}
+              {hasPhysicalSpecs ? (
+                <div>
+                  <dt>Dimensions</dt>
+                  <dd>
+                    {widthCm} × {depthCm} × {heightCm} cm
+                  </dd>
+                </div>
+              ) : null}
+            </dl>
+          </section>
+        ) : null}
+
+        {related.length > 0 ? (
+          <section className={styles.related} aria-labelledby="related-title">
+            <div className={styles.relatedHead}>
+              <h2 id="related-title" className={styles.relatedTitle}>
+                {product.category === 'furniture' ? 'Complete the room' : 'You might also like'}
+              </h2>
+              <Link
+                href={product.category === 'furniture' ? '/furniture#collection' : '/shop'}
+                className={styles.relatedAll}
+              >
+                {product.category === 'furniture' ? 'See all furniture' : 'See all products'}
               </Link>
-            ))}
-          </div>
-        </div>
+            </div>
+            <div className={styles.relatedGrid}>
+              {related.map((entry) => (
+                <Link key={entry.id} href={`/product/${entry.slug}`} className={styles.relatedCard}>
+                  <div className={styles.relatedStage}>
+                    {entry.images[0] ? (
+                      <button
+                        type="button"
+                        className={styles.relatedZoom}
+                        onClick={(event) =>
+                          openRelatedImagePreview(entry.name, entry.images, event)
+                        }
+                        aria-label={`Preview ${entry.name} image`}
+                      >
+                        <ZoomIn size={15} />
+                      </button>
+                    ) : null}
+                    {entry.images[0] ? (
+                      <img
+                        src={imageUrl(entry.images[0], 640)}
+                        alt={entry.name}
+                        className={styles.relatedImage}
+                        loading="lazy"
+                      />
+                    ) : (
+                      <ProductHeroSVG
+                        category={entry.category}
+                        color={entry.colors[0]?.hex ?? '#B59241'}
+                      />
+                    )}
+                  </div>
+                  <div className={styles.relatedInfo}>
+                    <h3 className={styles.relatedName}>{entry.name}</h3>
+                    <span className={styles.relatedPrice}>{formatPrice(entry.price)}</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        ) : null}
 
         <ProductImageLightbox
           isOpen={isMainLightboxOpen}

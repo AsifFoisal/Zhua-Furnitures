@@ -21,7 +21,7 @@
 .icon { color: #B59241; flex-shrink: 0; }
 
 .text {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-accent);
   font-size: 0.8rem;
   font-weight: 500;
   color: #A9B7C9;

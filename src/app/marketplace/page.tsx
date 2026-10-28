@@ -60,7 +60,7 @@ export default function MarketplacePage() {
     <div style={{ padding: '150px 0 6rem', minHeight: '100vh', background: 'var(--midnight)' }}>
       <div className="container" style={{ maxWidth: '720px', textAlign: 'center' }}>
         <span className="label-accent">Marketplace</span>
-        <h1 className="heading-xl" style={{ color: '#EAF0F8', margin: '1rem 0' }}>Vendor Portal Coming Soon</h1>
+        <h1 className="heading-xl" style={{ color: '#EAF0F8', margin: '1rem 0' }}>Vendor Portal <span className="heading-accent">Coming Soon</span></h1>
         <p style={{ color: '#A9B7C9', lineHeight: 1.8, marginBottom: '1.5rem' }}>
           We are preparing a curated marketplace where verified South African makers and decor studios can list premium products on Zhua.
         </p>

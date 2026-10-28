@@ -15,7 +15,7 @@ export default function FinalCTA() {
 
       <div className={`container ${styles.content}`}>
         <span className="label-accent">Start Your Transformation</span>
-        <h2 className={`heading-xl ${styles.title}`}>Ready to Transform Your Space?</h2>
+        <h2 className={`heading-xl ${styles.title}`}>Ready to Transform <span className="heading-accent">Your Space?</span></h2>
         <p className={styles.lede}>
           Whether you need a new sofa, custom curtains, a feature wall or a complete interior
           solution, let&apos;s bring your vision to life.

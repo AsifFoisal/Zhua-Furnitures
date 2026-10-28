@@ -16,7 +16,7 @@ export default function HowItWorks() {
         <div className="section-header" style={{ textAlign: 'center' }}>
           <span className="label-accent">How ZHUA Works</span>
           <div className="gold-divider" style={{ margin: '0.75rem auto 1rem' }} />
-          <h2 className="heading-xl">From Idea to Installation</h2>
+          <h2 className="heading-xl">From Idea to <span className="heading-accent">Installation</span></h2>
         </div>
 
         <div className={styles.grid}>

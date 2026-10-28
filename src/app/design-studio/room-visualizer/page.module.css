@@ -4,23 +4,23 @@
 
 /* Palette */
 .palette { background: #163250; border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 1.25rem; position: sticky; top: 100px; }
-.paletteTitle { font-family: 'Playfair Display', serif; font-size: 1rem; color: #EAF0F8; margin-bottom: 4px; }
+.paletteTitle { font-family: var(--font-display); font-size: 1rem; color: #EAF0F8; margin-bottom: 4px; }
 .paletteSub { font-size: 0.72rem; color: #58708A; margin-bottom: 1rem; }
 .paletteGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1.25rem; }
 .paletteItem { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 0.75rem 0.5rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; cursor: pointer; transition: all 150ms; }
 .paletteItem:hover { background: rgba(181,146,65,0.08); border-color: rgba(181,146,65,0.2); }
 .paletteEmoji { font-size: 1.5rem; }
-.paletteLabel { font-family: 'Outfit', sans-serif; font-size: 0.68rem; font-weight: 500; color: #7B8EA6; text-align: center; }
+.paletteLabel { font-family: var(--font-accent); font-size: 0.68rem; font-weight: 500; color: #7B8EA6; text-align: center; }
 
 .controls { background: rgba(181,146,65,0.06); border: 1px solid rgba(181,146,65,0.15); border-radius: 10px; padding: 1rem; margin-bottom: 1.25rem; }
-.controlsTitle { font-family: 'Outfit', sans-serif; font-size: 0.75rem; font-weight: 700; color: #B59241; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.75rem; }
+.controlsTitle { font-family: var(--font-accent); font-size: 0.75rem; font-weight: 700; color: #B59241; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.75rem; }
 .controlsRow { display: flex; align-items: center; gap: 0.5rem; justify-content: center; margin-bottom: 0.75rem; }
 .controlBtn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: #A9B7C9; cursor: pointer; transition: all 150ms; }
 .controlBtn:hover { background: rgba(181,146,65,0.1); color: #B59241; }
-.removeBtn { width: 100%; border-radius: 8px; font-family: 'Outfit', sans-serif; font-size: 0.78rem; font-weight: 600; color: #ff6b6b; background: rgba(255,107,107,0.08); border-color: rgba(255,107,107,0.2); }
+.removeBtn { width: 100%; border-radius: 8px; font-family: var(--font-accent); font-size: 0.78rem; font-weight: 600; color: #ff6b6b; background: rgba(255,107,107,0.08); border-color: rgba(255,107,107,0.2); }
 
 .tips { border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1rem; }
-.tipsTitle { font-family: 'Outfit', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #58708A; margin-bottom: 0.5rem; }
+.tipsTitle { font-family: var(--font-accent); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #58708A; margin-bottom: 0.5rem; }
 .tipsList { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; }
 .tipsList li { font-size: 0.75rem; color: #3A5673; padding-left: 0.875rem; position: relative; }
 .tipsList li::before { content: '·'; position: absolute; left: 0; color: #58708A; }
@@ -32,6 +32,6 @@
   position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 0.75rem; cursor: pointer; background: rgba(15,36,59,0.5);
 }
-.uploadOverlay span { font-family: 'Outfit', sans-serif; font-size: 0.9rem; color: #58708A; }
+.uploadOverlay span { font-family: var(--font-accent); font-size: 0.9rem; color: #58708A; }
 
 @media (max-width: 1024px) { .workspace { grid-template-columns: 1fr; } .palette { position: static; } }
