@@ -4,11 +4,14 @@ export type PayFastMode = 'sandbox' | 'live';
 export const PAYFAST_LIVE_MINIMUM_AMOUNT_CENTS = 500;
 
 /**
- * PayFast requires x-www-form-urlencoded encoding
- * Spaces must be converted to "+"
+ * PayFast signatures are built with PHP's urlencode(), which differs from
+ * encodeURIComponent: spaces become "+", and characters such as ' ! ( ) * ~
+ * are percent-encoded.
  */
 function encode(value: string): string {
-  return encodeURIComponent(value).replace(/%20/g, '+');
+  return encodeURIComponent(value)
+    .replace(/[!'()*~]/g, (char) => `%${char.charCodeAt(0).toString(16).toUpperCase()}`)
+    .replace(/%20/g, '+');
 }
 
 /**
@@ -68,7 +71,11 @@ export function generatePayFastSignature(
 }
 
 /**
- * Verify ITN signature (PayFast callback)
+ * Verify ITN signature (PayFast callback).
+ *
+ * PayFast hashes the variables in the order they were posted (not sorted),
+ * includes empty values, excludes "signature" and everything after it, and
+ * appends the passphrase last. This mirrors PayFast's official PHP SDK.
  */
 export function verifyPayFastSignature(
   payload: Record<string, unknown>,
@@ -80,12 +87,25 @@ export function verifyPayFastSignature(
 
   if (!incomingSignature) return false;
 
-  // ✅ PayFast ITN MUST use sorted keys
-  const expectedSignature = generatePayFastSignature(
-    payload,
-    passphrase,
-    true
-  ).toLowerCase();
+  const pairs: string[] = [];
+
+  for (const [key, value] of Object.entries(payload)) {
+    if (key === 'signature') {
+      break;
+    }
+
+    pairs.push(`${key}=${encode(String(value))}`);
+  }
+
+  const cleanPassphrase = passphrase?.trim();
+  if (cleanPassphrase) {
+    pairs.push(`passphrase=${encode(cleanPassphrase)}`);
+  }
+
+  const expectedSignature = createHash('md5')
+    .update(pairs.join('&'))
+    .digest('hex')
+    .toLowerCase();
 
   return incomingSignature === expectedSignature;
 }
