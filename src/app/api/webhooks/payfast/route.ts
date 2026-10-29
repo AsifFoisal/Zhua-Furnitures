@@ -48,6 +48,37 @@ export async function POST(request: Request) {
   const orderId = String(payload.m_payment_id ?? '').trim();
   const payfastPaymentId = String(payload.pf_payment_id ?? '').trim();
   const providerStatus = mapPayFastPaymentStatus(String(payload.payment_status ?? ''));
+  const webhookId = `${orderId}:${payfastPaymentId || 'none'}:${providerStatus}`;
+  const supabase = createSupabaseAdminClient();
+
+  async function recordRejectedEvent(reason: string) {
+    if (!orderId) {
+      return;
+    }
+
+    const { error } = await supabase.from('payment_webhook_events').upsert(
+      {
+        gateway: 'payfast',
+        webhook_id: webhookId,
+        event_type: String(payload.payment_status ?? 'unknown'),
+        related_order_id: isUuid(orderId) ? orderId : null,
+        processing_status: 'failed',
+        processed_at: new Date().toISOString(),
+        error_message: reason,
+        payload,
+      },
+      { onConflict: 'gateway,webhook_id', ignoreDuplicates: true }
+    );
+
+    if (error) {
+      console.error('[PayFast Webhook] Could not record rejected event.', {
+        webhookId,
+        orderId,
+        reason,
+        error: error.message,
+      });
+    }
+  }
 
   if (!orderId) {
     console.warn('[PayFast Webhook] Missing order reference in payload.');
@@ -60,11 +91,21 @@ export async function POST(request: Request) {
       payfastPaymentId,
       providerStatus,
     });
+    await recordRejectedEvent('Invalid signature');
     return new NextResponse('Invalid signature', { status: 400 });
   }
 
-  const webhookId = `${orderId}:${payfastPaymentId || 'none'}:${providerStatus}`;
-  const supabase = createSupabaseAdminClient();
+  const incomingMerchantId = String(payload.merchant_id ?? '').trim();
+  if (incomingMerchantId && incomingMerchantId !== payfastEnv.merchantId) {
+    console.warn('[PayFast Webhook] Merchant ID mismatch.', {
+      orderId,
+      payfastPaymentId,
+      expected: payfastEnv.merchantId,
+      received: incomingMerchantId,
+    });
+    await recordRejectedEvent('Merchant ID mismatch');
+    return new NextResponse('Merchant ID mismatch', { status: 400 });
+  }
 
   const { data: existingEvent } = await supabase
     .from('payment_webhook_events')
@@ -149,6 +190,31 @@ export async function POST(request: Request) {
   }
 
   const nowIso = new Date().toISOString();
+  const amountCents = toCents(String(payload.amount_gross ?? '0'));
+
+  if (providerStatus === 'paid' && amountCents !== order.total_cents) {
+    const errorMessage = `Amount mismatch: expected ${order.total_cents} cents, received ${amountCents} cents.`;
+
+    console.error('[PayFast Webhook] Amount mismatch; refusing to mark order paid.', {
+      webhookId,
+      orderId: order.id,
+      expectedCents: order.total_cents,
+      receivedCents: amountCents,
+    });
+
+    await supabase
+      .from('payment_webhook_events')
+      .update({
+        processing_status: 'failed',
+        processed_at: nowIso,
+        related_order_id: order.id,
+        error_message: errorMessage,
+      })
+      .eq('id', createdEvent.id);
+
+    return new NextResponse('Amount mismatch', { status: 400 });
+  }
+
   const paymentStatus =
     order.payment_status === 'paid' && providerStatus !== 'failed' ? 'paid' : providerStatus;
   const isFirstPaidTransition = paymentStatus === 'paid' && order.payment_status !== 'paid';
@@ -176,7 +242,6 @@ export async function POST(request: Request) {
     }
   }
 
-  const amountCents = toCents(String(payload.amount_gross ?? '0'));
   const transactionStatus =
     paymentStatus === 'paid' ? 'succeeded' : paymentStatus === 'failed' ? 'failed' : 'pending';
   const idempotencyKey = payfastPaymentId
