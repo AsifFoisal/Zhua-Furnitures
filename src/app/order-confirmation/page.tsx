@@ -7,6 +7,7 @@ import { cookies } from 'next/headers';
 import { getOptionalUser } from '@/lib/auth';
 import { normalizeEmail } from '@/lib/order-linking';
 import { applyPaidOrderStockDecrement } from '@/lib/inventory';
+import ClearCartOnConfirmation from './ClearCartOnConfirmation';
 
 type ConfirmationSearchParams = {
   order?: string;
@@ -320,9 +321,11 @@ export default async function OrderConfirmationPage({
     : 'Pending';
   const orderItems = confirmedOrder?.order_items ?? [];
   const totalLabel = confirmedOrder ? formatOrderCurrency(confirmedOrder.total_cents) : null;
+  const returningFromGateway = Boolean(orderIdCandidate || orderNumberCandidate || pendingOrder);
 
   return (
     <div style={{ padding: '140px 0 6rem', minHeight: '100vh', background: 'var(--midnight)' }}>
+      <ClearCartOnConfirmation enabled={returningFromGateway} />
       <div className="container" style={{ maxWidth: '640px', margin: '0 auto', textAlign: 'center' }}>
         <div style={{ width: 80, height: 80, background: 'rgba(78,205,196,0.1)', border: '1px solid rgba(78,205,196,0.3)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 2rem' }}>
           <CheckCircle size={40} color="#4ECDC4" />

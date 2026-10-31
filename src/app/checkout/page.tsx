@@ -29,7 +29,7 @@ export default function CheckoutPage() {
   const [promoCode, setPromoCode] = useState('');
   const [promoDiscount, setPromoDiscount] = useState(0);
   const [promoLoading, setPromoLoading] = useState(false);
-  const { items, total, clearCart, flushRemoteSync } = useCartStore();
+  const { items, total } = useCartStore();
   const { register, handleSubmit, watch } = useForm<DeliveryForm>();
   const selectedProvince = watch('province');
   const deliveryArea = deliveryZones.find((zone) => zone.id === selectedProvince);
@@ -246,9 +246,9 @@ export default function CheckoutPage() {
         throw new Error(paymentInit.error ?? 'Could not initialize PayFast checkout.');
       }
 
-      clearCart();
-      await flushRemoteSync();
-
+      // The cart is deliberately kept until the customer is back on the
+      // confirmation page. If the gateway page fails (for example a PayFast
+      // 500), the customer can press back and retry without re-adding items.
       toast.info('Redirecting to PayFast...');
 
       const form = document.createElement('form');
