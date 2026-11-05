@@ -3,7 +3,7 @@ import crypto from 'node:crypto';
 import { getCloudinaryEnv } from '@/lib/supabase/env';
 
 const allowedFolders = [
-  'zhua/products',
+  'zhua/products', // includes zhua/products/models for .glb raw uploads
   'zhua/content',
   'zhua/gallery',
   'zhua/testimonials',
@@ -24,9 +24,23 @@ function buildSignature(params: Record<string, string | number>, apiSecret: stri
   return crypto.createHash('sha1').update(`${toSign}${apiSecret}`).digest('hex');
 }
 
-export function createUploadSignature(options: { folder: string; publicId: string }) {
+export type CloudinaryResourceType = 'image' | 'raw';
+
+export function isCloudinaryResourceType(value: unknown): value is CloudinaryResourceType {
+  return value === 'image' || value === 'raw';
+}
+
+export function createUploadSignature(options: {
+  folder: string;
+  publicId: string;
+  resourceType?: CloudinaryResourceType;
+}) {
   const folder = options.folder.trim();
   const publicId = options.publicId.trim();
+  const resourceType: CloudinaryResourceType =
+    options.resourceType && isCloudinaryResourceType(options.resourceType)
+      ? options.resourceType
+      : 'image';
 
   if (!isAllowedFolder(folder)) {
     throw new Error('Folder is not allowed.');
@@ -55,7 +69,8 @@ export function createUploadSignature(options: { folder: string; publicId: strin
     publicId,
     timestamp,
     signature,
-    uploadUrl: `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+    resourceType,
+    uploadUrl: `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`,
   };
 }
 
@@ -100,6 +115,59 @@ export async function destroyCloudinaryImage(publicId: string): Promise<{ result
   return {
     result: body.result ?? 'unknown',
   };
+}
+
+export async function destroyCloudinaryAsset(
+  publicId: string,
+  resourceType: CloudinaryResourceType = 'image'
+): Promise<{ result: string }> {
+  const normalized = publicId.trim();
+  if (!normalized || normalized.includes('..')) {
+    throw new Error('Invalid public ID.');
+  }
+
+  const { cloudName, apiKey, apiSecret } = getCloudinaryEnv();
+  const timestamp = Math.floor(Date.now() / 1000);
+
+  const signature = buildSignature(
+    {
+      public_id: normalized,
+      timestamp,
+      invalidate: 'true',
+    },
+    apiSecret
+  );
+
+  const response = await fetch(
+    `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/destroy`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        public_id: normalized,
+        timestamp: String(timestamp),
+        signature,
+        api_key: apiKey,
+        invalidate: 'true',
+      }),
+    }
+  );
+
+  const body = (await response.json()) as { result?: string; error?: { message?: string } };
+
+  if (!response.ok || body.error?.message) {
+    throw new Error(body.error?.message ?? 'Cloudinary delete request failed.');
+  }
+
+  return {
+    result: body.result ?? 'unknown',
+  };
+}
+
+export async function destroyCloudinaryRaw(publicId: string): Promise<{ result: string }> {
+  return destroyCloudinaryAsset(publicId, 'raw');
 }
 
 export function buildPublicId(folder: string, baseName: string): string {

@@ -171,6 +171,7 @@ function toAdminProductRow(product: {
   sizes: unknown;
   fabrics: unknown;
   images: unknown;
+  model_url: string | null;
 }) {
   const images = normalizeCloudinaryImageAssets(product.images);
   const offerPercentage = calculateOfferPercentage(product.price_cents, product.original_price_cents);
@@ -206,6 +207,7 @@ function toAdminProductRow(product: {
     images,
     primaryImage: images[0]?.secureUrl ?? null,
     imageCount: images.length,
+    modelUrl: typeof product.model_url === 'string' && product.model_url.trim() ? product.model_url : null,
   };
 }
 
@@ -218,7 +220,7 @@ export async function GET() {
   const supabase = createSupabaseAdminClient();
   const { data, error } = await supabase
     .from('products')
-    .select('id, sku, slug, name, category, subcategory, stock, price_cents, original_price_cents, status, badge, description, long_description, delivery_days, weight_kg, width_cm, depth_cm, height_cm, colors, sizes, fabrics, images')
+    .select('id, sku, slug, name, category, subcategory, stock, price_cents, original_price_cents, status, badge, description, long_description, delivery_days, weight_kg, width_cm, depth_cm, height_cm, colors, sizes, fabrics, images, model_url')
     .order('created_at', { ascending: false });
 
   if (error) {
@@ -316,7 +318,7 @@ export async function POST(request: Request) {
       depth_cm: depthCm,
       height_cm: heightCm,
     })
-    .select('id, sku, slug, name, category, subcategory, stock, price_cents, original_price_cents, status, badge, description, long_description, delivery_days, weight_kg, width_cm, depth_cm, height_cm, colors, sizes, fabrics, images')
+    .select('id, sku, slug, name, category, subcategory, stock, price_cents, original_price_cents, status, badge, description, long_description, delivery_days, weight_kg, width_cm, depth_cm, height_cm, colors, sizes, fabrics, images, model_url')
     .single();
 
   if (error || !data) {
