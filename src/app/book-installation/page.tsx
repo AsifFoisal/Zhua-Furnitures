@@ -1,6 +1,6 @@
 'use client';
 import { FormEvent, useState } from 'react';
-import { products } from '@/lib/data';
+import { useStorefrontProducts } from '@/lib/use-storefront-products';
 import { useToastFeedback } from '@/lib/toast-feedback';
 import { buildWhatsAppUrl } from '@/lib/whatsapp';
 
@@ -18,6 +18,7 @@ const defaultBookingForm = {
 };
 
 export default function BookInstallationPage() {
+  const { products, loading } = useStorefrontProducts();
   const [form, setForm] = useState(defaultBookingForm);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -105,8 +106,9 @@ export default function BookInstallationPage() {
               required
               value={form.productId}
               onChange={(event) => setForm((prev) => ({ ...prev, productId: event.target.value }))}
+              disabled={loading}
             >
-              <option value="">Select product</option>
+              <option value="">{loading ? 'Loading products…' : 'Select product'}</option>
               {products.map((product) => <option key={product.id} value={product.id}>{product.name}</option>)}
             </select>
           </div>

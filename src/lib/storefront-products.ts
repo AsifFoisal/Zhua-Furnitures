@@ -1,4 +1,4 @@
-import { products as fallbackProducts, type Product, type ProductColor } from '@/lib/data';
+import type { Product, ProductColor } from '@/lib/data';
 import { normalizeCloudinaryImageAssets } from '@/lib/media';
 import { createSupabaseAdminClient } from '@/lib/supabase/admin';
 import { hasServiceSupabaseEnv } from '@/lib/supabase/env';
@@ -77,30 +77,15 @@ function toImageUrls(value: unknown): string[] {
   return [];
 }
 
-function isRenderableFallbackImage(value: string): boolean {
-  return value.startsWith('/images/') || isRenderableImageUrl(value);
-}
-
-export function fallbackStorefrontProducts(): Product[] {
-  return fallbackProducts.map((product) => ({
-    ...product,
-    images: product.images.filter((url) => isRenderableFallbackImage(url)),
-    weightKg: Number(product.weightKg ?? 0),
-    dimensions: {
-      widthCm: Number(product.dimensions?.widthCm ?? 0),
-      depthCm: Number(product.dimensions?.depthCm ?? 0),
-      heightCm: Number(product.dimensions?.heightCm ?? 0),
-    },
-  }));
-}
-
 /**
- * Reads the active storefront catalogue from Supabase, falling back to the
- * built-in demo catalogue when the service role environment is not configured.
+ * Reads the active storefront catalogue from Supabase. Returns an empty
+ * catalogue when the service role environment is not configured — callers
+ * render a skeleton while loading and an empty state afterwards. No mock
+ * fallback products.
  */
 export async function getStorefrontProducts(): Promise<Product[]> {
   if (!hasServiceSupabaseEnv) {
-    return fallbackStorefrontProducts();
+    return [];
   }
 
   const supabase = createSupabaseAdminClient();
