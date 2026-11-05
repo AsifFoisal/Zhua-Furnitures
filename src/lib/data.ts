@@ -29,6 +29,8 @@ export interface Product {
   inStock: boolean;
   isCustomizable: boolean;
   deliveryDays: string;
+  /** Public URL of the product's GLB 3D model, when one has been uploaded. */
+  modelUrl?: string;
   weightKg?: number;
   dimensions?: {
     widthCm?: number;

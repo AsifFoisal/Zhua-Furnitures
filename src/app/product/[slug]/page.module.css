@@ -144,6 +144,51 @@
   object-fit: contain;
 }
 
+/* 3D model entry points */
+.thumb3d {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  padding: 0.4rem;
+  color: var(--stage-ink);
+}
+
+.thumb3d span {
+  font-family: var(--font-accent);
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
+}
+
+.thumb3d:hover {
+  border-color: rgba(181, 146, 65, 0.75);
+  opacity: 1;
+}
+
+.view3dCard {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  padding: 0.4rem 0.72rem;
+  border: 1px solid rgba(181, 146, 65, 0.55);
+  border-radius: 2px;
+  background: linear-gradient(135deg, rgba(181, 146, 65, 0.18) 0%, rgba(181, 146, 65, 0.06) 100%);
+  color: var(--stage-ink);
+  font-family: var(--font-accent);
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 200ms, border-color 200ms, transform 200ms;
+}
+
+.view3dCard:hover {
+  background: linear-gradient(135deg, rgba(181, 146, 65, 0.32) 0%, rgba(181, 146, 65, 0.12) 100%);
+  border-color: var(--gold);
+  transform: translateY(-1px);
+}
+
 .stage {
   position: relative;
   display: flex;

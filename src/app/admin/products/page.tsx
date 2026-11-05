@@ -54,6 +54,7 @@ interface AdminProductRow {
   images: CloudinaryImageAsset[];
   primaryImage: string | null;
   imageCount: number;
+  modelUrl: string | null;
 }
 
 type ProductPatchPayload = {
@@ -249,6 +250,7 @@ function normalizeProductRow(row: AdminProductRow): AdminProductRow {
     images: Array.isArray(row.images) ? row.images : [],
     primaryImage: row.primaryImage ?? null,
     imageCount: Number.isFinite(row.imageCount) ? row.imageCount : row.images?.length ?? 0,
+    modelUrl: typeof row.modelUrl === 'string' && row.modelUrl.trim().length > 0 ? row.modelUrl : null,
   };
 }
 
@@ -686,6 +688,219 @@ function ProductStringListFields({ values, onChange, placeholder, addLabel }: Pr
   );
 }
 
+const MAX_MODEL_BYTES = 50 * 1024 * 1024;
+
+interface ProductModelFieldsProps {
+  productId: string;
+  modelUrl: string | null;
+  onModelChange: (modelUrl: string | null) => void;
+  onError: (message: string) => void;
+}
+
+function ProductModelFields({ productId, modelUrl, onModelChange, onError }: ProductModelFieldsProps) {
+  const [busy, setBusy] = useState(false);
+
+  const uploadModel = async (file: File) => {
+    if (!file.name.toLowerCase().endsWith('.glb')) {
+      onError('Only .glb model files are allowed.');
+      return;
+    }
+
+    if (file.size <= 0 || file.size > MAX_MODEL_BYTES) {
+      onError('Model files must be between 1 byte and 50MB.');
+      return;
+    }
+
+    // Validate the glTF header locally before uploading — reads only the
+    // first 4 bytes, so large files are not buffered fully.
+    const header = await file.slice(0, 4).arrayBuffer();
+    if (header.byteLength < 4 || new DataView(header).getUint32(0, true) !== 0x46546c67) {
+      onError('That file is not a valid GLB model (missing glTF header).');
+      return;
+    }
+
+    setBusy(true);
+    onError('');
+
+    try {
+      // Mirror the image flow: browser -> sign endpoint -> Cloudinary (raw)
+      // -> JSON persist. The .glb bytes never travel through Next.js, so
+      // the 1MB Server Actions / proxy body limits cannot trigger a 413.
+      const signRes = await fetch('/api/admin/media/sign-upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          folder: 'zhua/products/models',
+          baseName: productId,
+          resourceType: 'raw',
+        }),
+      });
+
+      const signData = (await signRes.json().catch(() => ({}))) as {
+        cloudName?: string;
+        apiKey?: string;
+        timestamp?: number;
+        signature?: string;
+        folder?: string;
+        publicId?: string;
+        uploadUrl?: string;
+        error?: string;
+      };
+
+      if (
+        !signRes.ok ||
+        !signData.uploadUrl ||
+        !signData.apiKey ||
+        !signData.signature ||
+        !signData.timestamp ||
+        !signData.publicId
+      ) {
+        throw new Error(signData.error ?? 'Could not prepare model upload.');
+      }
+
+      const uploadBody = new FormData();
+      uploadBody.append('file', file);
+      uploadBody.append('api_key', signData.apiKey);
+      uploadBody.append('timestamp', String(signData.timestamp));
+      uploadBody.append('signature', signData.signature);
+      uploadBody.append('folder', signData.folder ?? 'zhua/products/models');
+      uploadBody.append('public_id', signData.publicId);
+
+      const uploadRes = await fetch(signData.uploadUrl, {
+        method: 'POST',
+        body: uploadBody,
+      });
+
+      const uploadData = (await uploadRes.json().catch(() => ({}))) as {
+        secure_url?: string;
+        public_id?: string;
+        format?: string;
+        bytes?: number;
+        error?: { message?: string };
+      };
+
+      if (!uploadRes.ok || !uploadData.secure_url || !uploadData.public_id) {
+        throw new Error(
+          uploadData.error?.message ?? 'Could not upload the 3D model to Cloudinary.'
+        );
+      }
+
+      if (typeof uploadData.bytes === 'number' && uploadData.bytes > MAX_MODEL_BYTES) {
+        throw new Error('Model files must be between 1 byte and 50MB.');
+      }
+
+      const format = (uploadData.format ?? '').toLowerCase();
+      if (format && format !== 'glb') {
+        throw new Error('Only .glb model files are allowed.');
+      }
+
+      const res = await fetch(`/api/admin/products/${productId}/model`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          modelUrl: uploadData.secure_url,
+          publicId: uploadData.public_id,
+          bytes: uploadData.bytes,
+          format: uploadData.format,
+        }),
+      });
+      const data = (await res.json()) as { modelUrl?: string | null; error?: string };
+
+      if (!res.ok || typeof data.modelUrl !== 'string') {
+        throw new Error(data.error ?? 'Could not upload the 3D model.');
+      }
+
+      onModelChange(data.modelUrl);
+      toast.success('3D model uploaded. Customers can now view it on the product page.');
+    } catch (err) {
+      onError(err instanceof Error ? err.message : 'Could not upload the 3D model.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const removeModel = async () => {
+    setBusy(true);
+    onError('');
+
+    try {
+      const res = await fetch(`/api/admin/products/${productId}/model`, { method: 'DELETE' });
+      const data = (await res.json()) as { modelUrl?: string | null; error?: string };
+
+      if (!res.ok || data.modelUrl !== null) {
+        throw new Error(data.error ?? 'Could not remove the 3D model.');
+      }
+
+      onModelChange(null);
+      toast.success('3D model removed from the product.');
+    } catch (err) {
+      onError(err instanceof Error ? err.message : 'Could not remove the 3D model.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '0.5rem',
+        border: '1px dashed rgba(148, 163, 184, 0.4)',
+        borderRadius: '8px',
+        padding: '0.75rem',
+      }}
+    >
+      <span style={{ fontSize: '0.78rem', opacity: 0.85 }}>
+        {modelUrl
+          ? '3D model attached — it shows as a “View 3D” card on the product page.'
+          : 'No 3D model yet. Upload a .glb file (max 50MB) to show a “View 3D” card on the product page.'}
+      </span>
+
+      {modelUrl ? (
+        <a
+          href={modelUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ fontSize: '0.72rem', color: '#B59241', wordBreak: 'break-all' }}
+        >
+          Open current model file
+        </a>
+      ) : null}
+
+      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+        <label className={styles.ghostButton} style={{ cursor: busy ? 'wait' : 'pointer' }}>
+          {busy ? 'Working...' : modelUrl ? 'Replace model' : 'Upload GLB'}
+          <input
+            type="file"
+            accept=".glb,model/gltf-binary"
+            style={{ display: 'none' }}
+            disabled={busy}
+            onChange={(event) => {
+              const file = event.currentTarget.files?.[0];
+              if (file) {
+                void uploadModel(file);
+              }
+              event.currentTarget.value = '';
+            }}
+          />
+        </label>
+
+        {modelUrl ? (
+          <button
+            className={styles.ghostButton}
+            type="button"
+            onClick={() => void removeModel()}
+            disabled={busy}
+          >
+            Remove
+          </button>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
 export default function ProductsAdminPage() {
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('All');
@@ -879,6 +1094,13 @@ export default function ProductsAdminPage() {
 
     setEditingProductId(null);
     setEditDraft(null);
+  };
+
+  const applyModelChange = (productId: string, modelUrl: string | null) => {
+    setProducts((prev) =>
+      prev.map((row) => (row.id === productId ? { ...row, modelUrl } : row))
+    );
+    setEditDraft((prev) => (prev && prev.id === productId ? { ...prev, modelUrl } : prev));
   };
 
   const uploadProductImages = async (productId: string, files: File[]) => {
@@ -1957,6 +2179,18 @@ export default function ProductsAdminPage() {
                       setEditDraft((prev) => (prev ? { ...prev, longDescription: e.target.value } : prev))
                     }
                   />
+                </div>
+
+                <div className={styles.formRow} style={{ gridColumn: '1 / -1' }}>
+                  <label className={styles.label}>3D Model (GLB)</label>
+                  {editingProductId ? (
+                    <ProductModelFields
+                      productId={editingProductId}
+                      modelUrl={editDraft.modelUrl}
+                      onModelChange={(modelUrl) => applyModelChange(editingProductId, modelUrl)}
+                      onError={setError}
+                    />
+                  ) : null}
                 </div>
               </div>
             </div>

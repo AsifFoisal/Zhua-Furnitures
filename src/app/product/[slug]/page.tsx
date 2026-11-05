@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import {
+  Box,
   Check,
   ChevronLeft,
   ChevronRight,
@@ -24,6 +25,7 @@ import { useStorefrontProducts } from '@/lib/use-storefront-products';
 import { DEFAULT_DELIVERY_ZONES, type DeliveryZone } from '@/lib/delivery';
 import { buildWhatsAppUrl } from '@/lib/whatsapp';
 import ProductImageLightbox from '@/components/ui/ProductImageLightbox';
+import Product3DModal from '@/components/product3d/Product3DModal';
 import styles from './page.module.css';
 
 type RelatedImagePreviewState = {
@@ -96,6 +98,7 @@ export default function ProductPage() {
   const [deliveryZones, setDeliveryZones] = useState<DeliveryZone[]>(DEFAULT_DELIVERY_ZONES);
   const [imgIndex, setImgIndex] = useState(0);
   const [isMainLightboxOpen, setIsMainLightboxOpen] = useState(false);
+  const [is3dViewerOpen, setIs3dViewerOpen] = useState(false);
   const [relatedImagePreview, setRelatedImagePreview] =
     useState<RelatedImagePreviewState | null>(null);
   const [added, setAdded] = useState(false);
@@ -189,6 +192,9 @@ export default function ProductPage() {
   const galleryImages = colorImages.length > 0 ? colorImages : product.images;
   const galleryPreviewImages = toPreviewImages(galleryImages);
   const imgCount = galleryImages.length;
+  const modelUrl = typeof product.modelUrl === 'string' && product.modelUrl.trim().length > 0
+    ? product.modelUrl
+    : null;
   const safeImgIndex = Math.min(imgIndex, Math.max(0, imgCount - 1));
   const saving =
     product.originalPrice && product.originalPrice > product.price
@@ -244,8 +250,19 @@ export default function ProductPage() {
             className={`${styles.gallery} ${imgCount <= 1 ? styles.galleryNoThumbs : ''}`}
             aria-label="Product images"
           >
-            {imgCount > 1 ? (
+            {imgCount > 1 || modelUrl ? (
               <div className={styles.thumbs} role="group" aria-label="Choose product image">
+                {modelUrl ? (
+                  <button
+                    type="button"
+                    className={`${styles.thumb} ${styles.thumb3d}`}
+                    onClick={() => setIs3dViewerOpen(true)}
+                    aria-label="View 3D model"
+                  >
+                    <Box size={19} aria-hidden="true" />
+                    <span>3D</span>
+                  </button>
+                ) : null}
                 {galleryImages.map((image, index) => (
                   <button
                     key={`${image}-${index}`}
@@ -269,6 +286,17 @@ export default function ProductPage() {
             <div className={styles.stage}>
               <div className={styles.stageTop}>
                 <span className={styles.stageTag}>{selectedColor.name}</span>
+                {modelUrl ? (
+                  <button
+                    type="button"
+                    className={styles.view3dCard}
+                    onClick={() => setIs3dViewerOpen(true)}
+                    aria-label="View this product in 3D"
+                  >
+                    <Box size={15} aria-hidden="true" />
+                    View 3D
+                  </button>
+                ) : null}
               </div>
 
               <div className={styles.stageFrame}>
@@ -744,6 +772,14 @@ export default function ProductPage() {
           onClose={() => setIsMainLightboxOpen(false)}
           productName={product.name}
         />
+
+        {modelUrl && is3dViewerOpen ? (
+          <Product3DModal
+            modelUrl={modelUrl}
+            productName={product.name}
+            onClose={() => setIs3dViewerOpen(false)}
+          />
+        ) : null}
 
         <ProductImageLightbox
           isOpen={Boolean(relatedImagePreview)}

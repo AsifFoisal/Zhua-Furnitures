@@ -107,7 +107,7 @@ export async function getStorefrontProducts(): Promise<Product[]> {
   const { data, error } = await supabase
     .from('products')
     .select(
-      'id, slug, name, category, subcategory, price_cents, original_price_cents, rating, review_count, badge, description, long_description, images, colors, sizes, fabrics, in_stock, is_customizable, delivery_days, weight_kg, width_cm, depth_cm, height_cm, features'
+      'id, slug, name, category, subcategory, price_cents, original_price_cents, rating, review_count, badge, description, long_description, images, colors, sizes, fabrics, in_stock, is_customizable, delivery_days, weight_kg, width_cm, depth_cm, height_cm, features, model_url'
     )
     .eq('status', 'active')
     .order('created_at', { ascending: false });
@@ -139,6 +139,10 @@ export async function getStorefrontProducts(): Promise<Product[]> {
     inStock: row.in_stock,
     isCustomizable: row.is_customizable,
     deliveryDays: row.delivery_days,
+    modelUrl:
+      typeof row.model_url === 'string' && row.model_url.trim().length > 0
+        ? row.model_url
+        : undefined,
     weightKg: Number(row.weight_kg ?? 0),
     dimensions: {
       widthCm: Number(row.width_cm ?? 0),
