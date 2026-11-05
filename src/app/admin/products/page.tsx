@@ -78,6 +78,7 @@ type ProductPatchPayload = {
   colors: AdminProductColor[];
   sizes: string[];
   fabrics: string[];
+  images: CloudinaryImageAsset[];
 };
 
 const DEFAULT_COLOR_HEX = '#B59241';
@@ -180,6 +181,7 @@ const defaultNewProduct: ProductPatchPayload = {
   colors: [{ name: '', hex: DEFAULT_COLOR_HEX, images: [] }],
   sizes: [],
   fabrics: [],
+  images: [],
 };
 
 function toSafeMeasure(value: unknown): number {
@@ -908,15 +910,14 @@ export default function ProductsAdminPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [savingId, setSavingId] = useState<string | null>(null);
-  const [uploadingId, setUploadingId] = useState<string | null>(null);
-  const [uploadProgress, setUploadProgress] = useState<{
-    productId: string;
-    done: number;
-    total: number;
-  } | null>(null);
+  const [uploadingNew, setUploadingNew] = useState(false);
+  const [newUploadProgress, setNewUploadProgress] = useState<{ done: number; total: number } | null>(null);
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
   const [editDraft, setEditDraft] = useState<AdminProductRow | null>(null);
   const [newProduct, setNewProduct] = useState<ProductPatchPayload>(defaultNewProduct);
+  const [imageManagerProductId, setImageManagerProductId] = useState<string | null>(null);
+  const [selectedImageIds, setSelectedImageIds] = useState<string[]>([]);
+  const [deletingImages, setDeletingImages] = useState(false);
 
   useToastFeedback({ error });
 
@@ -960,6 +961,26 @@ export default function ProductsAdminPage() {
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [editingProductId, savingId]);
+
+  useEffect(() => {
+    if (!imageManagerProductId) {
+      return;
+    }
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && !deletingImages) {
+        setImageManagerProductId(null);
+        setSelectedImageIds([]);
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [imageManagerProductId, deletingImages]);
+
+  const imageManagerProduct = imageManagerProductId
+    ? (products.find((product) => product.id === imageManagerProductId) ?? null)
+    : null;
 
   const filtered = useMemo(() => {
     return products.filter((product) => {
@@ -1103,64 +1124,78 @@ export default function ProductsAdminPage() {
     setEditDraft((prev) => (prev && prev.id === productId ? { ...prev, modelUrl } : prev));
   };
 
-  const uploadProductImages = async (productId: string, files: File[]) => {
+  const uploadNewProductImages = async (files: File[], asMain: boolean) => {
     if (files.length === 0) {
       return;
     }
 
-    const target = products.find((row) => row.id === productId);
-    if (!target) {
-      setError('Product not found.');
-      return;
-    }
-
-    const validationError = validateImageFiles(files);
+    const picked = asMain ? files.slice(0, 1) : files;
+    const validationError = validateImageFiles(picked);
     if (validationError) {
       setError(validationError);
       return;
     }
 
-    setUploadingId(productId);
-    setUploadProgress({ productId, done: 0, total: files.length });
+    setUploadingNew(true);
+    setNewUploadProgress({ done: 0, total: picked.length });
     setError('');
 
     try {
       const assets: CloudinaryImageAsset[] = [];
 
-      for (const file of files) {
-        assets.push(await uploadImageAsset(file, target.name));
-        setUploadProgress({ productId, done: assets.length, total: files.length });
+      for (const file of picked) {
+        assets.push(await uploadImageAsset(file, newProduct.name.trim() || 'product'));
+        setNewUploadProgress({ done: assets.length, total: picked.length });
       }
 
-      await updateProduct(
-        productId,
-        { images: [...target.images, ...assets] },
-        `${assets.length} product image${assets.length === 1 ? '' : 's'} uploaded successfully.`
-      );
+      if (assets.length === 0) {
+        return;
+      }
+
+      if (asMain) {
+        const [newMain, ...extra] = assets;
+        const previousMain = newProduct.images[0];
+        // Replace the current main image — delete the old main asset and
+        // drop any staged copy of it so images[0] stays the single main.
+        if (previousMain && previousMain.publicId !== newMain.publicId) {
+          try {
+            await fetch('/api/admin/media/delete', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ publicId: previousMain.publicId }),
+            });
+          } catch {
+            // Non-fatal: keep the new main image even if the old delete fails.
+          }
+        }
+        setNewProduct((prev) => ({
+          ...prev,
+          images: [newMain, ...extra, ...prev.images.slice(1)],
+        }));
+        toast.success('Main product image uploaded.');
+      } else {
+        setNewProduct((prev) => ({ ...prev, images: [...prev.images, ...assets] }));
+        toast.success(
+          `${assets.length} gallery image${assets.length === 1 ? '' : 's'} uploaded.`
+        );
+      }
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Could not upload image.';
       setError(message);
     } finally {
-      setUploadingId(null);
-      setUploadProgress(null);
+      setUploadingNew(false);
+      setNewUploadProgress(null);
     }
   };
 
-  const removeFirstImage = async (product: AdminProductRow) => {
-    if (product.images.length === 0) {
-      return;
-    }
-
-    const [first, ...rest] = product.images;
-
-    setSavingId(product.id);
+  const removeNewProductImage = async (publicId: string) => {
     setError('');
 
     try {
       const deleteRes = await fetch('/api/admin/media/delete', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ publicId: first.publicId }),
+        body: JSON.stringify({ publicId }),
       });
 
       const deleteData = (await deleteRes.json()) as { error?: string };
@@ -1168,11 +1203,87 @@ export default function ProductsAdminPage() {
         throw new Error(deleteData.error ?? 'Could not delete image from Cloudinary.');
       }
 
-      await updateProduct(product.id, { images: rest }, 'Product image removed successfully.');
+      setNewProduct((prev) => ({
+        ...prev,
+        images: prev.images.filter((image) => image.publicId !== publicId),
+      }));
+      toast.success('Product image removed.');
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Could not remove image.';
       setError(message);
-      setSavingId(null);
+    }
+  };
+
+  const openImageManager = (product: AdminProductRow) => {
+    setError('');
+    setSelectedImageIds([]);
+    setImageManagerProductId(product.id);
+  };
+
+  const closeImageManager = () => {
+    if (deletingImages) {
+      return;
+    }
+    setImageManagerProductId(null);
+    setSelectedImageIds([]);
+  };
+
+  const toggleSelectedImage = (publicId: string) => {
+    setSelectedImageIds((prev) =>
+      prev.includes(publicId)
+        ? prev.filter((entry) => entry !== publicId)
+        : [...prev, publicId]
+    );
+  };
+
+  const deleteSelectedImages = async () => {
+    const product = imageManagerProduct;
+    if (!product || selectedImageIds.length === 0) {
+      return;
+    }
+
+    setDeletingImages(true);
+    setError('');
+
+    try {
+      for (const publicId of selectedImageIds) {
+        const deleteRes = await fetch('/api/admin/media/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ publicId }),
+        });
+
+        const deleteData = (await deleteRes.json()) as { error?: string };
+        if (!deleteRes.ok) {
+          throw new Error(deleteData.error ?? 'Could not delete image from Cloudinary.');
+        }
+      }
+
+      const remainingImages = product.images.filter(
+        (image) => !selectedImageIds.includes(image.publicId)
+      );
+      const cleanedColors = product.colors.map((color) => ({
+        ...color,
+        images: (color.images ?? []).filter(
+          (image) => !selectedImageIds.includes(image.publicId)
+        ),
+      }));
+
+      const didSave = await updateProduct(
+        product.id,
+        { images: remainingImages, colors: cleanedColors },
+        `${selectedImageIds.length} product image${selectedImageIds.length === 1 ? '' : 's'} removed successfully.`
+      );
+
+      if (didSave) {
+        setImageManagerProductId(null);
+        setSelectedImageIds([]);
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Could not remove image.';
+      setError(message);
+    } finally {
+      setDeletingImages(false);
     }
   };
 
@@ -1227,6 +1338,7 @@ export default function ProductsAdminPage() {
           colors: normalizeProductColors(newProduct.colors),
           sizes: normalizeStringList(newProduct.sizes),
           fabrics: normalizeStringList(newProduct.fabrics),
+          images: newProduct.images,
           deliveryDays: newProduct.deliveryDays,
           weightKg: Number(newProduct.weightKg || 0),
           widthCm: Number(newProduct.widthCm || 0),
@@ -1416,6 +1528,120 @@ export default function ProductsAdminPage() {
               placeholder="e.g. Linen Blend"
               addLabel="Add Fabric"
             />
+          </div>
+          <div className={styles.formRow} style={{ gridColumn: '1 / -1' }}>
+            <label className={styles.label}>Product Images</label>
+            <div style={{ display: 'grid', gap: '0.6rem' }}>
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                <label className={styles.ghostButton} style={{ cursor: uploadingNew ? 'wait' : 'pointer' }}>
+                  {uploadingNew
+                    ? newUploadProgress && newUploadProgress.total > 1
+                      ? `Uploading ${newUploadProgress.done}/${newUploadProgress.total}...`
+                      : 'Uploading...'
+                    : 'Upload main image'}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    disabled={uploadingNew}
+                    onChange={(e) => {
+                      const files = Array.from(e.currentTarget.files ?? []);
+                      if (files.length > 0) {
+                        void uploadNewProductImages(files, true);
+                      }
+                      e.currentTarget.value = '';
+                    }}
+                  />
+                </label>
+                <label className={styles.ghostButton} style={{ cursor: uploadingNew ? 'wait' : 'pointer' }}>
+                  {uploadingNew
+                    ? newUploadProgress && newUploadProgress.total > 1
+                      ? `Uploading ${newUploadProgress.done}/${newUploadProgress.total}...`
+                      : 'Uploading...'
+                    : 'Upload gallery images'}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    style={{ display: 'none' }}
+                    disabled={uploadingNew}
+                    onChange={(e) => {
+                      const files = Array.from(e.currentTarget.files ?? []);
+                      if (files.length > 0) {
+                        void uploadNewProductImages(files, false);
+                      }
+                      e.currentTarget.value = '';
+                    }}
+                  />
+                </label>
+                <span style={{ fontSize: '0.72rem', opacity: 0.65 }}>
+                  The main image is shown first on the product page.
+                </span>
+              </div>
+
+              {newProduct.images.length > 0 ? (
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  {newProduct.images.map((image, imageIndex) => (
+                    <div key={image.publicId} style={{ position: 'relative' }}>
+                      <img
+                        src={image.secureUrl}
+                        alt={imageIndex === 0 ? 'Main product image' : `Product image ${imageIndex + 1}`}
+                        style={{
+                          width: '84px',
+                          height: '64px',
+                          objectFit: 'cover',
+                          borderRadius: '8px',
+                          border: imageIndex === 0
+                            ? '2px solid #B59241'
+                            : '1px solid rgba(148, 163, 184, 0.4)',
+                          display: 'block',
+                        }}
+                      />
+                      <span
+                        style={{
+                          position: 'absolute',
+                          left: '4px',
+                          bottom: '4px',
+                          fontSize: '0.62rem',
+                          padding: '0.1rem 0.35rem',
+                          borderRadius: '999px',
+                          background: 'rgba(0,0,0,0.65)',
+                          color: '#EAF0F8',
+                        }}
+                      >
+                        {imageIndex === 0 ? 'Main' : `#${imageIndex + 1}`}
+                      </span>
+                      <button
+                        type="button"
+                        aria-label={`Remove product image ${imageIndex + 1}`}
+                        disabled={uploadingNew}
+                        onClick={() => void removeNewProductImage(image.publicId)}
+                        style={{
+                          position: 'absolute',
+                          top: '-6px',
+                          right: '-6px',
+                          width: '20px',
+                          height: '20px',
+                          borderRadius: '50%',
+                          border: 'none',
+                          background: '#1F2937',
+                          color: '#FFFFFF',
+                          fontSize: '13px',
+                          lineHeight: 1,
+                          cursor: 'pointer',
+                        }}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <span style={{ fontSize: '0.78rem', opacity: 0.65 }}>
+                  No images yet — upload a main image and gallery images above.
+                </span>
+              )}
+            </div>
           </div>
           <div className={styles.formRow}>
             <label className={styles.label}>Delivery Days</label>
@@ -1765,7 +1991,6 @@ export default function ProductsAdminPage() {
                         className={styles.ghostButton}
                         disabled={
                           savingId === product.id ||
-                          uploadingId === product.id ||
                           (editingProductId !== null && editingProductId !== product.id) ||
                           product.stock <= 0
                         }
@@ -1777,7 +2002,6 @@ export default function ProductsAdminPage() {
                         className={styles.ghostButton}
                         disabled={
                           savingId === product.id ||
-                          uploadingId === product.id ||
                           (editingProductId !== null && editingProductId !== product.id)
                         }
                         onClick={() => void adjustProductStock(product, 1)}
@@ -1790,38 +2014,16 @@ export default function ProductsAdminPage() {
                         className={styles.ghostButton}
                         disabled={
                           savingId === product.id ||
-                          uploadingId === product.id ||
                           (editingProductId !== null && editingProductId !== product.id)
                         }
                         onClick={() => openEditModal(product)}
                       >
                         {editingProductId === product.id ? 'Editing...' : 'Edit'}
                       </button>
-                      <label className={styles.ghostButton} style={{ cursor: uploadingId === product.id ? 'wait' : 'pointer' }}>
-                        {uploadingId === product.id
-                          ? uploadProgress && uploadProgress.total > 1
-                            ? `Uploading ${uploadProgress.done}/${uploadProgress.total}...`
-                            : 'Uploading...'
-                          : 'Upload'}
-                        <input
-                          type="file"
-                          accept="image/*"
-                          multiple
-                          style={{ display: 'none' }}
-                          disabled={uploadingId !== null}
-                          onChange={(e) => {
-                            const files = Array.from(e.currentTarget.files ?? []);
-                            if (files.length > 0) {
-                              void uploadProductImages(product.id, files);
-                            }
-                            e.currentTarget.value = '';
-                          }}
-                        />
-                      </label>
                       <button
                         className={styles.ghostButton}
                         disabled={savingId === product.id || product.images.length === 0}
-                        onClick={() => void removeFirstImage(product)}
+                        onClick={() => openImageManager(product)}
                       >
                         Remove Img
                       </button>
@@ -1840,6 +2042,138 @@ export default function ProductsAdminPage() {
           </table>
         </div>
       </section>
+
+      {imageManagerProduct ? (
+        <div className={styles.modalOverlay} onClick={closeImageManager}>
+          <div
+            className={styles.modalCard}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="remove-images-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className={styles.modalHeader}>
+              <div>
+                <h3 id="remove-images-title" className={styles.modalTitle}>Remove Product Images</h3>
+                <p className={styles.modalMeta}>
+                  {imageManagerProduct.name} — select the images to delete.
+                </p>
+              </div>
+              <button className={styles.ghostButton} onClick={closeImageManager} disabled={deletingImages}>
+                Close
+              </button>
+            </div>
+
+            <div className={styles.modalBody}>
+              {imageManagerProduct.images.length === 0 ? (
+                <p style={{ color: '#a9b7c9' }}>This product has no images yet.</p>
+              ) : (
+                <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
+                  {imageManagerProduct.images.map((image, imageIndex) => {
+                    const isSelected = selectedImageIds.includes(image.publicId);
+
+                    return (
+                      <button
+                        key={image.publicId}
+                        type="button"
+                        onClick={() => toggleSelectedImage(image.publicId)}
+                        aria-pressed={isSelected}
+                        aria-label={
+                          isSelected
+                            ? `Deselect ${imageIndex === 0 ? 'main' : `image ${imageIndex + 1}`}`
+                            : `Select ${imageIndex === 0 ? 'main' : `image ${imageIndex + 1}`} for deletion`
+                        }
+                        title={isSelected ? 'Selected — click to deselect' : 'Click to select'}
+                        disabled={deletingImages}
+                        style={{
+                          position: 'relative',
+                          padding: 0,
+                          border: isSelected
+                            ? '3px solid #B59241'
+                            : '3px solid rgba(148, 163, 184, 0.35)',
+                          borderRadius: '10px',
+                          background: 'none',
+                          cursor: 'pointer',
+                          lineHeight: 0,
+                        }}
+                      >
+                        <img
+                          src={image.secureUrl}
+                          alt={imageIndex === 0 ? 'Main product image' : `Product image ${imageIndex + 1}`}
+                          style={{
+                            width: '120px',
+                            height: '92px',
+                            objectFit: 'cover',
+                            borderRadius: '7px',
+                            opacity: isSelected ? 1 : 0.85,
+                            display: 'block',
+                          }}
+                        />
+                        <span
+                          style={{
+                            position: 'absolute',
+                            left: '6px',
+                            bottom: '6px',
+                            fontSize: '0.62rem',
+                            padding: '0.15rem 0.4rem',
+                            borderRadius: '999px',
+                            background: 'rgba(0,0,0,0.65)',
+                            color: '#EAF0F8',
+                            lineHeight: 1.4,
+                          }}
+                        >
+                          {imageIndex === 0 ? 'Main' : `#${imageIndex + 1}`}
+                        </span>
+                        {isSelected ? (
+                          <span
+                            style={{
+                              position: 'absolute',
+                              top: '6px',
+                              right: '6px',
+                              width: '22px',
+                              height: '22px',
+                              borderRadius: '50%',
+                              background: '#B59241',
+                              color: '#1F2937',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontSize: '13px',
+                              fontWeight: 700,
+                              lineHeight: 1,
+                            }}
+                          >
+                            ✓
+                          </span>
+                        ) : null}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+              <p style={{ fontSize: '0.78rem', color: '#a9b7c9', marginTop: '0.75rem' }}>
+                {selectedImageIds.length} image{selectedImageIds.length === 1 ? '' : 's'} selected.
+                Deleting removes the image from Cloudinary and the product.
+              </p>
+            </div>
+
+            <div className={styles.modalFooter}>
+              <button className={styles.ghostButton} onClick={closeImageManager} disabled={deletingImages}>
+                Cancel
+              </button>
+              <button
+                className={styles.ghostButton}
+                onClick={() => void deleteSelectedImages()}
+                disabled={deletingImages || selectedImageIds.length === 0}
+              >
+                {deletingImages
+                  ? 'Deleting...'
+                  : `Delete selected${selectedImageIds.length > 0 ? ` (${selectedImageIds.length})` : ''}`}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {editingProductId && editDraft ? (
         <div className={styles.modalOverlay} onClick={closeEditModal}>
