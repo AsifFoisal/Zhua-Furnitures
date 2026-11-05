@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import type { Product } from '@/lib/data';
-import { fallbackStorefrontProducts, getStorefrontProducts } from '@/lib/storefront-products';
+import { getStorefrontProducts } from '@/lib/storefront-products';
 import FurnitureLanding from './FurnitureLanding';
 
 export const dynamic = 'force-dynamic';
@@ -16,7 +16,7 @@ async function getFurnitureProducts(): Promise<Product[]> {
     const products = await getStorefrontProducts();
     return products.filter((product) => product.category === 'furniture');
   } catch {
-    return fallbackStorefrontProducts().filter((product) => product.category === 'furniture');
+    return [];
   }
 }
 

@@ -1,10 +1,11 @@
 import Link from 'next/link';
-import { ImageOff } from 'lucide-react';
 import { formatPrice, type Product } from '@/lib/data';
+import { ProductGridSkeleton } from '@/components/ui/ProductCardSkeleton';
 import styles from './CategoryProductGrid.module.css';
 
 interface CategoryProductGridProps {
   products: Product[];
+  loading?: boolean;
   emptyMessage?: string;
 }
 
@@ -17,7 +18,11 @@ function thumbnailUrl(url: string, width = 640): string {
   return url.replace('/image/upload/', `/image/upload/w_${width},c_fill,q_auto,f_auto/`);
 }
 
-export default function CategoryProductGrid({ products, emptyMessage }: CategoryProductGridProps) {
+export default function CategoryProductGrid({ products, loading = false, emptyMessage }: CategoryProductGridProps) {
+  if (loading) {
+    return <ProductGridSkeleton count={6} />;
+  }
+
   if (products.length === 0) {
     return <p className={styles.empty}>{emptyMessage ?? 'No products in this category yet.'}</p>;
   }
@@ -38,9 +43,7 @@ export default function CategoryProductGrid({ products, emptyMessage }: Category
                   className={styles.image}
                 />
               ) : (
-                <div className={styles.imageFallback} aria-hidden="true">
-                  <ImageOff size={28} />
-                </div>
+                <div className="skeleton" style={{ width: '100%', height: '100%', borderRadius: 0 }} aria-hidden="true" />
               )}
             </div>
             <div className={styles.body}>

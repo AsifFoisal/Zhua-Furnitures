@@ -323,9 +323,7 @@ export default function FurnitureLanding({ initialProducts }: FurnitureLandingPr
                           className={styles.cardImage}
                         />
                       ) : (
-                        <div className={styles.cardFallback} aria-hidden="true">
-                          <ImageOff size={30} />
-                        </div>
+                        <div className="skeleton" style={{ width: '100%', height: '100%', borderRadius: 0 }} aria-hidden="true" />
                       )}
                       {product.badge ? (
                         <span className={`badge badge-${product.badge} ${styles.cardBadge}`}>

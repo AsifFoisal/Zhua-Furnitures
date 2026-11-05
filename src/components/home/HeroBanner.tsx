@@ -5,13 +5,13 @@ import { ArrowRight, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { useStorefrontProducts } from '@/lib/use-storefront-products';
-import { products as fallbackProducts, type Product } from '@/lib/data';
+import type { Product } from '@/lib/data';
 import { DESIGN_STUDIO_FEATURE } from '@/lib/features';
 import styles from './HeroBanner.module.css';
 
 export default function HeroBanner() {
   const textRef = useRef<HTMLDivElement>(null);
-  const { products } = useStorefrontProducts();
+  const { products, loading } = useStorefrontProducts();
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [carouselPaused, setCarouselPaused] = useState(false);
   const prefersReducedMotion = useReducedMotion();
@@ -21,9 +21,8 @@ export default function HeroBanner() {
   const visualMotionStyle = prefersReducedMotion ? undefined : { y: parallaxY, scale: parallaxScale };
 
   const carouselProducts = useMemo((): Product[] => {
-    const source = products.length > 0 ? products : fallbackProducts;
-    const newest = source.filter((item) => item.badge === 'new');
-    const selected = newest.length > 0 ? newest : source;
+    const newest = products.filter((item) => item.badge === 'new');
+    const selected = newest.length > 0 ? newest : products;
     return selected.slice(0, 6);
   }, [products]);
 
@@ -133,7 +132,9 @@ export default function HeroBanner() {
                 <span className={styles.carouselCount}>{carouselCount} pieces</span>
               </div>
               <div className={styles.carouselViewport}>
-                {carouselCount > 0 ? (
+                {loading ? (
+                  <div className="skeleton" style={{ width: '100%', height: '100%', minHeight: '220px' }} aria-busy="true" aria-label="Loading new arrivals" />
+                ) : carouselCount > 0 ? (
                   <div className={styles.carouselTrack} style={{ transform: `translateX(-${safeIndex * 100}%)` }}>
                     {carouselProducts.map((item, index) => (
                       <Link
@@ -154,7 +155,7 @@ export default function HeroBanner() {
                               loading={index === 0 ? 'eager' : 'lazy'}
                             />
                           ) : (
-                            <div className={styles.carouselFallback}>{item.name.charAt(0)}</div>
+                            <div className="skeleton" style={{ width: '100%', height: '100%', borderRadius: 8 }} aria-hidden="true" />
                           )}
                         </div>
                       </Link>

@@ -7,6 +7,7 @@ import { categories, formatPrice } from '@/lib/data';
 import ProductImageLightbox from '@/components/ui/ProductImageLightbox';
 import { useCartStore, useWishlistStore } from '@/store';
 import { useStorefrontProducts } from '@/lib/use-storefront-products';
+import { ProductGridSkeleton } from '@/components/ui/ProductCardSkeleton';
 import styles from './page.module.css';
 
 type ImagePreviewState = {
@@ -20,7 +21,7 @@ function toPreviewImages(images: string[]): string[] {
 }
 
 export default function ShopPage() {
-  const { products } = useStorefrontProducts();
+  const { products, loading } = useStorefrontProducts();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedSubcategory, setSelectedSubcategory] = useState<string>('all');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 50000]);
@@ -161,6 +162,9 @@ export default function ShopPage() {
             </div>
 
             {/* Grid */}
+            {loading ? (
+              <ProductGridSkeleton count={9} />
+            ) : (
             <div className={styles.grid}>
               {filtered.map(product => (
                 <Link key={product.id} href={`/product/${product.slug}`} className={styles.card}>
@@ -173,10 +177,7 @@ export default function ShopPage() {
                           className={styles.productImage}
                         />
                       ) : (
-                        <ProductSVG
-                          cat={product.category}
-                          color={product.colors[0]?.hex ?? '#B59241'}
-                        />
+                        <div className="skeleton" style={{ width: '100%', height: '100%', borderRadius: 0 }} aria-hidden="true" />
                       )}
                     </div>
                     {product.badge && (
@@ -244,8 +245,9 @@ export default function ShopPage() {
                 </Link>
               ))}
             </div>
+            )}
 
-            {filtered.length === 0 && (
+            {!loading && filtered.length === 0 && (
               <div className={styles.empty}>
                 <p>No products match your filters.</p>
                 <button className="btn btn-outline btn-sm" onClick={() => { setSelectedCategory('all'); setSelectedSubcategory('all'); setPriceRange([0, 50000]); }}>
@@ -278,31 +280,4 @@ export default function ShopPage() {
   );
 }
 
-function ProductSVG({ cat, color }: { cat: string; color: string }) {
-  if (cat === 'furniture') return (
-    <svg viewBox="0 0 200 150" style={{ width: '100%', height: '100%', padding: '12px' }}>
-      <rect x="20" y="90" width="160" height="35" rx="6" fill={color} fillOpacity="0.25" />
-      <rect x="25" y="60" width="150" height="34" rx="6" fill={color} fillOpacity="0.4" />
-      <rect x="20" y="68" width="18" height="55" rx="5" fill={color} fillOpacity="0.5" />
-      <rect x="162" y="68" width="18" height="55" rx="5" fill={color} fillOpacity="0.5" />
-      <rect x="38" y="94" width="54" height="24" rx="4" fill={color} fillOpacity="0.6" />
-      <rect x="108" y="94" width="54" height="24" rx="4" fill={color} fillOpacity="0.6" />
-    </svg>
-  );
-  if (cat === 'curtains') return (
-    <svg viewBox="0 0 200 150" style={{ width: '100%', height: '100%', padding: '12px' }}>
-      <rect x="15" y="15" width="170" height="6" rx="3" fill={color} fillOpacity="0.5" />
-      <path d="M15 21 Q40 60 28 145 L15 145 Z" fill={color} fillOpacity="0.45" />
-      <path d="M185 21 Q160 60 172 145 L185 145 Z" fill={color} fillOpacity="0.45" />
-      {[25,45,65,85,115,135,155,175].map((x,i) => <circle key={i} cx={x} cy="18" r="5" fill={color} fillOpacity="0.7" />)}
-    </svg>
-  );
-  return (
-    <svg viewBox="0 0 200 150" style={{ width: '100%', height: '100%', padding: '12px' }}>
-      <rect x="96" y="100" width="8" height="40" rx="3" fill={color} fillOpacity="0.4" />
-      <ellipse cx="100" cy="60" rx="32" ry="42" fill={color} fillOpacity="0.15" />
-      <ellipse cx="100" cy="60" rx="20" ry="28" fill={color} fillOpacity="0.3" />
-      <circle cx="100" cy="60" r="10" fill={color} fillOpacity="0.6" />
-    </svg>
-  );
-}
+

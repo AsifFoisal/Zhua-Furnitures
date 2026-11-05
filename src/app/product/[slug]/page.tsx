@@ -19,7 +19,7 @@ import {
   ZoomIn,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { formatPrice, products, type Product } from '@/lib/data';
+import { formatPrice, type Product } from '@/lib/data';
 import { useCartStore, useWishlistStore } from '@/store';
 import { useStorefrontProducts } from '@/lib/use-storefront-products';
 import { DEFAULT_DELIVERY_ZONES, type DeliveryZone } from '@/lib/delivery';
@@ -75,18 +75,17 @@ function categoryLabel(category: Product['category']): string {
 }
 
 export default function ProductPage() {
-  const { products: liveProducts } = useStorefrontProducts();
+  const { products: liveProducts, loading } = useStorefrontProducts();
   const routeParams = useParams<{ slug: string }>();
   const slug = routeParams?.slug ?? '';
-  const product =
-    liveProducts.find((entry) => entry.slug === slug) || liveProducts[0] || products[0];
+  const product = liveProducts.find((entry) => entry.slug === slug) ?? null;
 
   const colorOptions =
-    product.colors.length > 0 ? product.colors : [{ name: 'Default', hex: '#B59241' }];
-  const sizeOptions = Array.isArray(product.sizes)
+    product && product.colors.length > 0 ? product.colors : [{ name: 'Default', hex: '#B59241' }];
+  const sizeOptions = product && Array.isArray(product.sizes)
     ? product.sizes.filter((entry) => typeof entry === 'string' && entry.trim().length > 0)
     : [];
-  const fabricOptions = Array.isArray(product.fabrics)
+  const fabricOptions = product && Array.isArray(product.fabrics)
     ? product.fabrics.filter((entry) => typeof entry === 'string' && entry.trim().length > 0)
     : [];
 
@@ -107,12 +106,13 @@ export default function ProductPage() {
   const { toggle, has } = useWishlistStore();
 
   useEffect(() => {
+    if (!product) return;
     void fetch('/api/account/activity/product-view', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ productId: product.id, slug: product.slug }),
     });
-  }, [product.id, product.slug]);
+  }, [product?.id, product?.slug]);
 
   useEffect(() => {
     let ignore = false;
@@ -157,10 +157,11 @@ export default function ProductPage() {
   const activeFabric = fabricOptions.includes(selectedFabric)
     ? selectedFabric
     : fabricOptions[0] || '';
-  const isOutOfStock = !product.inStock;
+  const isOutOfStock = !(product?.inStock ?? false);
   const delivery = deliveryZones.find((zone) => zone.id === province);
 
   const handleAddToCart = () => {
+    if (!product) return;
     if (isOutOfStock) {
       toast.error(`${product.name} is out of stock.`);
       return;
@@ -178,33 +179,35 @@ export default function ProductPage() {
     setTimeout(() => setAdded(false), 2000);
   };
 
-  const related = liveProducts
-    .filter((entry) => entry.category === product.category && entry.id !== product.id)
-    .slice(0, 4);
-  const weightKg = Number(product.weightKg ?? 0);
-  const widthCm = Number(product.dimensions?.widthCm ?? 0);
-  const depthCm = Number(product.dimensions?.depthCm ?? 0);
-  const heightCm = Number(product.dimensions?.heightCm ?? 0);
+  const related = product
+    ? liveProducts
+        .filter((entry) => entry.category === product.category && entry.id !== product.id)
+        .slice(0, 4)
+    : [];
+  const weightKg = Number(product?.weightKg ?? 0);
+  const widthCm = Number(product?.dimensions?.widthCm ?? 0);
+  const depthCm = Number(product?.dimensions?.depthCm ?? 0);
+  const heightCm = Number(product?.dimensions?.heightCm ?? 0);
   const hasPhysicalSpecs = weightKg > 0 || widthCm > 0 || depthCm > 0 || heightCm > 0;
   const colorImages = Array.isArray(selectedColor.images)
     ? toPreviewImages(selectedColor.images)
     : [];
-  const galleryImages = colorImages.length > 0 ? colorImages : product.images;
+  const galleryImages = colorImages.length > 0 ? colorImages : (product?.images ?? []);
   const galleryPreviewImages = toPreviewImages(galleryImages);
   const imgCount = galleryImages.length;
-  const modelUrl = typeof product.modelUrl === 'string' && product.modelUrl.trim().length > 0
+  const modelUrl = typeof product?.modelUrl === 'string' && product.modelUrl.trim().length > 0
     ? product.modelUrl
     : null;
   const safeImgIndex = Math.min(imgIndex, Math.max(0, imgCount - 1));
   const saving =
-    product.originalPrice && product.originalPrice > product.price
+    product && product.originalPrice && product.originalPrice > product.price
       ? product.originalPrice - product.price
       : 0;
-  const story = product.longDescription?.trim() ? product.longDescription : null;
-  const AvailabilityIcon = !product.inStock ? Shield : product.isCustomizable ? Hammer : Truck;
-  const availabilityNote = !product.inStock
+  const story = product?.longDescription?.trim() ? product.longDescription : null;
+  const AvailabilityIcon = !(product?.inStock ?? false) ? Shield : product?.isCustomizable ? Hammer : Truck;
+  const availabilityNote = !(product?.inStock ?? false)
     ? 'Currently out of stock. Talk to us about the next production run.'
-    : product.isCustomizable
+    : product?.isCustomizable
       ? 'Made to order in our Johannesburg workshop.'
       : 'Ready to deliver across South Africa.';
 
@@ -227,6 +230,41 @@ export default function ProductPage() {
       index: 0,
     });
   };
+
+  if (loading) {
+    return (
+      <div className={styles.page} aria-busy="true" aria-label="Loading product">
+        <div className="container">
+          <div className={styles.shell}>
+            <section className={styles.gallery} aria-label="Product images">
+              <div className="skeleton" style={{ width: '100%', height: '100%', minHeight: '420px' }} />
+            </section>
+            <div style={{ display: 'grid', gap: '1rem', alignContent: 'start' }}>
+              <div className="skeleton" style={{ height: '20px', width: '55%' }} />
+              <div className="skeleton" style={{ height: '34px', width: '85%' }} />
+              <div className="skeleton" style={{ height: '16px', width: '70%' }} />
+              <div className="skeleton" style={{ height: '16px', width: '62%' }} />
+              <div className="skeleton" style={{ height: '44px', width: '100%' }} />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className={styles.page}>
+        <div className="container" style={{ padding: '6rem 0', textAlign: 'center' }}>
+          <h1 className="heading-xl">Product not found</h1>
+          <p style={{ color: 'var(--text-muted)', margin: '1rem 0 1.5rem' }}>
+            This product may have been removed or the link is incorrect.
+          </p>
+          <Link href="/shop" className="btn btn-primary">Browse the shop</Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.page}>
@@ -315,7 +353,7 @@ export default function ProductPage() {
                     />
                   </button>
                 ) : (
-                  <ProductHeroSVG category={product.category} color={selectedColor.hex} />
+                  <div className="skeleton" style={{ width: '100%', height: '100%', minHeight: '320px', borderRadius: 0 }} aria-hidden="true" />
                 )}
               </div>
 
@@ -748,10 +786,7 @@ export default function ProductPage() {
                         loading="lazy"
                       />
                     ) : (
-                      <ProductHeroSVG
-                        category={entry.category}
-                        color={entry.colors[0]?.hex ?? '#B59241'}
-                      />
+                      <div className="skeleton" style={{ width: '100%', height: '100%', borderRadius: 0 }} aria-hidden="true" />
                     )}
                   </div>
                   <div className={styles.relatedInfo}>
@@ -803,34 +838,4 @@ export default function ProductPage() {
   );
 }
 
-function ProductHeroSVG({ category, color }: { category: string; color: string }) {
-  if (category === 'furniture') return (
-    <svg viewBox="0 0 300 220" style={{ width: '100%', height: '100%' }}>
-      <rect x="30" y="140" width="240" height="50" rx="8" fill={color} fillOpacity="0.25" />
-      <rect x="38" y="95" width="224" height="52" rx="8" fill={color} fillOpacity="0.45" />
-      <rect x="30" y="108" width="28" height="80" rx="8" fill={color} fillOpacity="0.6" />
-      <rect x="242" y="108" width="28" height="80" rx="8" fill={color} fillOpacity="0.6" />
-      <rect x="60" y="148" width="80" height="34" rx="6" fill={color} fillOpacity="0.7" />
-      <rect x="160" y="148" width="80" height="34" rx="6" fill={color} fillOpacity="0.7" />
-    </svg>
-  );
-  if (category === 'curtains') return (
-    <svg viewBox="0 0 300 220" style={{ width: '100%', height: '100%' }}>
-      <rect x="20" y="20" width="260" height="8" rx="4" fill={color} fillOpacity="0.5" />
-      <path d="M20 28 Q55 90 40 210 L20 210 Z" fill={color} fillOpacity="0.5" />
-      <path d="M280 28 Q245 90 260 210 L280 210 Z" fill={color} fillOpacity="0.5" />
-      {[35,60,85,110,140,170,195,220,245,270].map((x,i) => <circle key={i} cx={x} cy="24" r="7" fill={color} fillOpacity="0.7" />)}
-      <rect x="80" y="50" width="140" height="160" fill={color} fillOpacity="0.06" rx="4" />
-    </svg>
-  );
-  return (
-    <svg viewBox="0 0 300 220" style={{ width: '100%', height: '100%' }}>
-      <rect x="142" y="155" width="16" height="55" rx="4" fill={color} fillOpacity="0.4" />
-      <rect x="100" y="205" width="100" height="12" rx="4" fill={color} fillOpacity="0.25" />
-      <ellipse cx="150" cy="90" rx="55" ry="70" fill={color} fillOpacity="0.15" />
-      <ellipse cx="150" cy="90" rx="36" ry="48" fill={color} fillOpacity="0.3" />
-      <ellipse cx="150" cy="90" rx="20" ry="28" fill={color} fillOpacity="0.5" />
-      <circle cx="150" cy="90" r="10" fill={color} fillOpacity="0.9" />
-    </svg>
-  );
-}
+

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { products as fallbackProducts, type Product } from '@/lib/data';
+import type { Product } from '@/lib/data';
 
 interface ProductsResponse {
   products?: Product[];
@@ -9,7 +9,7 @@ interface ProductsResponse {
 }
 
 export function useStorefrontProducts() {
-  const [products, setProducts] = useState<Product[]>(fallbackProducts);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -21,11 +21,12 @@ export function useStorefrontProducts() {
         }
 
         const data = (await res.json()) as ProductsResponse;
-        if (Array.isArray(data.products) && data.products.length > 0) {
+        if (Array.isArray(data.products)) {
           setProducts(data.products);
         }
       } catch {
-        // Fallback data stays in place when live API is unavailable.
+        // Keep the empty catalogue — callers render skeleton while loading
+        // and an empty state afterwards. No mock fallback products.
       } finally {
         setLoading(false);
       }

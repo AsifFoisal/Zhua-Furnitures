@@ -9,7 +9,7 @@ import { useStorefrontProducts } from '@/lib/use-storefront-products';
 import styles from './SearchModal.module.css';
 
 export default function SearchModal() {
-  const { products } = useStorefrontProducts();
+  const { products, loading } = useStorefrontProducts();
   const { isOpen, query, close, setQuery } = useSearchStore();
 
   useEffect(() => {
@@ -57,7 +57,13 @@ export default function SearchModal() {
         </div>
 
         <div className={styles.content}>
-          {results.length === 0 ? (
+          {loading ? (
+            <div style={{ display: 'grid', gap: '0.6rem', padding: '1rem' }} aria-busy="true" aria-label="Loading products">
+              {[0, 1, 2].map((i) => (
+                <div key={i} className="skeleton" style={{ height: '20px', width: i === 1 ? '70%' : '85%' }} />
+              ))}
+            </div>
+          ) : results.length === 0 ? (
             <p className={styles.empty}>No products found for &quot;{query}&quot;.</p>
           ) : (
             results.map((product) => (
