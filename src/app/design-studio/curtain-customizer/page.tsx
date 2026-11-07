@@ -243,8 +243,8 @@ export default function CurtainCustomizerPage() {
       <div className="container-wide">
         <div className={styles.header}>
           <span className="label-accent">Design Studio</span>
-          <h1 className="heading-xl" style={{ color: '#EAF0F8', margin: '0.75rem 0 0.5rem' }}>Curtain <span className="heading-accent">Customizer</span></h1>
-          <p style={{ color: '#A9B7C9' }}>
+          <h1 className="heading-xl" style={{ color: 'var(--text-primary)', margin: '0.75rem 0 0.5rem' }}>Curtain <span className="heading-accent">Customizer</span></h1>
+          <p style={{ color: 'var(--text-dim)' }}>
             Enter your window measurements, choose your options, and see an estimated price update live — then
             submit an enquiry and we&apos;ll confirm the final quotation.
           </p>
@@ -257,10 +257,10 @@ export default function CurtainCustomizerPage() {
 
         {submitted ? (
           <div className={styles.successCard}>
-            <CheckCircle2 size={44} color="#B59241" />
-            <h2 className="heading-md" style={{ color: '#EAF0F8' }}>Enquiry received — reference {submitted.reference}</h2>
-            <p style={{ color: '#A9B7C9', lineHeight: 1.7 }}>
-              Thank you! Your estimated price was <strong style={{ color: '#B59241' }}>{formatPrice(submitted.estimateTotal)}</strong>.
+            <CheckCircle2 size={44} color="var(--gold)" />
+            <h2 className="heading-md" style={{ color: 'var(--text-primary)' }}>Enquiry received — reference {submitted.reference}</h2>
+            <p style={{ color: 'var(--text-dim)', lineHeight: 1.7 }}>
+              Thank you! Your estimated price was <strong style={{ color: 'var(--gold)' }}>{formatPrice(submitted.estimateTotal)}</strong>.
               Our team will review your measurements and requirements, confirm the final quotation, and contact you
               with a payment request. No payment is due until then.
             </p>
@@ -397,7 +397,7 @@ export default function CurtainCustomizerPage() {
 
               {/* Colour */}
               <div className={styles.group}>
-                <h3 className={styles.groupTitle}>Colour: <span style={{ color: '#EAF0F8', fontWeight: 400 }}>{selectedColor.name}</span></h3>
+                <h3 className={styles.groupTitle}>Colour: <span style={{ color: 'var(--text-primary)', fontWeight: 400 }}>{selectedColor.name}</span></h3>
                 <div className={styles.colorRow}>
                   {colors.map((c) => (
                     <button key={c.id} type="button" title={c.name} aria-label={c.name}

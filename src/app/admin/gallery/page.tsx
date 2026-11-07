@@ -271,8 +271,8 @@ export default function AdminGalleryPage() {
 
       <section className={styles.card}>
         <h2 className={styles.sectionTitle}>Gallery Items</h2>
-        {loading ? <p style={{ color: '#a9b7c9' }}>Loading gallery items...</p> : null}
-        {error ? <p style={{ color: '#ffd0d0' }}>{error}</p> : null}
+        {loading ? <p style={{ color: 'var(--text-dim)' }}>Loading gallery items...</p> : null}
+        {error ? <p style={{ color: 'var(--status-danger)' }}>{error}</p> : null}
         <div className={styles.tableWrap}>
           <table className={styles.table}>
             <thead>
@@ -301,7 +301,7 @@ export default function AdminGalleryPage() {
                         )
                       }
                     />
-                    <div style={{ marginTop: '0.3rem', color: '#a9b7c9', fontSize: '0.72rem' }}>{item.project}</div>
+                    <div style={{ marginTop: '0.3rem', color: 'var(--text-dim)', fontSize: '0.72rem' }}>{item.project}</div>
                   </td>
                   <td>
                     <input
@@ -344,7 +344,7 @@ export default function AdminGalleryPage() {
                       <img
                         src={item.beforeImage.secureUrl}
                         alt={item.beforeImage.alt || item.title}
-                        style={{ width: 80, height: 52, borderRadius: 8, objectFit: 'cover', border: '1px solid rgba(255,255,255,0.12)' }}
+                        style={{ width: 80, height: 52, borderRadius: 8, objectFit: 'cover', border: '1px solid var(--border-light)' }}
                       />
                     ) : (
                       <div style={{ width: 80, height: 52, borderRadius: 8, border: '1px dashed rgba(255,255,255,0.22)' }} />
@@ -384,7 +384,7 @@ export default function AdminGalleryPage() {
                       <img
                         src={item.afterImage.secureUrl}
                         alt={item.afterImage.alt || item.title}
-                        style={{ width: 80, height: 52, borderRadius: 8, objectFit: 'cover', border: '1px solid rgba(255,255,255,0.12)' }}
+                        style={{ width: 80, height: 52, borderRadius: 8, objectFit: 'cover', border: '1px solid var(--border-light)' }}
                       />
                     ) : (
                       <div style={{ width: 80, height: 52, borderRadius: 8, border: '1px dashed rgba(255,255,255,0.22)' }} />

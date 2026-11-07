@@ -58,11 +58,11 @@ export default function ContactPage() {
     <div style={{ padding: '140px 0 6rem', minHeight: '100vh', background: 'var(--midnight)' }}>
       <div className="container" style={{ maxWidth: '960px' }}>
         <span className="label-accent">Contact</span>
-        <h1 className="heading-xl" style={{ color: '#EAF0F8', margin: '1rem 0 1.25rem' }}>Talk to the <span className="heading-accent">Zhua Team</span></h1>
+        <h1 className="heading-xl" style={{ color: 'var(--text-primary)', margin: '1rem 0 1.25rem' }}>Talk to the <span className="heading-accent">Zhua Team</span></h1>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: '1rem' }}>
-          <div style={{ background: '#163250', border: '1px solid rgba(181,146,65,0.18)', borderRadius: 14, padding: '1.25rem' }}>
-            <h2 className="heading-md" style={{ color: '#EAF0F8', marginBottom: '1rem' }}>Send a Message</h2>
+          <div style={{ background: 'var(--charcoal)', border: '1px solid rgba(181,146,65,0.18)', borderRadius: 14, padding: '1.25rem' }}>
+            <h2 className="heading-md" style={{ color: 'var(--text-primary)', marginBottom: '1rem' }}>Send a Message</h2>
             <form style={{ display: 'grid', gap: '0.8rem' }} onSubmit={onSubmit}>
               <input
                 className="form-input"
@@ -93,7 +93,7 @@ export default function ContactPage() {
                 onChange={(event) => setForm((prev) => ({ ...prev, message: event.target.value }))}
                 required
               />
-              {error ? <p style={{ margin: 0, color: '#ffd0d0' }}>{error}</p> : null}
+              {error ? <p style={{ margin: 0, color: 'var(--status-danger)' }}>{error}</p> : null}
               {success ? <p style={{ margin: 0, color: '#b6eccf' }}>{success}</p> : null}
               <button className="btn btn-primary" type="submit" style={{ justifyContent: 'center' }} disabled={submitting}>
                 {submitting ? 'Submitting...' : 'Submit Enquiry'}
@@ -107,12 +107,12 @@ export default function ContactPage() {
               { icon: Mail, title: 'Email', value: 'zhuaenterprise@gmail.com' },
               { icon: MapPin, title: 'Location', value: 'Johannesburg, South Africa' },
             ].map(({ icon: Icon, title, value }) => (
-              <div key={title} style={{ background: '#163250', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: '1rem' }}>
+              <div key={title} style={{ background: 'var(--charcoal)', border: '1px solid var(--border-light)', borderRadius: 14, padding: '1rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '0.3rem' }}>
-                  <Icon size={14} color="#B59241" />
-                  <span style={{ color: '#EAF0F8', fontWeight: 600, fontSize: '0.9rem' }}>{title}</span>
+                  <Icon size={14} color="var(--gold)" />
+                  <span style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: '0.9rem' }}>{title}</span>
                 </div>
-                <p style={{ color: '#A9B7C9', fontSize: '0.9rem' }}>{value}</p>
+                <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem' }}>{value}</p>
               </div>
             ))}
             <a href={buildWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="btn btn-whatsapp" style={{ justifyContent: 'center' }}>

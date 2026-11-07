@@ -80,8 +80,8 @@ export default function ContactEnquiriesAdminPage() {
   return (
     <section className={styles.card}>
       <h2 className={styles.sectionTitle}>Contact Enquiries</h2>
-      {loading ? <p style={{ color: '#a9b7c9' }}>Loading enquiries...</p> : null}
-      {error ? <p style={{ color: '#ffd0d0' }}>{error}</p> : null}
+      {loading ? <p style={{ color: 'var(--text-dim)' }}>Loading enquiries...</p> : null}
+      {error ? <p style={{ color: 'var(--status-danger)' }}>{error}</p> : null}
       <div className={styles.tableWrap}>
         <table className={styles.table}>
           <thead>

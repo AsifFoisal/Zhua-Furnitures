@@ -44,7 +44,7 @@
   font-weight: 700;
   line-height: 1.06;
   letter-spacing: -0.02em;
-  color: var(--text-primary);
+  color: var(--media-ink); /* fixed light: sits on the hero photo scrim in both themes */
   max-width: 14ch;
   margin-bottom: var(--spacing-xl);
 }
@@ -58,7 +58,7 @@
 .subtext {
   font-size: clamp(1rem, 1.4vw, 1.2rem);
   line-height: 1.7;
-  color: var(--cream);
+  color: rgba(234, 240, 248, 0.86); /* fixed light over hero scrim */
   max-width: 54ch;
   margin-bottom: var(--spacing-2xl);
 }
@@ -80,7 +80,7 @@
   flex-direction: column;
   align-items: center;
   gap: 0.6rem;
-  color: var(--text-dim);
+  color: rgba(234, 240, 248, 0.72); /* fixed light over hero scrim */
   font-family: var(--font-accent);
   font-size: 0.62rem;
   letter-spacing: 0.22em;

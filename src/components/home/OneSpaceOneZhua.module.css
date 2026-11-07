@@ -86,7 +86,7 @@
   font-family: var(--font-display);
   font-size: clamp(1.4rem, 2.4vw, 1.9rem);
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--media-ink); /* over visual scrim */;
   letter-spacing: 0.02em;
 }
 

@@ -74,8 +74,8 @@ export default function AppToaster() {
         duration={3500}
         toastOptions={{
           style: {
-            background: '#163250',
-            color: '#eaf0f8',
+            background: 'var(--charcoal)',
+            color: 'var(--text-primary)',
             border: '1px solid rgba(181,146,65,0.3)',
           },
         }}

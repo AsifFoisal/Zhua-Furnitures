@@ -149,8 +149,8 @@ function RoomVisualizerWorkspace() {
         <div className={styles.header}>
           <div>
             <span className="label-accent">Design Studio</span>
-            <h1 className="heading-xl" style={{ color: '#EAF0F8', margin: '0.75rem 0 0.5rem' }}>Room <span className="heading-accent">Visualizer</span></h1>
-            <p style={{ color: '#A9B7C9' }}>Upload your room photo, then drag furniture and curtain overlays to preview your design.</p>
+            <h1 className="heading-xl" style={{ color: 'var(--text-primary)', margin: '0.75rem 0 0.5rem' }}>Room <span className="heading-accent">Visualizer</span></h1>
+            <p style={{ color: 'var(--text-dim)' }}>Upload your room photo, then drag furniture and curtain overlays to preview your design.</p>
           </div>
           <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'flex-start' }}>
             <label className="btn btn-outline btn-sm" style={{ cursor: 'pointer' }}>
@@ -181,7 +181,7 @@ function RoomVisualizerWorkspace() {
                 <h4 className={styles.controlsTitle}>Selected Item</h4>
                 <div className={styles.controlsRow}>
                   <button className={styles.controlBtn} onClick={() => resize(-20)}><ZoomOut size={14} /></button>
-                  <span style={{ fontSize: '0.8rem', color: '#7B8EA6' }}>Resize</span>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Resize</span>
                   <button className={styles.controlBtn} onClick={() => resize(20)}><ZoomIn size={14} /></button>
                 </div>
                 <button className={`${styles.controlBtn} ${styles.removeBtn}`} onClick={() => { setOverlays(prev => prev.filter(o => o.id !== selected)); setSelected(null); }}>

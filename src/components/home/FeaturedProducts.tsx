@@ -153,7 +153,7 @@ export default function FeaturedProducts() {
                 <div className={styles.ratingRow}>
                   <div className={styles.stars}>
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} size={11} fill={i < Math.floor(product.rating) ? '#B59241' : 'none'} color="#B59241" />
+                      <Star key={i} size={11} fill={i < Math.floor(product.rating) ? 'var(--gold)' : 'none'} color="var(--gold)" />
                     ))}
                   </div>
                   <span className={styles.ratingText}>({product.reviewCount})</span>

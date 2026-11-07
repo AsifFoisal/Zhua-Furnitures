@@ -226,10 +226,10 @@ export default function OrdersAdminPage() {
           autoComplete="off"
         />
       </div>
-      {loading ? <p style={{ color: '#a9b7c9' }}>Loading orders...</p> : null}
-      {error ? <p style={{ color: '#ffd0d0' }}>{error}</p> : null}
+      {loading ? <p style={{ color: 'var(--text-dim)' }}>Loading orders...</p> : null}
+      {error ? <p style={{ color: 'var(--status-danger)' }}>{error}</p> : null}
       {!loading && !error && orders.length === 0 && searchQuery ? (
-        <p style={{ color: '#a9b7c9', marginBottom: '0.75rem' }}>
+        <p style={{ color: 'var(--text-dim)', marginBottom: '0.75rem' }}>
           No orders found for {searchQuery}.
         </p>
       ) : null}
@@ -377,8 +377,8 @@ export default function OrdersAdminPage() {
               </button>
             </header>
             <div className={styles.modalBody}>
-              {detailsLoading ? <p style={{ color: '#a9b7c9' }}>Loading full order details...</p> : null}
-              {detailsError ? <p style={{ color: '#ffd0d0' }}>{detailsError}</p> : null}
+              {detailsLoading ? <p style={{ color: 'var(--text-dim)' }}>Loading full order details...</p> : null}
+              {detailsError ? <p style={{ color: 'var(--status-danger)' }}>{detailsError}</p> : null}
 
               {!detailsLoading && !detailsError && detailsOrder ? (
                 <>

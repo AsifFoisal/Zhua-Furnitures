@@ -84,8 +84,8 @@ export default function BookInstallationPage() {
       <div style={{ padding: '150px 0 6rem', minHeight: '100vh', background: 'var(--midnight)' }}>
         <div className="container" style={{ maxWidth: '700px', textAlign: 'center' }}>
           <span className="label-accent">Booking Confirmed</span>
-          <h1 className="heading-xl" style={{ color: '#EAF0F8', margin: '1rem 0' }}>Installation Request Received</h1>
-          <p style={{ color: '#A9B7C9', lineHeight: 1.8, marginBottom: '1.2rem' }}>Our scheduling team will confirm your installation slot via WhatsApp and email.</p>
+          <h1 className="heading-xl" style={{ color: 'var(--text-primary)', margin: '1rem 0' }}>Installation Request Received</h1>
+          <p style={{ color: 'var(--text-dim)', lineHeight: 1.8, marginBottom: '1.2rem' }}>Our scheduling team will confirm your installation slot via WhatsApp and email.</p>
           <a href={buildWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="btn btn-whatsapp">Confirm on WhatsApp</a>
         </div>
       </div>
@@ -96,9 +96,9 @@ export default function BookInstallationPage() {
     <div style={{ padding: '140px 0 6rem', minHeight: '100vh', background: 'var(--midnight)' }}>
       <div className="container" style={{ maxWidth: '860px' }}>
         <span className="label-accent">Book Installation</span>
-        <h1 className="heading-xl" style={{ color: '#EAF0F8', margin: '1rem 0 1.25rem' }}>Schedule <span className="heading-accent">Professional Installation</span></h1>
+        <h1 className="heading-xl" style={{ color: 'var(--text-primary)', margin: '1rem 0 1.25rem' }}>Schedule <span className="heading-accent">Professional Installation</span></h1>
 
-        <form onSubmit={onSubmit} style={{ background: '#163250', border: '1px solid rgba(181,146,65,0.2)', borderRadius: 14, padding: '1.2rem', display: 'grid', gap: '0.8rem' }}>
+        <form onSubmit={onSubmit} style={{ background: 'var(--charcoal)', border: '1px solid rgba(181,146,65,0.2)', borderRadius: 14, padding: '1.2rem', display: 'grid', gap: '0.8rem' }}>
           <div className="form-group">
             <label className="form-label">Product</label>
             <select
@@ -189,7 +189,7 @@ export default function BookInstallationPage() {
               onChange={(event) => setForm((prev) => ({ ...prev, notes: event.target.value }))}
             />
           </div>
-          {error ? <p style={{ margin: 0, color: '#ffd0d0' }}>{error}</p> : null}
+          {error ? <p style={{ margin: 0, color: 'var(--status-danger)' }}>{error}</p> : null}
           <button className="btn btn-primary" type="submit" style={{ justifyContent: 'center' }} disabled={submitting}>
             {submitting ? 'Submitting...' : 'Confirm Booking'}
           </button>

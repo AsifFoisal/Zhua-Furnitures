@@ -31,14 +31,14 @@ export default function DesignStudioPage() {
     <div style={{ padding: '140px 0 6rem', minHeight: '100vh', background: 'var(--midnight)' }}>
       <div className="container">
         <span className="label-accent">Design Studio</span>
-        <h1 className="heading-xl" style={{ color: '#EAF0F8', margin: '1rem 0 1.25rem' }}>Plan Your Space With <span className="heading-accent">Interactive Tools</span></h1>
+        <h1 className="heading-xl" style={{ color: 'var(--text-primary)', margin: '1rem 0 1.25rem' }}>Plan Your Space With <span className="heading-accent">Interactive Tools</span></h1>
 
         <div style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))' }}>
           {tools.map((tool) => (
-            <article key={tool.title} style={{ background: '#163250', border: '1px solid rgba(181,146,65,0.18)', borderRadius: 14, padding: '1.1rem', display: 'grid', gap: '0.9rem' }}>
+            <article key={tool.title} style={{ background: 'var(--charcoal)', border: '1px solid rgba(181,146,65,0.18)', borderRadius: 14, padding: '1.1rem', display: 'grid', gap: '0.9rem' }}>
               <div>
-                <h2 className="heading-md" style={{ color: '#EAF0F8', fontSize: '1.22rem', marginBottom: '0.35rem' }}>{tool.title}</h2>
-                <p style={{ color: '#A9B7C9', fontSize: '0.92rem', lineHeight: 1.7 }}>{tool.desc}</p>
+                <h2 className="heading-md" style={{ color: 'var(--text-primary)', fontSize: '1.22rem', marginBottom: '0.35rem' }}>{tool.title}</h2>
+                <p style={{ color: 'var(--text-dim)', fontSize: '0.92rem', lineHeight: 1.7 }}>{tool.desc}</p>
               </div>
               <Link href={tool.href} className="btn btn-outline btn-sm" style={{ justifyContent: 'center' }}>Open Tool</Link>
             </article>

@@ -66,7 +66,7 @@ export default function Testimonials() {
           <div className={styles.left}>
             <span className="label-accent">Real Clients, Real Rooms</span>
             <div className="gold-divider" style={{ margin: '0.75rem 0 1rem' }} />
-            <h2 className="heading-xl" style={{ color: '#EAF0F8', marginBottom: '2rem' }}>
+            <h2 className="heading-xl" style={{ color: 'var(--text-primary)', marginBottom: '2rem' }}>
               What Our <span className="heading-accent">Clients Say</span>
             </h2>
             <div className={styles.thumbs}>
@@ -103,7 +103,7 @@ export default function Testimonials() {
               <Quote size={36} className={styles.quoteIcon} />
               <div className={styles.stars}>
                 {[...Array(t.rating)].map((_, i) => (
-                  <Star key={i} size={16} fill="#B59241" color="#B59241" />
+                  <Star key={i} size={16} fill="var(--gold)" color="var(--gold)" />
                 ))}
               </div>
               <blockquote className={styles.quoteText}>&ldquo;{t.text}&rdquo;</blockquote>

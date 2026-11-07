@@ -88,8 +88,8 @@ export default function InstallationBookingsAdminPage() {
   return (
     <section className={styles.card}>
       <h2 className={styles.sectionTitle}>Installation Bookings</h2>
-      {loading ? <p style={{ color: '#a9b7c9' }}>Loading bookings...</p> : null}
-      {error ? <p style={{ color: '#ffd0d0' }}>{error}</p> : null}
+      {loading ? <p style={{ color: 'var(--text-dim)' }}>Loading bookings...</p> : null}
+      {error ? <p style={{ color: 'var(--status-danger)' }}>{error}</p> : null}
       <div className={styles.tableWrap}>
         <table className={styles.table}>
           <thead>
@@ -110,7 +110,7 @@ export default function InstallationBookingsAdminPage() {
                 <td>{row.customerName}</td>
                 <td>
                   <div>{row.customerEmail}</div>
-                  <div style={{ color: '#a9b7c9', fontSize: '0.74rem' }}>{row.customerPhone}</div>
+                  <div style={{ color: 'var(--text-dim)', fontSize: '0.74rem' }}>{row.customerPhone}</div>
                 </td>
                 <td>{row.productName}</td>
                 <td style={{ maxWidth: 220 }}>{row.address}</td>

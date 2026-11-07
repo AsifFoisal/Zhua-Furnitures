@@ -331,40 +331,40 @@ export default async function OrderConfirmationPage({
           <CheckCircle size={40} color="#4ECDC4" />
         </div>
         <span className="label-accent">Order Received</span>
-        <h1 className="heading-xl" style={{ color: '#EAF0F8', margin: '1rem 0', fontSize: '2.5rem' }}>We Are Verifying Your <span className="heading-accent">Payment</span></h1>
-        <p style={{ color: '#A9B7C9', fontSize: '1rem', lineHeight: 1.7, marginBottom: '2rem' }}>
-          Your order <strong style={{ color: '#B59241' }}>{orderNum}</strong> has been created. We&apos;ll confirm payment and continue fulfillment as soon as your gateway response is received.
+        <h1 className="heading-xl" style={{ color: 'var(--text-primary)', margin: '1rem 0', fontSize: '2.5rem' }}>We Are Verifying Your <span className="heading-accent">Payment</span></h1>
+        <p style={{ color: 'var(--text-dim)', fontSize: '1rem', lineHeight: 1.7, marginBottom: '2rem' }}>
+          Your order <strong style={{ color: 'var(--gold)' }}>{orderNum}</strong> has been created. We&apos;ll confirm payment and continue fulfillment as soon as your gateway response is received.
         </p>
 
         {confirmedOrder ? (
           <div
             style={{
               textAlign: 'left',
-              background: '#163250',
-              border: '1px solid rgba(255,255,255,0.08)',
+              background: 'var(--charcoal)',
+              border: '1px solid var(--border-light)',
               borderRadius: 14,
               padding: '1rem',
               marginBottom: '1.5rem',
             }}
           >
-            <p style={{ color: '#A9B7C9', margin: 0 }}>Order ID: <span style={{ color: '#EAF0F8' }}>{confirmedOrder.id}</span></p>
-            <p style={{ color: '#A9B7C9', margin: '0.3rem 0 0' }}>Payment: <span style={{ color: '#EAF0F8' }}>{paymentStatusLabel}</span></p>
-            <p style={{ color: '#A9B7C9', margin: '0.3rem 0 0' }}>Fulfillment: <span style={{ color: '#EAF0F8' }}>{fulfillmentStatusLabel}</span></p>
+            <p style={{ color: 'var(--text-dim)', margin: 0 }}>Order ID: <span style={{ color: 'var(--text-primary)' }}>{confirmedOrder.id}</span></p>
+            <p style={{ color: 'var(--text-dim)', margin: '0.3rem 0 0' }}>Payment: <span style={{ color: 'var(--text-primary)' }}>{paymentStatusLabel}</span></p>
+            <p style={{ color: 'var(--text-dim)', margin: '0.3rem 0 0' }}>Fulfillment: <span style={{ color: 'var(--text-primary)' }}>{fulfillmentStatusLabel}</span></p>
             {totalLabel ? (
-              <p style={{ color: '#A9B7C9', margin: '0.3rem 0 0' }}>Total: <span style={{ color: '#EAF0F8' }}>{totalLabel}</span></p>
+              <p style={{ color: 'var(--text-dim)', margin: '0.3rem 0 0' }}>Total: <span style={{ color: 'var(--text-primary)' }}>{totalLabel}</span></p>
             ) : null}
 
-            <div style={{ marginTop: '0.8rem', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '0.7rem' }}>
-              <p style={{ color: '#B59241', margin: '0 0 0.6rem', fontWeight: 700 }}>Ordered Products</p>
+            <div style={{ marginTop: '0.8rem', borderTop: '1px solid var(--border-light)', paddingTop: '0.7rem' }}>
+              <p style={{ color: 'var(--gold)', margin: '0 0 0.6rem', fontWeight: 700 }}>Ordered Products</p>
               {orderItems.length === 0 ? (
-                <p style={{ color: '#A9B7C9', margin: 0 }}>No line items found yet.</p>
+                <p style={{ color: 'var(--text-dim)', margin: 0 }}>No line items found yet.</p>
               ) : (
                 <div style={{ display: 'grid', gap: '0.6rem' }}>
                   {orderItems.map((item, index) => (
-                    <div key={`${item.product_name}-${index}`} style={{ border: '1px solid rgba(255,255,255,0.06)', borderRadius: 10, padding: '0.7rem' }}>
-                      <p style={{ color: '#EAF0F8', margin: 0, fontWeight: 600 }}>{item.product_name}</p>
-                      <p style={{ color: '#A9B7C9', margin: '0.25rem 0 0', fontSize: '0.9rem' }}>Product ID: {item.product_id ?? 'N/A'}</p>
-                      <p style={{ color: '#A9B7C9', margin: '0.25rem 0 0', fontSize: '0.9rem' }}>
+                    <div key={`${item.product_name}-${index}`} style={{ border: '1px solid var(--border-light)', borderRadius: 10, padding: '0.7rem' }}>
+                      <p style={{ color: 'var(--text-primary)', margin: 0, fontWeight: 600 }}>{item.product_name}</p>
+                      <p style={{ color: 'var(--text-dim)', margin: '0.25rem 0 0', fontSize: '0.9rem' }}>Product ID: {item.product_id ?? 'N/A'}</p>
+                      <p style={{ color: 'var(--text-dim)', margin: '0.25rem 0 0', fontSize: '0.9rem' }}>
                         Quantity: {item.quantity} · Line Total: {formatOrderCurrency(item.line_total_cents)}
                       </p>
                     </div>
@@ -381,9 +381,9 @@ export default async function OrderConfirmationPage({
             { icon: Truck, label: 'Dispatched', status: fulfillmentStatusLabel, color: '#3A5673' },
             { icon: CheckCircle, label: 'Delivered', status: confirmedOrder?.fulfillment_status === 'delivered' ? 'Done' : 'Pending', color: '#3A5673' },
           ].map(({ icon: Icon, label, status, color }) => (
-            <div key={label} style={{ padding: '1.25rem', background: '#163250', border: `1px solid ${color}30`, borderRadius: 12 }}>
+            <div key={label} style={{ padding: '1.25rem', background: 'var(--charcoal)', border: `1px solid ${color}30`, borderRadius: 12 }}>
               <Icon size={24} color={color} style={{ marginBottom: '0.5rem' }} />
-              <div style={{ fontFamily: 'var(--font-accent)', fontSize: '0.85rem', fontWeight: 600, color: color === '#3A5673' ? '#58708A' : '#EAF0F8' }}>{label}</div>
+              <div style={{ fontFamily: 'var(--font-accent)', fontSize: '0.85rem', fontWeight: 600, color: color === '#3A5673' ? '#58708A' : 'var(--text-primary)' }}>{label}</div>
               <div style={{ fontSize: '0.72rem', color: color === '#B59241' ? '#B59241' : '#3A5673', marginTop: 2 }}>{status}</div>
             </div>
           ))}

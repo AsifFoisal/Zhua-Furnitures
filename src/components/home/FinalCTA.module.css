@@ -32,10 +32,11 @@
 
 .title {
   margin-bottom: var(--spacing-lg);
+  color: var(--media-ink); /* fixed light over photo scrim */
 }
 
 .lede {
-  color: var(--cream);
+  color: rgba(234, 240, 248, 0.86); /* fixed light over photo scrim */;
   line-height: 1.75;
   font-size: 1.02rem;
   max-width: 58ch;

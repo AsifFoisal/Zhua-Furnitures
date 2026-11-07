@@ -279,14 +279,14 @@ export default function CurtainQuotesAdminPage() {
   return (
     <section className={styles.card}>
       <h2 className={styles.sectionTitle}>Curtain Quote Enquiries</h2>
-      <p style={{ color: '#a9b7c9', marginBottom: '1rem' }}>
+      <p style={{ color: 'var(--text-dim)', marginBottom: '1rem' }}>
         Review each configuration, adjust the final pricing, and email the quotation to the customer. The email
         includes a secure payment link for the confirmed amount. Quotes must be saved with a final total before
         they can be sent.
       </p>
-      {loading ? <p style={{ color: '#a9b7c9' }}>Loading quotes...</p> : null}
-      {error ? <p style={{ color: '#ffd0d0' }}>{error}</p> : null}
-      {!loading && quotes.length === 0 ? <p style={{ color: '#a9b7c9' }}>No curtain quote enquiries yet.</p> : null}
+      {loading ? <p style={{ color: 'var(--text-dim)' }}>Loading quotes...</p> : null}
+      {error ? <p style={{ color: 'var(--status-danger)' }}>{error}</p> : null}
+      {!loading && quotes.length === 0 ? <p style={{ color: 'var(--text-dim)' }}>No curtain quote enquiries yet.</p> : null}
       <div className={styles.tableWrap}>
         <table className={styles.table}>
           <thead>
@@ -376,16 +376,16 @@ function QuoteRow({
       <tr>
         <td style={{ whiteSpace: 'nowrap' }}>
           {row.reference}
-          {row.city ? <div style={{ color: '#8ca0b8', fontSize: 12 }}>{row.city}</div> : null}
+          {row.city ? <div style={{ color: 'var(--text-faint)', fontSize: 12 }}>{row.city}</div> : null}
         </td>
         <td>
           {row.fullName}
-          <div style={{ color: '#8ca0b8', fontSize: 12 }}>{row.email}</div>
-          {row.phone ? <div style={{ color: '#8ca0b8', fontSize: 12 }}>{row.phone}</div> : null}
+          <div style={{ color: 'var(--text-faint)', fontSize: 12 }}>{row.email}</div>
+          {row.phone ? <div style={{ color: 'var(--text-faint)', fontSize: 12 }}>{row.phone}</div> : null}
         </td>
         <td style={{ whiteSpace: 'nowrap' }}>{formatPrice(row.estimatedTotal)}</td>
         <td style={{ whiteSpace: 'nowrap' }}>
-          {row.finalTotal !== null ? formatPrice(row.finalTotal) : <span style={{ color: '#8ca0b8' }}>—</span>}
+          {row.finalTotal !== null ? formatPrice(row.finalTotal) : <span style={{ color: 'var(--text-faint)' }}>—</span>}
         </td>
         <td>
           {row.paymentStatus === 'paid' ? (
@@ -394,9 +394,9 @@ function QuoteRow({
               {row.paidAt ? ` · ${row.paidAt.slice(0, 10)}` : ''}
             </span>
           ) : row.quoteSentAt ? (
-            <span style={{ color: '#b59241' }}>Quote sent · awaiting payment</span>
+            <span style={{ color: 'var(--gold)' }}>Quote sent · awaiting payment</span>
           ) : (
-            <span style={{ color: '#8ca0b8' }}>Not sent</span>
+            <span style={{ color: 'var(--text-faint)' }}>Not sent</span>
           )}
         </td>
         <td>
@@ -429,29 +429,29 @@ function QuoteRow({
             <div style={{ display: 'grid', gap: '1.25rem', padding: '0.5rem 0.25rem' }}>
               {/* Original configuration */}
               <div>
-                <strong style={{ color: '#eaf0f8', fontSize: 13 }}>Customer configuration</strong>
-                <p style={{ color: '#a9b7c9', fontSize: 13, margin: '0.35rem 0' }}>
+                <strong style={{ color: 'var(--text-primary)', fontSize: 13 }}>Customer configuration</strong>
+                <p style={{ color: 'var(--text-dim)', fontSize: 13, margin: '0.35rem 0' }}>
                   {describeConfiguration(row.configuration)}
                 </p>
                 <details>
-                  <summary style={{ cursor: 'pointer', color: '#b59241', fontSize: 12 }}>Full specification</summary>
+                  <summary style={{ cursor: 'pointer', color: 'var(--gold)', fontSize: 12 }}>Full specification</summary>
                   <div style={{ marginTop: 6 }}>
                     {configurationDetails(row.configuration).map((detail) => (
-                      <div key={detail.label} style={{ fontSize: 12, color: '#a9b7c9' }}>
-                        <strong style={{ color: '#eaf0f8' }}>{detail.label}:</strong> {detail.value}
+                      <div key={detail.label} style={{ fontSize: 12, color: 'var(--text-dim)' }}>
+                        <strong style={{ color: 'var(--text-primary)' }}>{detail.label}:</strong> {detail.value}
                       </div>
                     ))}
                   </div>
                 </details>
                 {row.notes ? (
-                  <p style={{ color: '#8ca0b8', fontSize: 12, marginTop: 6 }}>Customer notes: {row.notes}</p>
+                  <p style={{ color: 'var(--text-faint)', fontSize: 12, marginTop: 6 }}>Customer notes: {row.notes}</p>
                 ) : null}
               </div>
 
               {/* Final pricing editor */}
               {draft ? (
-                <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '1rem', display: 'grid', gap: '0.75rem' }}>
-                  <strong style={{ color: '#eaf0f8', fontSize: 13 }}>Final quotation</strong>
+                <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '1rem', display: 'grid', gap: '0.75rem' }}>
+                  <strong style={{ color: 'var(--text-primary)', fontSize: 13 }}>Final quotation</strong>
 
                   <div style={{ display: 'grid', gap: '0.5rem' }}>
                     {draft.lines.map((line, index) => (
@@ -531,7 +531,7 @@ function QuoteRow({
                         onChange={(e) => onPatchDraft({ finalTotal: e.target.value })}
                       />
                       {draft.lines.length > 0 ? (
-                        <span style={{ color: '#8ca0b8', fontSize: 11 }}>
+                        <span style={{ color: 'var(--text-faint)', fontSize: 11 }}>
                           Line items add up to {formatPrice(draftLinesTotal)}
                         </span>
                       ) : null}
@@ -573,7 +573,7 @@ function QuoteRow({
 
                   {sentLink ? (
                     <div style={{ display: 'grid', gap: '0.35rem' }}>
-                      <span style={{ color: '#8ca0b8', fontSize: 11 }}>Payment link sent to the customer:</span>
+                      <span style={{ color: 'var(--text-faint)', fontSize: 11 }}>Payment link sent to the customer:</span>
                       <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                         <input className={styles.input} readOnly value={sentLink} onFocus={(e) => e.target.select()} />
                         <button className={styles.ghostButton} type="button" onClick={onCopyLink} style={{ justifyContent: 'center' }}>

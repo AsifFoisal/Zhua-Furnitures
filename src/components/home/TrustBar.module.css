@@ -1,5 +1,5 @@
 .bar {
-  background: linear-gradient(135deg, #1E3C5F, #1C1A18);
+  background: var(--trustbar-background);
   border-bottom: 1px solid rgba(181,146,65,0.1);
   padding: 0.875rem 0;
 }
@@ -18,13 +18,13 @@
   gap: 0.5rem;
 }
 
-.icon { color: #B59241; flex-shrink: 0; }
+.icon { color: var(--gold); flex-shrink: 0; }
 
 .text {
   font-family: var(--font-accent);
   font-size: 0.8rem;
   font-weight: 500;
-  color: #A9B7C9;
+  color: var(--text-dim);
   white-space: nowrap;
 }
 

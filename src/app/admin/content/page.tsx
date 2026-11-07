@@ -260,8 +260,8 @@ export default function ContentAdminPage() {
     <>
       <section className={styles.card}>
         <h2 className={styles.sectionTitle}>Content Block Editor</h2>
-        {loading ? <p style={{ color: '#a9b7c9' }}>Loading content blocks...</p> : null}
-        {error ? <p style={{ color: '#ffd0d0' }}>{error}</p> : null}
+        {loading ? <p style={{ color: 'var(--text-dim)' }}>Loading content blocks...</p> : null}
+        {error ? <p style={{ color: 'var(--status-danger)' }}>{error}</p> : null}
 
         {selectedBlock ? (
           <div className={styles.formGrid}>
@@ -363,7 +363,7 @@ export default function ContentAdminPage() {
                 <img
                   src={selectedBlock.payload.heroImage.secureUrl}
                   alt={selectedBlock.payload.heroImage.alt || selectedBlock.title}
-                  style={{ width: '100%', maxWidth: 220, borderRadius: 10, border: '1px solid rgba(255,255,255,0.12)' }}
+                  style={{ width: '100%', maxWidth: 220, borderRadius: 10, border: '1px solid var(--border-light)' }}
                 />
               ) : (
                 <div style={{ width: '100%', maxWidth: 220, height: 124, borderRadius: 10, border: '1px dashed rgba(255,255,255,0.25)', background: 'rgba(255,255,255,0.03)' }} />
@@ -401,7 +401,7 @@ export default function ContentAdminPage() {
                 <img
                   src={selectedBlock.payload.secondaryImage.secureUrl}
                   alt={selectedBlock.payload.secondaryImage.alt || selectedBlock.title}
-                  style={{ width: '100%', maxWidth: 220, borderRadius: 10, border: '1px solid rgba(255,255,255,0.12)' }}
+                  style={{ width: '100%', maxWidth: 220, borderRadius: 10, border: '1px solid var(--border-light)' }}
                 />
               ) : (
                 <div style={{ width: '100%', maxWidth: 220, height: 124, borderRadius: 10, border: '1px dashed rgba(255,255,255,0.25)', background: 'rgba(255,255,255,0.03)' }} />

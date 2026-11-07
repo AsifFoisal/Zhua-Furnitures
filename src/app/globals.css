@@ -21,6 +21,10 @@
   --text-muted: #7B8EA6;
   --border: rgba(181, 146, 65, 0.2);
   --border-light: rgba(255,255,255,0.08);
+  --border-strong: rgba(255,255,255,0.14);
+  --input-background: rgba(10, 24, 40, 0.9);
+  --status-danger: #FFD0D0;
+  --status-success: #CCE8D6;
   --glass: rgba(22,50,80,0.85);
   --page-background: #0F243B;
   --surface-1: #163250;
@@ -28,9 +32,16 @@
   --surface-3: #122A45;
   --surface-elevated: rgba(15, 36, 59, 0.92);
   --surface-overlay: rgba(15, 36, 59, 0.72);
+  --surface-solid: rgba(15, 36, 59, 0.97);
   --surface-border: rgba(255,255,255,0.08);
+  --tint: rgba(255,255,255,0.06);
+  --tint-soft: rgba(255,255,255,0.03);
+  --tint-strong: rgba(255,255,255,0.1);
+  --text-faint: #8CA0B8;
+  --media-ink: #EAF0F8;
   --hero-background: linear-gradient(160deg, #0F243B 0%, #163250 52%, #122A45 100%);
   --panel-background: linear-gradient(135deg, rgba(22, 50, 80, 0.95), rgba(12, 30, 50, 0.98));
+  --trustbar-background: linear-gradient(135deg, #1E3C5F, #1C1A18);
 
   /* — Typography — */
   --font-display: var(--font-playfair), 'Playfair Display', Georgia, serif;
@@ -111,6 +122,10 @@ html[data-theme='light'] {
   --text-muted: #52657b;
   --border: rgba(157, 122, 47, 0.2);
   --border-light: rgba(15, 36, 59, 0.1);
+  --border-strong: rgba(15, 36, 59, 0.18);
+  --input-background: rgba(15, 36, 59, 0.055);
+  --status-danger: #B3261E;
+  --status-success: #1E7B45;
   --glass: rgba(255, 255, 255, 0.88);
   --page-background: #f4f7fb;
   --surface-1: #ffffff;
@@ -118,9 +133,16 @@ html[data-theme='light'] {
   --surface-3: #e8eef6;
   --surface-elevated: rgba(255, 255, 255, 0.96);
   --surface-overlay: rgba(255, 255, 255, 0.84);
+  --surface-solid: rgba(255, 255, 255, 0.97);
   --surface-border: rgba(15, 36, 59, 0.08);
+  --tint: rgba(15, 36, 59, 0.06);
+  --tint-soft: rgba(15, 36, 59, 0.035);
+  --tint-strong: rgba(15, 36, 59, 0.09);
+  --text-faint: #5D7189;
+  --media-ink: #EAF0F8;
   --hero-background: linear-gradient(160deg, #f8fbfe 0%, #edf3f8 52%, #e4ebf4 100%);
   --panel-background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(242, 247, 252, 0.98));
+  --trustbar-background: linear-gradient(135deg, #ffffff, #f4efe4);
 
   --shadow-sm: 0 2px 8px rgba(15, 36, 59, 0.08);
   --shadow-md: 0 4px 24px rgba(15, 36, 59, 0.1);
@@ -399,7 +421,7 @@ ul, ol {
 }
 
 .glass-card {
-  background: rgba(22,50,80,0.7);
+  background: var(--glass);
   border: 1px solid var(--border-light);
   border-radius: var(--radius-lg);
   backdrop-filter: blur(20px);
@@ -852,10 +874,10 @@ ul, ol {
 }
 
 .navbar-solid {
-  background: rgba(15,36,59,0.97);
+  background: var(--surface-solid);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border-light);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+  box-shadow: var(--shadow-md);
 }
 
 /* ============================================================

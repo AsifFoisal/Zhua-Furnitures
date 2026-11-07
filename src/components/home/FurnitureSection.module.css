@@ -79,12 +79,12 @@
   font-family: var(--font-display);
   font-size: clamp(1.6rem, 2.6vw, 2.2rem);
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--media-ink); /* over visual scrim */;
   margin-bottom: 0.4rem;
 }
 
 .featuredCaption p {
-  color: var(--cream);
+  color: rgba(234, 240, 248, 0.86); /* over visual scrim */;
   font-size: 0.95rem;
   margin-bottom: var(--spacing-md);
 }

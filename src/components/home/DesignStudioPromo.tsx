@@ -20,10 +20,10 @@ export default function DesignStudioPromo() {
           <div className={styles.left}>
             <span className="label-accent">Design Studio</span>
             <div className="gold-divider" style={{ margin: '0.75rem 0 1rem' }} />
-            <h2 className="heading-xl" style={{ color: '#EAF0F8', marginBottom: '1.25rem' }}>
+            <h2 className="heading-xl" style={{ color: 'var(--text-primary)', marginBottom: '1.25rem' }}>
               Design Your <span className="heading-accent">Space</span><br />Before You Buy
             </h2>
-            <p style={{ color: '#A9B7C9', fontSize: '1rem', lineHeight: '1.75', maxWidth: '420px', marginBottom: '2rem' }}>
+            <p style={{ color: 'var(--text-dim)', fontSize: '1rem', lineHeight: '1.75', maxWidth: '420px', marginBottom: '2rem' }}>
               Our suite of free design tools helps you make confident decisions. Visualize furniture in your room, design custom curtains, and calculate exactly what you need.
             </p>
             {isDesignStudioDisabled ? (

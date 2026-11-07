@@ -282,8 +282,8 @@ export default function AdminTestimonialsPage() {
 
       <section className={styles.card}>
         <h2 className={styles.sectionTitle}>Testimonials</h2>
-        {loading ? <p style={{ color: '#a9b7c9' }}>Loading testimonials...</p> : null}
-        {error ? <p style={{ color: '#ffd0d0' }}>{error}</p> : null}
+        {loading ? <p style={{ color: 'var(--text-dim)' }}>Loading testimonials...</p> : null}
+        {error ? <p style={{ color: 'var(--status-danger)' }}>{error}</p> : null}
 
         <div className={styles.tableWrap}>
           <table className={styles.table}>
@@ -313,7 +313,7 @@ export default function AdminTestimonialsPage() {
                         )
                       }
                     />
-                    <div style={{ marginTop: '0.3rem', color: '#a9b7c9', fontSize: '0.72rem' }}>{item.project}</div>
+                    <div style={{ marginTop: '0.3rem', color: 'var(--text-dim)', fontSize: '0.72rem' }}>{item.project}</div>
                   </td>
                   <td>
                     <input
@@ -358,7 +358,7 @@ export default function AdminTestimonialsPage() {
                   </td>
                   <td>
                     <span className={statusClass(item.status)}>{item.status}</span>
-                    <div style={{ color: '#a9b7c9', fontSize: '0.72rem', marginTop: '0.35rem' }}>{item.updatedAt}</div>
+                    <div style={{ color: 'var(--text-dim)', fontSize: '0.72rem', marginTop: '0.35rem' }}>{item.updatedAt}</div>
                   </td>
                   {(['avatarImage', 'beforeImage', 'afterImage'] as const).map((slot) => (
                     <td key={slot}>
@@ -366,7 +366,7 @@ export default function AdminTestimonialsPage() {
                         <img
                           src={item[slot]!.secureUrl}
                           alt={item[slot]!.alt || item.name}
-                          style={{ width: 72, height: 48, objectFit: 'cover', borderRadius: 8, border: '1px solid rgba(255,255,255,0.12)' }}
+                          style={{ width: 72, height: 48, objectFit: 'cover', borderRadius: 8, border: '1px solid var(--border-light)' }}
                         />
                       ) : (
                         <div style={{ width: 72, height: 48, borderRadius: 8, border: '1px dashed rgba(255,255,255,0.22)' }} />

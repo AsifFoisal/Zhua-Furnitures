@@ -1,4 +1,4 @@
-.section { background: linear-gradient(135deg, #122A45 0%, #163250 100%); }
+.section { background: linear-gradient(135deg, var(--surface-3) 0%, var(--charcoal) 100%); }
 
 .inner {
   display: grid;
@@ -24,7 +24,7 @@
 }
 
 .thumb:hover, .thumbActive {
-  background: rgba(255,255,255,0.03);
+  background: var(--tint-soft);
   border-color: rgba(181,146,65,0.15);
 }
 
@@ -46,16 +46,16 @@
   font-family: var(--font-accent);
   font-size: 0.875rem;
   font-weight: 600;
-  color: #EAF0F8;
+  color: var(--text-primary);
 }
 
-.thumbLoc { font-size: 0.75rem; color: #7B8EA6; }
+.thumbLoc { font-size: 0.75rem; color: var(--text-muted); }
 
 /* Quote Card */
 .right { display: flex; flex-direction: column; gap: 1.5rem; }
 
 .quoteCard {
-  background: rgba(255,255,255,0.02);
+  background: var(--tint-soft);
   border: 1px solid rgba(181,146,65,0.12);
   border-radius: 20px;
   padding: 2.5rem;
@@ -96,8 +96,8 @@
   flex-shrink: 0;
 }
 
-.authorName { font-family: var(--font-accent); font-size: 0.95rem; font-weight: 600; color: #EAF0F8; }
-.authorMeta { font-size: 0.78rem; color: #7B8EA6; margin-top: 2px; }
+.authorName { font-family: var(--font-accent); font-size: 0.95rem; font-weight: 600; color: var(--text-primary); }
+.authorMeta { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
 
 .dots { display: flex; gap: 8px; justify-content: center; }
 
@@ -105,7 +105,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.1);
+  background: var(--tint-strong);
   border: none;
   cursor: pointer;
   transition: all 200ms;
@@ -114,7 +114,7 @@
 .dotActive {
   width: 24px;
   border-radius: 4px;
-  background: #B59241;
+  background: var(--gold);
 }
 
 @media (max-width: 1024px) { .inner { grid-template-columns: 1fr; gap: 3rem; } }

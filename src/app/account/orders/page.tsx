@@ -120,27 +120,27 @@ export default async function OrdersPage() {
     <div style={{ padding: '140px 0 6rem', minHeight: '100vh', background: 'var(--midnight)' }}>
       <div className="container" style={{ maxWidth: '900px' }}>
         <span className="label-accent">Account</span>
-        <h1 className="heading-xl" style={{ color: '#EAF0F8', margin: '1rem 0 1.25rem' }}>Order History</h1>
+        <h1 className="heading-xl" style={{ color: 'var(--text-primary)', margin: '1rem 0 1.25rem' }}>Order History</h1>
 
         {orders.length === 0 ? (
-          <div style={{ background: '#163250', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: '1.2rem' }}>
-            <p style={{ color: '#A9B7C9', marginBottom: '0.8rem' }}>No orders found for this account yet.</p>
+          <div style={{ background: 'var(--charcoal)', border: '1px solid var(--border-light)', borderRadius: 14, padding: '1.2rem' }}>
+            <p style={{ color: 'var(--text-dim)', marginBottom: '0.8rem' }}>No orders found for this account yet.</p>
             <Link href="/shop" className="btn btn-primary btn-sm">Browse Shop</Link>
           </div>
         ) : (
-          <div style={{ background: '#163250', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, overflow: 'hidden' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr 1fr 1fr', gap: '0.6rem', padding: '0.85rem 1rem', borderBottom: '1px solid rgba(255,255,255,0.08)', color: '#B59241', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+          <div style={{ background: 'var(--charcoal)', border: '1px solid var(--border-light)', borderRadius: 14, overflow: 'hidden' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr 1fr 1fr', gap: '0.6rem', padding: '0.85rem 1rem', borderBottom: '1px solid var(--border-light)', color: 'var(--gold)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
               <span>Order</span><span>Date</span><span>Total</span><span>Status</span><span>Payment</span>
             </div>
             {orders.map((order) => (
-              <div key={order.id} style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr 1fr 1fr', gap: '0.6rem', padding: '0.95rem 1rem', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                <Link href={`/account/orders/${order.id}`} style={{ color: '#EAF0F8', textDecoration: 'none' }}>
+              <div key={order.id} style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr 1fr 1fr', gap: '0.6rem', padding: '0.95rem 1rem', borderBottom: '1px solid var(--border-light)' }}>
+                <Link href={`/account/orders/${order.id}`} style={{ color: 'var(--text-primary)', textDecoration: 'none' }}>
                   {order.orderNumber}
                 </Link>
-                <span style={{ color: '#A9B7C9' }}>{order.date}</span>
-                <span style={{ color: '#EAF0F8' }}>{order.total}</span>
-                <span style={{ color: order.status === 'Delivered' ? '#4ECDC4' : '#B59241' }}>{order.status}</span>
-                <span style={{ color: '#A9B7C9' }}>{order.payment}</span>
+                <span style={{ color: 'var(--text-dim)' }}>{order.date}</span>
+                <span style={{ color: 'var(--text-primary)' }}>{order.total}</span>
+                <span style={{ color: order.status === 'Delivered' ? '#4ECDC4' : 'var(--gold)' }}>{order.status}</span>
+                <span style={{ color: 'var(--text-dim)' }}>{order.payment}</span>
               </div>
             ))}
           </div>

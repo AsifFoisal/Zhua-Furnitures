@@ -30,12 +30,12 @@ export default function PoliciesPage() {
     <div style={{ padding: '140px 0 6rem', minHeight: '100vh', background: 'var(--midnight)' }}>
       <div className="container" style={{ maxWidth: '920px' }}>
         <span className="label-accent">Policies</span>
-        <h1 className="heading-xl" style={{ color: '#EAF0F8', margin: '1rem 0 1.25rem' }}>Shipping, Returns &amp; <span className="heading-accent">Privacy</span></h1>
+        <h1 className="heading-xl" style={{ color: 'var(--text-primary)', margin: '1rem 0 1.25rem' }}>Shipping, Returns &amp; <span className="heading-accent">Privacy</span></h1>
         <div style={{ display: 'grid', gap: '1rem' }}>
           {sections.map((section) => (
-            <section key={section.title} style={{ background: '#163250', border: '1px solid rgba(181,146,65,0.18)', borderRadius: 14, padding: '1.1rem' }}>
-              <h2 className="heading-md" style={{ color: '#EAF0F8', fontSize: '1.2rem', marginBottom: '0.55rem' }}>{section.title}</h2>
-              <ul style={{ display: 'grid', gap: '0.45rem', listStyle: 'disc', paddingLeft: '1.2rem', color: '#A9B7C9' }}>
+            <section key={section.title} style={{ background: 'var(--charcoal)', border: '1px solid rgba(181,146,65,0.18)', borderRadius: 14, padding: '1.1rem' }}>
+              <h2 className="heading-md" style={{ color: 'var(--text-primary)', fontSize: '1.2rem', marginBottom: '0.55rem' }}>{section.title}</h2>
+              <ul style={{ display: 'grid', gap: '0.45rem', listStyle: 'disc', paddingLeft: '1.2rem', color: 'var(--text-dim)' }}>
                 {section.points.map((point) => <li key={point}>{point}</li>)}
               </ul>
             </section>

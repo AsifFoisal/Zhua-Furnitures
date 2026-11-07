@@ -1,5 +1,5 @@
 .section {
-  background: linear-gradient(135deg, #122A45 0%, #163250 50%, #122A45 100%);
+  background: linear-gradient(135deg, var(--surface-3) 0%, var(--charcoal) 50%, var(--surface-3) 100%);
   padding: 6rem 0;
   position: relative;
   overflow: hidden;
@@ -36,8 +36,8 @@
   align-items: center;
   gap: 1.25rem;
   padding: 1.25rem 1.5rem;
-  background: rgba(255,255,255,0.02);
-  border: 1px solid rgba(255,255,255,0.06);
+  background: var(--tint-soft);
+  border: 1px solid var(--border-light);
   border-radius: 14px;
   text-decoration: none;
   transition: all 250ms;
@@ -45,7 +45,7 @@
 }
 
 .toolCard:hover {
-  background: rgba(255,255,255,0.04);
+  background: var(--tint-soft);
   border-color: rgba(181,146,65,0.15);
   transform: translateX(4px);
 }
@@ -64,13 +64,13 @@
   font-family: var(--font-accent);
   font-size: 0.95rem;
   font-weight: 600;
-  color: #EAF0F8;
+  color: var(--text-primary);
   margin-bottom: 3px;
 }
 
 .toolDesc {
   font-size: 0.8rem;
-  color: #7B8EA6;
+  color: var(--text-muted);
   line-height: 1.5;
 }
 
@@ -93,7 +93,7 @@
 }
 
 .toolCardDisabled:hover {
-  background: rgba(255,255,255,0.02);
+  background: var(--tint-soft);
   border-color: rgba(255,255,255,0.06);
   transform: none;
 }
@@ -107,7 +107,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.16em;
-  color: #b59241;
+  color: var(--gold);
   border: 1px solid rgba(181, 146, 65, 0.4);
   background: rgba(181, 146, 65, 0.12);
 }

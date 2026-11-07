@@ -43,6 +43,6 @@
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--text-dim);
+  color: rgba(234, 240, 248, 0.8); /* fixed light on dark pill */;
   pointer-events: none;
 }

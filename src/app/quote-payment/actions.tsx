@@ -89,7 +89,7 @@ export default function QuotePaymentActions({
           <CreditCard size={15} /> {paying === 'yoco' ? 'Redirecting...' : 'Pay with Yoco'}
         </button>
       </div>
-      <p style={{ color: '#8ca0b8', fontSize: '0.75rem', margin: 0, textAlign: 'center' }}>
+      <p style={{ color: 'var(--text-faint)', fontSize: '0.75rem', margin: 0, textAlign: 'center' }}>
         Reference {reference} · Secured checkout
       </p>
     </div>

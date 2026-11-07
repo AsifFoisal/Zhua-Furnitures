@@ -10,8 +10,8 @@
   width: min(460px, 100%);
   padding: 1.6rem;
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(15, 36, 59, 0.9);
+  border: 1px solid var(--border-light);
+  background: var(--surface-elevated);
   box-shadow: 0 20px 45px rgba(0, 0, 0, 0.2);
 }
 
@@ -25,13 +25,13 @@
 
 .title {
   margin: 0.4rem 0 1rem;
-  color: #eaf0f8;
+  color: var(--text-primary);
   font-size: clamp(1.4rem, 2vw, 1.8rem);
 }
 
 .help {
   margin: 0 0 1.2rem;
-  color: #a9b7c9;
+  color: var(--text-dim);
   font-size: 0.95rem;
 }
 
@@ -41,7 +41,7 @@
 }
 
 .label {
-  color: #eaf0f8;
+  color: var(--text-primary);
   font-size: 0.84rem;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -49,22 +49,22 @@
 
 .input {
   width: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid var(--border-strong);
   border-radius: 10px;
-  background: rgba(10, 24, 40, 0.9);
-  color: #eaf0f8;
+  background: var(--input-background);
+  color: var(--text-primary);
   padding: 0.68rem 0.78rem;
 }
 
 .input:focus {
   outline: none;
-  border-color: #b59241;
+  border-color: var(--gold);
   box-shadow: 0 0 0 3px rgba(181, 146, 65, 0.2);
 }
 
 .error {
   margin: 0.35rem 0;
-  color: #ffd0d0;
+  color: var(--status-danger);
   font-size: 0.9rem;
 }
 
@@ -73,8 +73,8 @@
   border: none;
   border-radius: 10px;
   padding: 0.72rem 0.9rem;
-  background: #b59241;
-  color: #0f243b;
+  background: var(--gold);
+  color: var(--midnight);
   font-weight: 700;
   cursor: pointer;
 }

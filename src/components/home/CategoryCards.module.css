@@ -59,13 +59,13 @@
   font-family: var(--font-display);
   font-size: 1.5rem;
   font-weight: 600;
-  color: #EAF0F8;
+  color: var(--media-ink);
   line-height: 1.2;
 }
 
 .cardDesc {
   font-size: 0.875rem;
-  color: #7B8EA6;
+  color: var(--media-ink);
   line-height: 1.6;
 }
 

@@ -50,19 +50,19 @@ export default async function ActivityPage() {
     <div style={{ padding: '140px 0 6rem', minHeight: '100vh', background: 'var(--midnight)' }}>
       <div className="container" style={{ maxWidth: '900px' }}>
         <span className="label-accent">Account</span>
-        <h1 className="heading-xl" style={{ color: '#EAF0F8', margin: '1rem 0 1.25rem' }}>Activity Timeline</h1>
+        <h1 className="heading-xl" style={{ color: 'var(--text-primary)', margin: '1rem 0 1.25rem' }}>Activity Timeline</h1>
 
         {feed.length === 0 ? (
-          <div style={{ background: '#163250', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: '1.2rem' }}>
-            <p style={{ color: '#A9B7C9', marginBottom: '0.8rem' }}>No activity captured yet for this account.</p>
+          <div style={{ background: 'var(--charcoal)', border: '1px solid var(--border-light)', borderRadius: 14, padding: '1.2rem' }}>
+            <p style={{ color: 'var(--text-dim)', marginBottom: '0.8rem' }}>No activity captured yet for this account.</p>
             <Link href="/shop" className="btn btn-primary btn-sm">Browse Shop</Link>
           </div>
         ) : (
           <div style={{ display: 'grid', gap: '0.75rem' }}>
             {feed.map((event) => (
-              <article key={event.id} style={{ background: '#163250', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: '0.9rem 1rem', display: 'grid', gap: '0.25rem' }}>
-                <p style={{ color: '#EAF0F8', margin: 0, fontWeight: 600 }}>{toTitle(event.actionType)}</p>
-                <p style={{ color: '#A9B7C9', margin: 0, fontSize: '0.9rem' }}>
+              <article key={event.id} style={{ background: 'var(--charcoal)', border: '1px solid var(--border-light)', borderRadius: 14, padding: '0.9rem 1rem', display: 'grid', gap: '0.25rem' }}>
+                <p style={{ color: 'var(--text-primary)', margin: 0, fontWeight: 600 }}>{toTitle(event.actionType)}</p>
+                <p style={{ color: 'var(--text-dim)', margin: 0, fontSize: '0.9rem' }}>
                   {toTitle(event.resourceType)}{event.resourceId ? ` · ${event.resourceId}` : ''}
                 </p>
                 <p style={{ color: '#7e9ab8', margin: 0, fontSize: '0.8rem' }}>{event.createdAt}</p>

@@ -176,7 +176,7 @@ export default function SettingsAdminPage() {
 
       <section className={styles.card}>
         <h2 className={styles.sectionTitle}>Delivery Pricing</h2>
-        <p style={{ color: '#a9b7c9', fontSize: '0.82rem', marginBottom: '0.85rem' }}>
+        <p style={{ color: 'var(--text-dim)', fontSize: '0.82rem', marginBottom: '0.85rem' }}>
           Configure the free-shipping threshold and province-level standard/express delivery charges.
         </p>
 
@@ -214,7 +214,7 @@ export default function SettingsAdminPage() {
                 <tr key={zone.id}>
                   <td>
                     {zone.name}
-                    <div style={{ color: '#a9b7c9', fontSize: '0.72rem', marginTop: '0.2rem' }}>{zone.id}</div>
+                    <div style={{ color: 'var(--text-dim)', fontSize: '0.72rem', marginTop: '0.2rem' }}>{zone.id}</div>
                   </td>
                   <td>
                     <input

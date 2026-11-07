@@ -46,7 +46,7 @@
 }
 
 .newsletterInput:focus {
-  border-color: #B59241;
+  border-color: var(--gold);
   background: rgba(181,146,65,0.06);
 }
 
@@ -87,7 +87,7 @@
 .logoIcon {
   width: 40px;
   height: 40px;
-  background: linear-gradient(135deg, #B59241, #D0AF63);
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -95,7 +95,7 @@
   font-family: var(--font-display);
   font-size: 1.4rem;
   font-weight: 800;
-  color: #0F243B;
+  color: var(--midnight);
   flex-shrink: 0;
 }
 
@@ -235,7 +235,7 @@
 
 .payBadge {
   padding: 4px 10px;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid var(--border-light);
   border-radius: 6px;
   font-family: var(--font-accent);
   font-size: 0.68rem;

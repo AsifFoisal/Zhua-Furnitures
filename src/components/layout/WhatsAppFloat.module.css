@@ -33,15 +33,15 @@
   right: calc(100% + 12px);
   top: 50%;
   transform: translateY(-50%);
-  background: #163250;
-  color: #EAF0F8;
+  background: var(--charcoal);
+  color: var(--text-primary);
   padding: 0.5rem 0.875rem;
   border-radius: 8px;
   font-family: var(--font-accent);
   font-size: 0.8rem;
   font-weight: 500;
   white-space: nowrap;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid var(--border-light);
   box-shadow: 0 4px 16px rgba(0,0,0,0.3);
   opacity: 0;
   pointer-events: none;
@@ -55,7 +55,7 @@
   top: 50%;
   transform: translateY(-50%);
   border: 5px solid transparent;
-  border-left-color: #163250;
+  border-left-color: var(--charcoal);
 }
 
 .float:hover .tooltip { opacity: 1; }

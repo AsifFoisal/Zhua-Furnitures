@@ -301,7 +301,7 @@ export default function CheckoutPage() {
             {/* Step 0: Delivery */}
             {step === 0 && (
               <form onSubmit={handleSubmit(onDeliverySubmit)} className={styles.formSection}>
-                <div className={styles.sectionHeader}><Truck size={18} color="#B59241" /><h2 className={styles.sectionTitle}>Delivery Information</h2></div>
+                <div className={styles.sectionHeader}><Truck size={18} color="var(--gold)" /><h2 className={styles.sectionTitle}>Delivery Information</h2></div>
                 <div className={styles.formGrid2}>
                   <div className="form-group">
                     <label className="form-label">Full Name</label>
@@ -370,7 +370,7 @@ export default function CheckoutPage() {
             {/* Step 1: Payment */}
             {step === 1 && (
               <div className={styles.formSection}>
-                <div className={styles.sectionHeader}><CreditCard size={18} color="#B59241" /><h2 className={styles.sectionTitle}>Payment Method</h2></div>
+                <div className={styles.sectionHeader}><CreditCard size={18} color="var(--gold)" /><h2 className={styles.sectionTitle}>Payment Method</h2></div>
                 <div className={styles.paymentMethods}>
                   {paymentOptions.map((pm) => (
                     <label
@@ -396,7 +396,7 @@ export default function CheckoutPage() {
                         <div className={styles.paymentDesc}>{pm.desc}</div>
                         <div className={styles.paymentSub}>{pm.sub}</div>
                       </div>
-                      {paymentMethod === pm.id && <Check size={16} color="#B59241" />}
+                      {paymentMethod === pm.id && <Check size={16} color="var(--gold)" />}
                     </label>
                   ))}
                 </div>
@@ -420,7 +420,7 @@ export default function CheckoutPage() {
             {/* Step 2: Review */}
             {step === 2 && (
               <div className={styles.formSection}>
-                <div className={styles.sectionHeader}><FileText size={18} color="#B59241" /><h2 className={styles.sectionTitle}>Review Your Order</h2></div>
+                <div className={styles.sectionHeader}><FileText size={18} color="var(--gold)" /><h2 className={styles.sectionTitle}>Review Your Order</h2></div>
                 <div className={styles.reviewItems}>
                   {hydratedItems.map(item => (
                     <div key={item.product.id} className={styles.reviewItem}>
@@ -452,7 +452,7 @@ export default function CheckoutPage() {
                     Place Order → Pay with {paymentMethod === 'payfast' ? 'PayFast' : paymentMethod === 'yoco' ? 'Yoco' : 'Payflex'}
                   </button>
                 </div>
-                {submitError ? <p style={{ marginTop: '0.8rem', color: '#ffd0d0' }}>{submitError}</p> : null}
+                {submitError ? <p style={{ marginTop: '0.8rem', color: 'var(--status-danger)' }}>{submitError}</p> : null}
               </div>
             )}
           </div>
@@ -473,7 +473,7 @@ export default function CheckoutPage() {
             ) : null}
             <div className={styles.summaryRow}><span>Delivery</span><span>{hydratedDeliveryFee === 0 ? <span style={{ color: '#4ECDC4' }}>FREE</span> : formatPrice(hydratedDeliveryFee)}</span></div>
             <div className={`${styles.summaryRow} ${styles.summaryGrand}`}><span>Total</span><span>{formatPrice(hydratedGrandTotal)}</span></div>
-            {promoLoading ? <p style={{ color: '#7b8ea6', marginTop: '0.6rem' }}>Validating promo...</p> : null}
+            {promoLoading ? <p style={{ color: 'var(--text-muted)', marginTop: '0.6rem' }}>Validating promo...</p> : null}
           </div>
         </div>
       </div>

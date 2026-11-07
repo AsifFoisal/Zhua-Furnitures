@@ -81,7 +81,7 @@ type ProductPatchPayload = {
   images: CloudinaryImageAsset[];
 };
 
-const DEFAULT_COLOR_HEX = '#B59241';
+const DEFAULT_COLOR_HEX = 'var(--gold)';
 
 function toSafeColorHex(value: unknown): string {
   const raw = typeof value === 'string' ? value.trim() : '';
@@ -485,7 +485,7 @@ function ProductColorFields({
               />
               <input
                 className={styles.input}
-                placeholder="#B59241"
+                placeholder="var(--gold)"
                 value={color.hex}
                 onChange={(event) => updateRow(index, { hex: event.target.value })}
               />
@@ -595,7 +595,7 @@ function ProductColorFields({
                     style={{
                       padding: 0,
                       border: isAttached
-                        ? '2px solid #B59241'
+                        ? '2px solid var(--gold)'
                         : '2px solid rgba(148, 163, 184, 0.35)',
                       borderRadius: '6px',
                       background: 'none',
@@ -864,7 +864,7 @@ function ProductModelFields({ productId, modelUrl, onModelChange, onError }: Pro
           href={modelUrl}
           target="_blank"
           rel="noopener noreferrer"
-          style={{ fontSize: '0.72rem', color: '#B59241', wordBreak: 'break-all' }}
+          style={{ fontSize: '0.72rem', color: 'var(--gold)', wordBreak: 'break-all' }}
         >
           Open current model file
         </a>
@@ -1592,7 +1592,7 @@ export default function ProductsAdminPage() {
                           objectFit: 'cover',
                           borderRadius: '8px',
                           border: imageIndex === 0
-                            ? '2px solid #B59241'
+                            ? '2px solid var(--gold)'
                             : '1px solid rgba(148, 163, 184, 0.4)',
                           display: 'block',
                         }}
@@ -1606,7 +1606,7 @@ export default function ProductsAdminPage() {
                           padding: '0.1rem 0.35rem',
                           borderRadius: '999px',
                           background: 'rgba(0,0,0,0.65)',
-                          color: '#EAF0F8',
+                          color: 'var(--text-primary)',
                         }}
                       >
                         {imageIndex === 0 ? 'Main' : `#${imageIndex + 1}`}
@@ -1717,12 +1717,12 @@ export default function ProductsAdminPage() {
             </button>
           </div>
         </div>
-        {error ? <p style={{ color: '#ffd0d0', marginTop: '0.75rem' }}>{error}</p> : null}
+        {error ? <p style={{ color: 'var(--status-danger)', marginTop: '0.75rem' }}>{error}</p> : null}
       </section>
 
       <section className={styles.card}>
         <h2 className={styles.sectionTitle}>Products ({filtered.length})</h2>
-        {loading ? <p style={{ color: '#a9b7c9' }}>Loading products...</p> : null}
+        {loading ? <p style={{ color: 'var(--text-dim)' }}>Loading products...</p> : null}
         <div className={`${styles.tableWrap} ${styles.productTableWrap}`}>
           <table className={`${styles.table} ${styles.productTable}`}>
             <thead>
@@ -1821,7 +1821,7 @@ export default function ProductsAdminPage() {
                       ) : (
                         <div style={{ width: 60, height: 40, borderRadius: 6, background: 'rgba(255,255,255,0.08)', border: '1px dashed rgba(255,255,255,0.2)' }} />
                       )}
-                      <span style={{ color: '#a9b7c9', fontSize: '0.72rem' }}>{product.imageCount} image(s)</span>
+                      <span style={{ color: 'var(--text-dim)', fontSize: '0.72rem' }}>{product.imageCount} image(s)</span>
                     </div>
                   </td>
                   <td data-label="Stock">
@@ -1944,7 +1944,7 @@ export default function ProductsAdminPage() {
                         }}
                       />
                     </div>
-                    <div style={{ color: '#a9b7c9', fontSize: '0.72rem', marginTop: '0.3rem', display: 'grid', gap: '0.2rem' }}>
+                    <div style={{ color: 'var(--text-dim)', fontSize: '0.72rem', marginTop: '0.3rem', display: 'grid', gap: '0.2rem' }}>
                       <span>Original: {formatCurrency(product.price)}</span>
                       <span>Offer Price: {formatCurrency(product.offerPrice)}</span>
                     </div>
@@ -2066,7 +2066,7 @@ export default function ProductsAdminPage() {
 
             <div className={styles.modalBody}>
               {imageManagerProduct.images.length === 0 ? (
-                <p style={{ color: '#a9b7c9' }}>This product has no images yet.</p>
+                <p style={{ color: 'var(--text-dim)' }}>This product has no images yet.</p>
               ) : (
                 <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
                   {imageManagerProduct.images.map((image, imageIndex) => {
@@ -2089,7 +2089,7 @@ export default function ProductsAdminPage() {
                           position: 'relative',
                           padding: 0,
                           border: isSelected
-                            ? '3px solid #B59241'
+                            ? '3px solid var(--gold)'
                             : '3px solid rgba(148, 163, 184, 0.35)',
                           borderRadius: '10px',
                           background: 'none',
@@ -2118,7 +2118,7 @@ export default function ProductsAdminPage() {
                             padding: '0.15rem 0.4rem',
                             borderRadius: '999px',
                             background: 'rgba(0,0,0,0.65)',
-                            color: '#EAF0F8',
+                            color: 'var(--text-primary)',
                             lineHeight: 1.4,
                           }}
                         >
@@ -2133,7 +2133,7 @@ export default function ProductsAdminPage() {
                               width: '22px',
                               height: '22px',
                               borderRadius: '50%',
-                              background: '#B59241',
+                              background: 'var(--gold)',
                               color: '#1F2937',
                               display: 'inline-flex',
                               alignItems: 'center',
@@ -2151,7 +2151,7 @@ export default function ProductsAdminPage() {
                   })}
                 </div>
               )}
-              <p style={{ fontSize: '0.78rem', color: '#a9b7c9', marginTop: '0.75rem' }}>
+              <p style={{ fontSize: '0.78rem', color: 'var(--text-dim)', marginTop: '0.75rem' }}>
                 {selectedImageIds.length} image{selectedImageIds.length === 1 ? '' : 's'} selected.
                 Deleting removes the image from Cloudinary and the product.
               </p>

@@ -212,13 +212,13 @@ export default function CurtainCustomizerAdminPage() {
   return (
     <section className={styles.card}>
       <h2 className={styles.sectionTitle}>Curtain Customizer Settings</h2>
-      <p style={{ color: '#a9b7c9', marginBottom: '1.25rem' }}>
+      <p style={{ color: 'var(--text-dim)', marginBottom: '1.25rem' }}>
         Control everything customers see and every price used by the Curtain Customizer estimator. Changes apply
         immediately for new visitors after saving. Existing quote enquiries keep the configuration they were
         submitted with.
       </p>
-      {loading ? <p style={{ color: '#a9b7c9' }}>Loading configuration...</p> : null}
-      {error ? <p style={{ color: '#ffd0d0' }}>{error}</p> : null}
+      {loading ? <p style={{ color: 'var(--text-dim)' }}>Loading configuration...</p> : null}
+      {error ? <p style={{ color: 'var(--status-danger)' }}>{error}</p> : null}
 
       {!loading ? (
         <>
@@ -230,7 +230,7 @@ export default function CurtainCustomizerAdminPage() {
               checked={config.enabled}
               onChange={(e) => setConfig((current) => ({ ...current, enabled: e.target.checked }))}
             />
-            <span className={styles.switchCopy} style={{ color: '#eaf0f8' }}>
+            <span className={styles.switchCopy} style={{ color: 'var(--text-primary)' }}>
               Customizer enabled — when off, customers see a temporarily unavailable notice instead of the tool.
             </span>
           </label>
@@ -279,7 +279,7 @@ export default function CurtainCustomizerAdminPage() {
                     display: 'grid',
                     gap: '0.6rem',
                     padding: '0.75rem',
-                    border: '1px solid rgba(255,255,255,0.08)',
+                    border: '1px solid var(--border-light)',
                     borderRadius: 10,
                     background: 'rgba(255,255,255,0.02)',
                   }}
@@ -294,7 +294,7 @@ export default function CurtainCustomizerAdminPage() {
                           height: 56,
                           objectFit: 'cover',
                           borderRadius: 8,
-                          border: '1px solid rgba(255,255,255,0.1)',
+                          border: '1px solid var(--border-light)',
                         }}
                       />
                     ) : (
@@ -305,7 +305,7 @@ export default function CurtainCustomizerAdminPage() {
                           height: 56,
                           borderRadius: 8,
                           background: /^#[0-9a-fA-F]{6}$/.test(fabric.swatch) ? fabric.swatch : '#888888',
-                          border: '1px solid rgba(255,255,255,0.1)',
+                          border: '1px solid var(--border-light)',
                         }}
                       />
                     )}
@@ -582,7 +582,7 @@ export default function CurtainCustomizerAdminPage() {
                   onChange={(e) => patchListItem('layers', index, { pricePerMetre: numberFromInput(e.target.value) })}
                   aria-label="Extra cost per metre"
                 />
-                <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#a9b7c9', fontSize: 12, whiteSpace: 'nowrap' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--text-dim)', fontSize: 12, whiteSpace: 'nowrap' }}>
                   <input
                     type="checkbox"
                     checked={layer.requiresDoubleTrack}
@@ -632,7 +632,7 @@ export default function CurtainCustomizerAdminPage() {
                   onChange={(e) => patchListItem('tracks', index, { pricePerMetre: numberFromInput(e.target.value) })}
                   aria-label="Price per metre"
                 />
-                <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#a9b7c9', fontSize: 12, whiteSpace: 'nowrap' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--text-dim)', fontSize: 12, whiteSpace: 'nowrap' }}>
                   <input
                     type="checkbox"
                     checked={track.motorisable}
@@ -707,7 +707,7 @@ export default function CurtainCustomizerAdminPage() {
             <button className={styles.ghostButton} type="button" disabled={saving} onClick={() => void saveConfig()}>
               <Save size={15} /> {saving ? 'Saving...' : 'Save Configuration'}
             </button>
-            <span style={{ color: '#8ca0b8', fontSize: 12 }}>
+            <span style={{ color: 'var(--text-faint)', fontSize: 12 }}>
               Estimated cost preview with current values: a 240cm × 260cm window (2 panels, 2× fullness, cheapest
               fabric) plus making charge ={' '}
               {formatPrice(

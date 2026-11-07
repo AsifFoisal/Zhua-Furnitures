@@ -89,8 +89,8 @@ export default function VendorApplicationsAdminPage() {
   return (
     <section className={styles.card}>
       <h2 className={styles.sectionTitle}>Vendor Applications</h2>
-      {loading ? <p style={{ color: '#a9b7c9' }}>Loading applications...</p> : null}
-      {error ? <p style={{ color: '#ffd0d0' }}>{error}</p> : null}
+      {loading ? <p style={{ color: 'var(--text-dim)' }}>Loading applications...</p> : null}
+      {error ? <p style={{ color: 'var(--status-danger)' }}>{error}</p> : null}
       <div className={styles.tableWrap}>
         <table className={styles.table}>
           <thead>
@@ -109,12 +109,12 @@ export default function VendorApplicationsAdminPage() {
               <tr key={row.id}>
                 <td>
                   <div style={{ fontWeight: 700 }}>{row.businessName}</div>
-                  <div style={{ color: '#a9b7c9', fontSize: '0.74rem' }}>{row.createdAt.slice(0, 10)}</div>
+                  <div style={{ color: 'var(--text-dim)', fontSize: '0.74rem' }}>{row.createdAt.slice(0, 10)}</div>
                 </td>
                 <td>
                   <div>{row.contactName}</div>
-                  <div style={{ color: '#a9b7c9', fontSize: '0.74rem' }}>{row.email}</div>
-                  <div style={{ color: '#a9b7c9', fontSize: '0.74rem' }}>{row.phone || '-'}</div>
+                  <div style={{ color: 'var(--text-dim)', fontSize: '0.74rem' }}>{row.email}</div>
+                  <div style={{ color: 'var(--text-dim)', fontSize: '0.74rem' }}>{row.phone || '-'}</div>
                 </td>
                 <td>{row.category}</td>
                 <td>

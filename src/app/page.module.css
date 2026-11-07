@@ -1,12 +1,11 @@
 .page {
-  --background: #0F243B;
-  --foreground: #163250;
+  --background: var(--midnight);
+  --foreground: var(--charcoal);
 
-  --text-primary: #EAF0F8;
-  --text-secondary: #7B8EA6;
+  --text-secondary: var(--text-muted);
 
-  --button-primary-hover: #D0AF63;
-  --button-secondary-hover: #1E3C5F;
+  --button-primary-hover: var(--gold-light);
+  --button-secondary-hover: var(--charcoal-2);
   --button-secondary-border: rgba(181,146,65,0.2);
 
   display: flex;
@@ -129,27 +128,25 @@ a.secondary {
   }
 
   .page {
-    --background: #0F243B;
-    --foreground: #163250;
+    --background: var(--midnight);
+    --foreground: var(--charcoal);
 
-    --text-primary: #EAF0F8;
-    --text-secondary: #7B8EA6;
+    --text-secondary: var(--text-muted);
 
-    --button-primary-hover: #D0AF63;
-    --button-secondary-hover: #1E3C5F;
+    --button-primary-hover: var(--gold-light);
+    --button-secondary-hover: var(--charcoal-2);
     --button-secondary-border: rgba(181,146,65,0.2);
   }
 }
 
   .page {
-    --background: #0F243B;
-    --foreground: #163250;
+    --background: var(--midnight);
+    --foreground: var(--charcoal);
 
-    --text-primary: #EAF0F8;
-    --text-secondary: #7B8EA6;
+    --text-secondary: var(--text-muted);
 
-    --button-primary-hover: #D0AF63;
-    --button-secondary-hover: #1E3C5F;
+    --button-primary-hover: var(--gold-light);
+    --button-secondary-hover: var(--charcoal-2);
     --button-secondary-border: rgba(181,146,65,0.2);
   }
 }

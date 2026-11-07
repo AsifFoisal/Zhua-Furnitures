@@ -247,7 +247,7 @@ export default function AdminDivisionsPage() {
     <>
       <section className={styles.card}>
         <h2 className={styles.sectionTitle}>Add Division Item</h2>
-        <p style={{ color: '#a9b7c9', marginBottom: '1rem', fontSize: '0.85rem' }}>
+        <p style={{ color: 'var(--text-dim)', marginBottom: '1rem', fontSize: '0.85rem' }}>
           Content saved here appears on the public <strong>WALLZ</strong> and <strong>DECKZ</strong> landing
           pages (published rows only, ordered by display order).
         </p>
@@ -312,7 +312,7 @@ export default function AdminDivisionsPage() {
               className={styles.ghostButton}
               style={
                 activeDivision === division
-                  ? { borderColor: 'rgba(181,146,65,0.6)', color: '#D0AF63' }
+                  ? { borderColor: 'rgba(181,146,65,0.6)', color: 'var(--gold-light)' }
                   : undefined
               }
               onClick={() => setActiveDivision(division)}
@@ -321,8 +321,8 @@ export default function AdminDivisionsPage() {
             </button>
           ))}
         </div>
-        {loading ? <p style={{ color: '#a9b7c9' }}>Loading division items...</p> : null}
-        {error ? <p style={{ color: '#ffd0d0' }}>{error}</p> : null}
+        {loading ? <p style={{ color: 'var(--text-dim)' }}>Loading division items...</p> : null}
+        {error ? <p style={{ color: 'var(--status-danger)' }}>{error}</p> : null}
         <div className={styles.tableWrap}>
           <table className={styles.table}>
             <thead>
@@ -351,7 +351,7 @@ export default function AdminDivisionsPage() {
                         )
                       }
                     />
-                    <div style={{ marginTop: '0.3rem', color: '#a9b7c9', fontSize: '0.72rem' }}>
+                    <div style={{ marginTop: '0.3rem', color: 'var(--text-dim)', fontSize: '0.72rem' }}>
                       Updated {item.updatedAt}
                     </div>
                   </td>
@@ -409,7 +409,7 @@ export default function AdminDivisionsPage() {
                       <img
                         src={item.image.secureUrl}
                         alt={item.image.alt || item.title}
-                        style={{ width: 80, height: 52, borderRadius: 8, objectFit: 'cover', border: '1px solid rgba(255,255,255,0.12)' }}
+                        style={{ width: 80, height: 52, borderRadius: 8, objectFit: 'cover', border: '1px solid var(--border-light)' }}
                       />
                     ) : (
                       <div style={{ width: 80, height: 52, borderRadius: 8, border: '1px dashed rgba(255,255,255,0.22)' }} />
@@ -485,7 +485,7 @@ export default function AdminDivisionsPage() {
               ))}
               {!loading && visibleItems.length === 0 ? (
                 <tr>
-                  <td colSpan={7} style={{ color: '#a9b7c9', padding: '1rem' }}>
+                  <td colSpan={7} style={{ color: 'var(--text-dim)', padding: '1rem' }}>
                     No {divisionLabel[activeDivision]} items yet — create the first one above.
                   </td>
                 </tr>

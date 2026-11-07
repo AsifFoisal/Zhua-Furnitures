@@ -37,7 +37,7 @@
   font-size: 1.2rem;
   font-weight: 700;
   color: var(--midnight);
-  background: linear-gradient(140deg, #b59241, #d0af63);
+  background: linear-gradient(140deg, var(--gold), var(--gold-light));
 }
 
 .brandTitle {
@@ -180,8 +180,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(140deg, #b59241, #d0af63);
-  color: #0f243b;
+  background: linear-gradient(140deg, var(--gold), var(--gold-light));
+  color: var(--midnight);
   font-weight: 700;
   font-size: 0.85rem;
 }
