@@ -11,6 +11,7 @@ import {
   type DeliveryZone,
 } from '@/lib/delivery';
 import { Check, ChevronRight, CreditCard, Truck, FileText } from 'lucide-react';
+import { describeResponseFailure, readResponseJson } from '@/lib/http';
 import styles from './page.module.css';
 
 const steps = ['Delivery', 'Payment', 'Review'];
@@ -224,9 +225,9 @@ export default function CheckoutPage() {
         }),
       });
 
-      const data = (await res.json()) as { orderId?: string; orderNumber?: string; error?: string };
-      if (!res.ok || !data.orderNumber || !data.orderId) {
-        throw new Error(data.error ?? 'Could not place order.');
+      const data = await readResponseJson<{ orderId?: string; orderNumber?: string; error?: string }>(res);
+      if (!res.ok || !data?.orderNumber || !data?.orderId) {
+        throw new Error(data?.error ?? describeResponseFailure(res));
       }
 
       const paymentInitRes = await fetch('/api/payments/payfast/initiate', {
@@ -235,15 +236,15 @@ export default function CheckoutPage() {
         body: JSON.stringify({ orderId: data.orderId }),
       });
 
-      const paymentInit = (await paymentInitRes.json()) as {
+      const paymentInit = await readResponseJson<{
         redirectUrl?: string;
         formAction?: string;
         fields?: Record<string, string>;
         error?: string;
-      };
+      }>(paymentInitRes);
 
-      if (!paymentInitRes.ok || !paymentInit.formAction || !paymentInit.fields) {
-        throw new Error(paymentInit.error ?? 'Could not initialize PayFast checkout.');
+      if (!paymentInitRes.ok || !paymentInit?.formAction || !paymentInit?.fields) {
+        throw new Error(paymentInit?.error ?? describeResponseFailure(paymentInitRes));
       }
 
       // The cart is deliberately kept until the customer is back on the

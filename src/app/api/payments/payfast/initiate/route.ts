@@ -1,14 +1,29 @@
 import { NextResponse } from 'next/server';
 import { createSupabaseAdminClient } from '@/lib/supabase/admin';
-import { getPayFastEnv, hasPayFastEnv, hasServiceSupabaseEnv } from '@/lib/supabase/env';
 import {
+  PayFastConfigError,
+  getPayFastEnv,
+  hasPayFastEnv,
+  hasServiceSupabaseEnv,
+} from '@/lib/supabase/env';
+import {
+  buildPayFastFields,
   generatePayFastSignature,
   getPayFastProcessUrl,
   PAYFAST_LIVE_MINIMUM_AMOUNT_CENTS,
+  validatePayFastCallbackUrls,
 } from '@/lib/payments/payfast';
+import {
+  DATABASE_OUT_OF_DATE_MESSAGE,
+  isSchemaDriftError,
+  logDatabaseError,
+} from '@/lib/supabase/errors';
 import { getSiteUrl } from '@/lib/supabase/site-url';
 
 export const dynamic = 'force-dynamic';
+
+const ORDER_ID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const FALLBACK_BASE_URL = 'http://localhost:3000';
 
 function getNameParts(fullName: string): { firstName: string; lastName: string } {
   const tokens = fullName.trim().split(/\s+/).filter(Boolean);
@@ -26,34 +41,33 @@ function getNameParts(fullName: string): { firstName: string; lastName: string }
   };
 }
 
+function safeUrl(value: string, base: string): URL | null {
+  try {
+    return new URL(value, base);
+  } catch {
+    return null;
+  }
+}
+
 function buildCallbackUrl(
   configuredUrl: string,
   fallbackPath: string,
   siteUrl: string,
   params: Record<string, string>
 ): string {
-  const fallback = new URL(fallbackPath, siteUrl);
+  const base = siteUrl.trim() || FALLBACK_BASE_URL;
+  const fallback = safeUrl(fallbackPath, base) ?? new URL(fallbackPath, FALLBACK_BASE_URL);
+  const trimmedConfiguredUrl = configuredUrl.trim();
+  const target = (trimmedConfiguredUrl ? safeUrl(trimmedConfiguredUrl, base) : null) ?? fallback;
+
   Object.entries(params).forEach(([key, value]) => {
-    fallback.searchParams.set(key, value);
+    target.searchParams.set(key, value);
   });
 
-  const trimmedConfiguredUrl = configuredUrl.trim();
-  if (!trimmedConfiguredUrl) {
-    return fallback.toString();
-  }
-
-  try {
-    const parsed = new URL(trimmedConfiguredUrl, siteUrl);
-    Object.entries(params).forEach(([key, value]) => {
-      parsed.searchParams.set(key, value);
-    });
-    return parsed.toString();
-  } catch {
-    return fallback.toString();
-  }
+  return target.toString();
 }
 
-export async function POST(request: Request) {
+async function handlePost(request: Request): Promise<NextResponse> {
   if (!hasServiceSupabaseEnv) {
     return NextResponse.json({ error: 'Supabase service role key is missing.' }, { status: 503 });
   }
@@ -62,20 +76,50 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'PayFast environment is not configured.' }, { status: 503 });
   }
 
-  let payload: { orderId?: string };
+  let payload: unknown;
   try {
-    payload = (await request.json()) as { orderId?: string };
+    payload = await request.json();
   } catch {
     return NextResponse.json({ error: 'Invalid payment initiation payload.' }, { status: 400 });
   }
 
-  const orderId = String(payload.orderId ?? '').trim();
+  const rawOrderId =
+    payload && typeof payload === 'object' && !Array.isArray(payload)
+      ? (payload as Record<string, unknown>).orderId
+      : undefined;
+  const orderId = typeof rawOrderId === 'string' ? rawOrderId.trim() : '';
 
   if (!orderId) {
     return NextResponse.json({ error: 'orderId is required.' }, { status: 400 });
   }
 
-  const supabase = createSupabaseAdminClient();
+  if (!ORDER_ID_PATTERN.test(orderId)) {
+    return NextResponse.json({ error: 'orderId is not a valid order id.' }, { status: 400 });
+  }
+
+  let payfastEnv: ReturnType<typeof getPayFastEnv>;
+  try {
+    payfastEnv = getPayFastEnv();
+  } catch (error) {
+    const message =
+      error instanceof PayFastConfigError ? error.message : 'PayFast is not configured.';
+    console.error('[PayFast Initiate] Configuration error.', { message });
+    return NextResponse.json({ error: message }, { status: 503 });
+  }
+
+  let supabase: ReturnType<typeof createSupabaseAdminClient>;
+  try {
+    supabase = createSupabaseAdminClient();
+  } catch (error) {
+    console.error('[PayFast Initiate] Could not create database client.', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+    });
+    return NextResponse.json(
+      { error: 'PayFast is not available right now. Please try again later.' },
+      { status: 503 }
+    );
+  }
+
   const { data: order, error: orderError } = await supabase
     .from('orders')
     .select(
@@ -85,14 +129,25 @@ export async function POST(request: Request) {
     .single();
 
   if (orderError || !order) {
-    return NextResponse.json({ error: orderError?.message ?? 'Order not found.' }, { status: 404 });
+    logDatabaseError('[PayFast Initiate] Could not load order.', orderError, { orderId });
+
+    if (isSchemaDriftError(orderError)) {
+      return NextResponse.json({ error: DATABASE_OUT_OF_DATE_MESSAGE }, { status: 503 });
+    }
+
+    if (!orderError || orderError.code === 'PGRST116') {
+      return NextResponse.json({ error: 'Order not found.' }, { status: 404 });
+    }
+
+    return NextResponse.json(
+      { error: 'Could not load the order. Please try again.' },
+      { status: 500 }
+    );
   }
 
   if (order.payment_status === 'paid') {
     return NextResponse.json({ error: 'Order is already paid.' }, { status: 400 });
   }
-
-  const payfastEnv = getPayFastEnv();
 
   if (payfastEnv.mode === 'live' && order.total_cents < PAYFAST_LIVE_MINIMUM_AMOUNT_CENTS) {
     const minimum = (PAYFAST_LIVE_MINIMUM_AMOUNT_CENTS / 100).toFixed(2);
@@ -130,20 +185,37 @@ export async function POST(request: Request) {
     }
   );
 
-  const fields: Record<string, string> = {
-    merchant_id: payfastEnv.merchantId,
-    merchant_key: payfastEnv.merchantKey,
-    return_url: returnUrl,
-    cancel_url: cancelUrl,
-    notify_url: payfastEnv.notifyUrl,
-    name_first: names.firstName,
-    name_last: names.lastName,
-    email_address: order.customer_email,
-    m_payment_id: order.id,
-    amount: (order.total_cents / 100).toFixed(2),
-    item_name: `Order ${order.order_number}`,
-    custom_str1: order.order_number,
-  };
+  const urlError = validatePayFastCallbackUrls(
+    { returnUrl, cancelUrl, notifyUrl: payfastEnv.notifyUrl },
+    payfastEnv.mode
+  );
+
+  if (urlError) {
+    console.error('[PayFast Initiate] Invalid callback URL configuration.', {
+      orderId,
+      mode: payfastEnv.mode,
+      issue: urlError,
+    });
+    return NextResponse.json(
+      { error: `PayFast is not configured correctly: ${urlError}` },
+      { status: 503 }
+    );
+  }
+
+  const fields = buildPayFastFields({
+    merchantId: payfastEnv.merchantId,
+    merchantKey: payfastEnv.merchantKey,
+    returnUrl,
+    cancelUrl,
+    notifyUrl: payfastEnv.notifyUrl,
+    firstName: names.firstName,
+    lastName: names.lastName,
+    email: order.customer_email,
+    paymentId: order.id,
+    amountCents: order.total_cents,
+    itemName: `Order ${order.order_number}`,
+    customStr1: order.order_number,
+  });
 
   const signature = generatePayFastSignature(fields, payfastEnv.passphrase);
 
@@ -163,8 +235,26 @@ export async function POST(request: Request) {
     .eq('id', order.id);
 
   if (updateError) {
-    return NextResponse.json({ error: updateError.message }, { status: 500 });
+    logDatabaseError('[PayFast Initiate] Could not record payment attempt.', updateError, {
+      orderId: order.id,
+      mode: payfastEnv.mode,
+    });
+
+    if (isSchemaDriftError(updateError)) {
+      return NextResponse.json({ error: DATABASE_OUT_OF_DATE_MESSAGE }, { status: 503 });
+    }
+
+    return NextResponse.json(
+      { error: 'Could not start PayFast checkout. Please try again.' },
+      { status: 500 }
+    );
   }
+
+  console.info('[PayFast Initiate] Prepared payment form.', {
+    orderId: order.id,
+    mode: payfastEnv.mode,
+    amountCents: order.total_cents,
+  });
 
   const response = NextResponse.json({
     formAction: processUrl,
@@ -183,4 +273,19 @@ export async function POST(request: Request) {
   });
 
   return response;
+}
+
+export async function POST(request: Request) {
+  try {
+    return await handlePost(request);
+  } catch (error) {
+    console.error('[PayFast Initiate] Unexpected failure.', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+    });
+
+    return NextResponse.json(
+      { error: 'Could not start PayFast checkout. Please try again.' },
+      { status: 500 }
+    );
+  }
 }

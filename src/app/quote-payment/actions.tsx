@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { CreditCard, Lock } from 'lucide-react';
 import { toast } from 'sonner';
+import { describeResponseFailure, readResponseJson } from '@/lib/http';
 
 type InitiateResponse = {
   formAction?: string;
@@ -30,18 +31,22 @@ export default function QuotePaymentActions({
         body: JSON.stringify({ reference, token, provider }),
       });
 
-      const data = (await res.json()) as InitiateResponse;
+      const data = await readResponseJson<InitiateResponse>(res);
       if (!res.ok) {
-        throw new Error(data.error ?? 'Could not start the payment.');
+        throw new Error(data?.error ?? describeResponseFailure(res));
       }
 
-      if (provider === 'payfast' && data.formAction && data.fields) {
+      const formAction = data?.formAction;
+      const fields = data?.fields;
+      const redirectUrl = data?.redirectUrl;
+
+      if (provider === 'payfast' && formAction && fields) {
         toast.info('Redirecting to PayFast...');
         const form = document.createElement('form');
         form.method = 'POST';
-        form.action = data.formAction;
+        form.action = formAction;
 
-        for (const [key, value] of Object.entries(data.fields)) {
+        for (const [key, value] of Object.entries(fields)) {
           const input = document.createElement('input');
           input.type = 'hidden';
           input.name = key;
@@ -54,9 +59,9 @@ export default function QuotePaymentActions({
         return;
       }
 
-      if (provider === 'yoco' && data.redirectUrl) {
+      if (provider === 'yoco' && redirectUrl) {
         toast.info('Redirecting to Yoco...');
-        window.location.href = data.redirectUrl;
+        window.location.href = redirectUrl;
         return;
       }
 

@@ -54,10 +54,28 @@ export function getSiteUrl(headerStore?: Headers): string {
   }
 
   if (headerStore) {
-    const host = headerStore.get('x-forwarded-host') ?? headerStore.get('host');
-    if (host) {
-      const proto = headerStore.get('x-forwarded-proto') ?? (host.includes('localhost') ? 'http' : 'https');
-      return `${proto}://${host}`.replace(/\/+$/, '');
+    // Proxies can send a comma-separated list; only the first entry is the
+    // public host. Reject anything that is not a plain hostname[:port] so the
+    // callers never build a URL from a malformed header.
+    const host = (headerStore.get('x-forwarded-host') ?? headerStore.get('host') ?? '')
+      .split(',')[0]
+      .trim();
+
+    if (host && /^[a-z0-9.-]+(?::\d{1,5})?$/i.test(host)) {
+      const forwardedProto = (headerStore.get('x-forwarded-proto') ?? '')
+        .split(',')[0]
+        .trim()
+        .toLowerCase();
+      const proto =
+        forwardedProto === 'http' || forwardedProto === 'https'
+          ? forwardedProto
+          : host.includes('localhost')
+            ? 'http'
+            : 'https';
+      const normalized = normalizeAbsoluteUrl(`${proto}://${host}`);
+      if (normalized) {
+        return normalized;
+      }
     }
   }
 

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createSupabaseAdminClient } from '@/lib/supabase/admin';
 import {
+  PayFastConfigError,
   getPayFastEnv,
   hasPayFastEnv,
   hasResendEnv,
@@ -26,17 +27,22 @@ function toCents(value: string): number {
   return Math.max(0, Math.round(amount * 100));
 }
 
-function isUuid(value: string): boolean {
-  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
-}
-
 export async function POST(request: Request) {
   if (!hasServiceSupabaseEnv || !hasPayFastEnv) {
     console.error('[PayFast Webhook] Missing required environment configuration.');
     return new NextResponse('Configuration missing', { status: 503 });
   }
 
-  const payfastEnv = getPayFastEnv();
+  let payfastEnv: ReturnType<typeof getPayFastEnv>;
+  try {
+    payfastEnv = getPayFastEnv();
+  } catch (error) {
+    console.error('[PayFast Webhook] PayFast configuration error.', {
+      message: error instanceof PayFastConfigError ? error.message : 'Unknown error',
+    });
+    return new NextResponse('Configuration missing', { status: 503 });
+  }
+
   const raw = await request.text();
   const params = new URLSearchParams(raw);
 
@@ -61,7 +67,9 @@ export async function POST(request: Request) {
         gateway: 'payfast',
         webhook_id: webhookId,
         event_type: String(payload.payment_status ?? 'unknown'),
-        related_order_id: isUuid(orderId) ? orderId : null,
+        // Left null: the reference can be a curtain quote id, which is not a
+        // valid orders(id) reference and would fail the foreign key.
+        related_order_id: null,
         processing_status: 'failed',
         processed_at: new Date().toISOString(),
         error_message: reason,
@@ -128,7 +136,10 @@ export async function POST(request: Request) {
       gateway: 'payfast',
       webhook_id: webhookId,
       event_type: String(payload.payment_status ?? 'unknown'),
-      related_order_id: isUuid(orderId) ? orderId : null,
+      // Set to the order id after the reference is confirmed to belong to an
+      // order. Quote payment references reuse this endpoint but are not rows in
+      // orders, so a non-null id here breaks the foreign key.
+      related_order_id: null,
       processing_status: 'received',
       payload,
     })
@@ -162,7 +173,9 @@ export async function POST(request: Request) {
       provider: 'payfast',
       providerStatus,
       quoteId: orderId,
-      amountCents: toCents(payload.amount ?? '0'),
+      amountCents: toCents(
+        String(payload.amount_gross ?? '').trim() || String(payload.amount ?? '')
+      ),
       paymentReference: payfastPaymentId,
       webhookEventId: createdEvent.id,
     });

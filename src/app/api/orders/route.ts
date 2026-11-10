@@ -1,6 +1,16 @@
 import { NextResponse } from 'next/server';
 import { createSupabaseAdminClient } from '@/lib/supabase/admin';
-import { getPublicPayFastMode, hasResendEnv, hasServiceSupabaseEnv } from '@/lib/supabase/env';
+import {
+  getPayFastMode,
+  hasPayFastEnv,
+  hasResendEnv,
+  hasServiceSupabaseEnv,
+} from '@/lib/supabase/env';
+import {
+  DATABASE_OUT_OF_DATE_MESSAGE,
+  isSchemaDriftError,
+  logDatabaseError,
+} from '@/lib/supabase/errors';
 import { getOptionalUser } from '@/lib/auth';
 import { findAuthUserIdByEmail } from '@/lib/order-linking';
 import { validatePromoCode } from '@/lib/promo';
@@ -63,6 +73,20 @@ function isUuid(value: string): boolean {
 
 function normalizeOrderEmail(value: string): string {
   return value.trim().toLowerCase();
+}
+
+function databaseFailureResponse(
+  scope: string,
+  error: { code?: string | null; message?: string | null } | null,
+  fallbackMessage: string
+): NextResponse {
+  logDatabaseError(scope, error);
+
+  if (isSchemaDriftError(error)) {
+    return NextResponse.json({ error: DATABASE_OUT_OF_DATE_MESSAGE }, { status: 503 });
+  }
+
+  return NextResponse.json({ error: fallbackMessage }, { status: 500 });
 }
 
 export async function POST(request: Request) {
@@ -165,7 +189,11 @@ export async function POST(request: Request) {
       .in('id', productIds);
 
     if (productError) {
-      return NextResponse.json({ error: productError.message }, { status: 500 });
+      return databaseFailureResponse(
+        '[Orders API] Could not load products.',
+        productError,
+        'Could not validate the cart. Please try again.'
+      );
     }
 
     const productMap = new Map((productRows ?? []).map((row) => [row.id, row]));
@@ -210,7 +238,11 @@ export async function POST(request: Request) {
     .eq('is_active', true);
 
   if (zoneError) {
-    return NextResponse.json({ error: zoneError.message }, { status: 500 });
+    return databaseFailureResponse(
+      '[Orders API] Could not load delivery zones.',
+      zoneError,
+      'Could not calculate delivery. Please try again.'
+    );
   }
 
   const activeZones = (zoneData ?? []).map((zone) => ({
@@ -266,8 +298,25 @@ export async function POST(request: Request) {
     subtotalCents + deliveryFeeCents - (appliedPromo?.discountCents ?? 0)
   );
   const gatewayProvider = parseGatewayProvider(String(payload.paymentMethod ?? 'placeholder'));
+  const payfastMode = getPayFastMode();
 
-  if (gatewayProvider === 'payfast' && getPublicPayFastMode() === 'live') {
+  if (gatewayProvider === 'payfast' && !hasPayFastEnv) {
+    console.error('[Orders API] PayFast credentials are not configured.');
+    return NextResponse.json(
+      { error: 'PayFast is not configured correctly. Please contact support.' },
+      { status: 503 }
+    );
+  }
+
+  if (gatewayProvider === 'payfast' && payfastMode === null) {
+    console.error('[Orders API] PayFast mode is not configured.');
+    return NextResponse.json(
+      { error: 'PayFast is not configured correctly. Please contact support.' },
+      { status: 503 }
+    );
+  }
+
+  if (gatewayProvider === 'payfast' && payfastMode === 'live') {
     if (finalTotalCents < PAYFAST_LIVE_MINIMUM_AMOUNT_CENTS) {
       const minimum = (PAYFAST_LIVE_MINIMUM_AMOUNT_CENTS / 100).toFixed(2);
       return NextResponse.json(
@@ -307,7 +356,11 @@ export async function POST(request: Request) {
     .single();
 
   if (orderError || !order) {
-    return NextResponse.json({ error: orderError?.message ?? 'Could not create order.' }, { status: 500 });
+    return databaseFailureResponse(
+      '[Orders API] Could not create order.',
+      orderError,
+      'Could not create your order. Please try again.'
+    );
   }
 
   const orderItems = normalizedItems.map((item) => ({
@@ -326,7 +379,11 @@ export async function POST(request: Request) {
   const { error: itemsError } = await supabase.from('order_items').insert(orderItems);
   if (itemsError) {
     await supabase.from('orders').delete().eq('id', order.id);
-    return NextResponse.json({ error: itemsError.message }, { status: 500 });
+    return databaseFailureResponse(
+      '[Orders API] Could not create order items.',
+      itemsError,
+      'Could not create your order. Please try again.'
+    );
   }
 
   if (userId) {

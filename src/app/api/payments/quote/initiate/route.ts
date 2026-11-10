@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createSupabaseAdminClient } from '@/lib/supabase/admin';
 import {
+  PayFastConfigError,
   getPayFastEnv,
   getYocoEnv,
   hasPayFastEnv,
@@ -8,9 +9,11 @@ import {
   hasYocoEnv,
 } from '@/lib/supabase/env';
 import {
+  buildPayFastFields,
   generatePayFastSignature,
   getPayFastProcessUrl,
   PAYFAST_LIVE_MINIMUM_AMOUNT_CENTS,
+  validatePayFastCallbackUrls,
 } from '@/lib/payments/payfast';
 import { getYocoCheckoutApiUrl, parseYocoCheckoutResponse } from '@/lib/payments/yoco';
 import { getSiteUrl } from '@/lib/supabase/site-url';
@@ -100,7 +103,15 @@ export async function POST(request: Request) {
   const paymentPageParams = `ref=${encodeURIComponent(quote.reference)}&token=${encodeURIComponent(token)}`;
 
   if (provider === 'payfast') {
-    const payfastEnv = getPayFastEnv();
+    let payfastEnv: ReturnType<typeof getPayFastEnv>;
+    try {
+      payfastEnv = getPayFastEnv();
+    } catch (error) {
+      const message =
+        error instanceof PayFastConfigError ? error.message : 'PayFast is not configured.';
+      console.error('[Quote Payment Initiate] PayFast configuration error.', { message });
+      return NextResponse.json({ error: message }, { status: 503 });
+    }
 
     if (payfastEnv.mode === 'live' && finalTotalCents < PAYFAST_LIVE_MINIMUM_AMOUNT_CENTS) {
       const minimum = (PAYFAST_LIVE_MINIMUM_AMOUNT_CENTS / 100).toFixed(2);
@@ -111,20 +122,40 @@ export async function POST(request: Request) {
     }
 
     const names = getNameParts(quote.full_name);
-    const fields: Record<string, string> = {
-      merchant_id: payfastEnv.merchantId,
-      merchant_key: payfastEnv.merchantKey,
-      return_url: `${siteUrl}/quote-payment?${paymentPageParams}&payment=success`,
-      cancel_url: `${siteUrl}/quote-payment?${paymentPageParams}&payment=cancelled`,
-      notify_url: payfastEnv.notifyUrl,
-      name_first: names.firstName,
-      name_last: names.lastName,
-      email_address: quote.email,
-      m_payment_id: quote.id,
-      amount: (finalTotalCents / 100).toFixed(2),
-      item_name: `Curtain quote ${quote.reference}`,
-      custom_str1: quote.reference,
-    };
+    const returnUrl = `${siteUrl}/quote-payment?${paymentPageParams}&payment=success`;
+    const cancelUrl = `${siteUrl}/quote-payment?${paymentPageParams}&payment=cancelled`;
+
+    const urlError = validatePayFastCallbackUrls(
+      { returnUrl, cancelUrl, notifyUrl: payfastEnv.notifyUrl },
+      payfastEnv.mode
+    );
+
+    if (urlError) {
+      console.error('[Quote Payment Initiate] Invalid PayFast callback URL configuration.', {
+        quoteId: quote.id,
+        mode: payfastEnv.mode,
+        issue: urlError,
+      });
+      return NextResponse.json(
+        { error: `PayFast is not configured correctly: ${urlError}` },
+        { status: 503 }
+      );
+    }
+
+    const fields = buildPayFastFields({
+      merchantId: payfastEnv.merchantId,
+      merchantKey: payfastEnv.merchantKey,
+      returnUrl,
+      cancelUrl,
+      notifyUrl: payfastEnv.notifyUrl,
+      firstName: names.firstName,
+      lastName: names.lastName,
+      email: quote.email,
+      paymentId: quote.id,
+      amountCents: finalTotalCents,
+      itemName: `Curtain quote ${quote.reference}`,
+      customStr1: quote.reference,
+    });
 
     const signature = generatePayFastSignature(fields, payfastEnv.passphrase);
 

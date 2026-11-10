@@ -89,9 +89,7 @@ export async function processCurtainQuotePaymentWebhook(
   }
 
   const expectedCents = Math.round(Number(quote.final_total ?? 0) * 100);
-  const amountMatches =
-    expectedCents > 0 &&
-    (amountCents === expectedCents || amountCents === Math.round(expectedCents / 100));
+  const amountMatches = expectedCents > 0 && amountCents === expectedCents;
 
   if (!amountMatches) {
     await markWebhookEvent(
