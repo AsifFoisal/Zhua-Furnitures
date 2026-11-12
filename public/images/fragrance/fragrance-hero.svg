@@ -1,0 +1,227 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1050" viewBox="0 0 1600 1050" role="img" aria-label="ZHUA ScentaRiva fragrance collection for homes and businesses">
+    <defs>
+
+    <filter id="herosoft" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="24"/>
+    </filter>
+    <filter id="heroshadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+    <filter id="heroblur6" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6"/>
+    </filter>
+    <filter id="heroblur2" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="1.6"/>
+    </filter>
+    <filter id="herograin" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.78" numOctaves="3" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.16"/></feComponentTransfer>
+      <feBlend in="SourceGraphic" mode="soft-light"/>
+    </filter>
+    <radialGradient id="herohalo" cx="50%" cy="42%" r="58%">
+      <stop offset="0" stop-color="#d3a35f" stop-opacity="0.25"/>
+      <stop offset="0.46" stop-color="#b67c3b" stop-opacity="0.1"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="herovignette" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#000000" stop-opacity="0.2"/>
+      <stop offset="0.45" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.66"/>
+    </linearGradient>
+
+    <linearGradient id="herovignette" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#000" stop-opacity=".12"/>
+      <stop offset=".55" stop-color="#000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000" stop-opacity=".6"/>
+    </linearGradient>
+    <linearGradient id="heroLeftFade" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0a0908" stop-opacity=".88"/>
+      <stop offset=".52" stop-color="#0a0908" stop-opacity=".2"/>
+      <stop offset="1" stop-color="#0a0908" stop-opacity="0"/>
+    </linearGradient>
+      <linearGradient id="herobg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#201a15"/>
+        <stop offset="0.55" stop-color="#201a15"/>
+        <stop offset="1" stop-color="#080706"/>
+      </linearGradient>
+      <linearGradient id="heromachineBody" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#050505"/>
+        <stop offset="0.18" stop-color="#161412"/>
+        <stop offset="0.55" stop-color="#24201c"/>
+        <stop offset="0.82" stop-color="#0a0908"/>
+        <stop offset="1" stop-color="#020202"/>
+      </linearGradient>
+      <linearGradient id="herogold" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#8f6c2d"/>
+        <stop offset="0.28" stop-color="#e1bd78"/>
+        <stop offset="0.56" stop-color="#b78c44"/>
+        <stop offset="0.8" stop-color="#f6ddb0"/>
+        <stop offset="1" stop-color="#8d682c"/>
+      </linearGradient>
+      <linearGradient id="herocap" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#050505"/>
+        <stop offset="0.35" stop-color="#2c2823"/>
+        <stop offset="0.62" stop-color="#151310"/>
+        <stop offset="1" stop-color="#030303"/>
+      </linearGradient>
+      <linearGradient id="herobottleGlass" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#2a1209"/>
+        <stop offset="0.18" stop-color="#5a2f17"/>
+        <stop offset="0.48" stop-color="#8c5128"/>
+        <stop offset="0.72" stop-color="#5a2f17"/>
+        <stop offset="1" stop-color="#2a1209"/>
+      </linearGradient>
+      <linearGradient id="heroreedGlass" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#5d4120"/>
+        <stop offset="0.25" stop-color="#b08345"/>
+        <stop offset="0.52" stop-color="#d9b577"/>
+        <stop offset="0.76" stop-color="#8b622e"/>
+        <stop offset="1" stop-color="#4e351a"/>
+      </linearGradient>
+      <linearGradient id="herofade" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#000" stop-opacity="0"/>
+        <stop offset="1" stop-color="#000" stop-opacity=".65"/>
+      </linearGradient>
+    </defs>
+
+
+    <rect width="1600" height="1050" fill="#080706"/>
+    <rect width="1600" height="1050" fill="url(#herobg)"/>
+    <rect width="1600" height="1050" fill="url(#herohalo)"/>
+    <ellipse cx="800" cy="462" rx="480" ry="294" fill="#c98b44" opacity="0.1" filter="url(#herosoft)"/>
+
+    <path d="M 288 861 L 288 606.5 A 512 512 0 0 1 1312 606.5 L 1312 861 Z"
+      fill="#c98b44" opacity="0.035"/>
+    <path d="M 288 861 L 288 606.5 A 512 512 0 0 1 1312 606.5 L 1312 861"
+      fill="none" stroke="#f1d8ad" stroke-opacity="0.16" stroke-width="1.2"/>
+
+    <rect x="0" y="850.5" width="1600" height="199.5" fill="#080706" opacity="0.52"/>
+    <line x1="160" y1="850.5" x2="1440" y2="850.5" stroke="#f1d8ad" stroke-opacity="0.16"/>
+    <ellipse cx="800" cy="860.5" rx="432" ry="47.25" fill="#000" opacity="0.5" filter="url(#herosoft)"/>
+
+    <path d="M 94 850 L 94 378 A 348 348 0 0 1 790 378 L 790 850 Z" fill="#c99a55" opacity=".05"/>
+    <path d="M 94 850 L 94 378 A 348 348 0 0 1 790 378 L 790 850" fill="none" stroke="#e8c995" stroke-opacity=".14"/>
+
+    <g opacity="0.62" filter="url(#heroblur6)">
+      <path d="M 1077.4 294 C 1026.8 233.5, 1143.4 192.8, 1073 120.19999999999999 C 1027.9 64.1, 1113.7 24.5, 1092.8 -41.5"
+        fill="none" stroke="#c98b44" stroke-opacity="0.36" stroke-width="8.8" stroke-linecap="round"/>
+      <path d="M 1100.5 285.2 C 1155.5 223.6, 1059.8 182.89999999999998, 1126.9 110.29999999999998 C 1168.7 67.39999999999998, 1090.6 8, 1108.2 -51.400000000000034"
+        fill="none" stroke="#f4e3c4" stroke-opacity="0.2" stroke-width="4.4" stroke-linecap="round"/>
+    </g>
+
+    <g>
+      <ellipse cx="1096.6" cy="821" rx="165.564" ry="25.2" fill="#000" opacity="0.72" filter="url(#herosoft)"/>
+      <path d="M 1001.2 804.8 L 1166.8000000000002 804.8 L 1179.4 822.8 L 988.6 822.8 Z" fill="#0a0a0a"/>
+      <rect x="970.6" y="285.5" width="226.8" height="526.5" rx="30.6" fill="url(#heromachineBody)"/>
+      <rect x="972.4" y="288.2" width="223.20000000000002" height="521.1" rx="28.8" fill="none" stroke="#f3d7a4" stroke-opacity="0.13"/>
+      <path d="M 995.8000000000001 326.9 C 977.8000000000001 487.1, 981.4 679.7, 1000.3000000000001 781.4" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="6.3" stroke-linecap="round"/>
+      <path d="M 1175.8000000000002 357.5 C 1192.9 510.5, 1188.4 699.5, 1163.2 768.8" fill="none" stroke="#f2c27d" stroke-opacity="0.1" stroke-width="4.5" stroke-linecap="round"/>
+      <rect x="1006.6" y="269.3" width="154.8" height="31.5" rx="15.3" fill="url(#herogold)"/>
+      <rect x="1015.6" y="274.7" width="136.8" height="20.7" rx="9.9" fill="#1b1610"/>
+      <rect x="985.9" y="317" width="196.20000000000002" height="30.6" rx="15.3" fill="#080808"/>
+      <rect x="985.9" y="317" width="196.20000000000002" height="30.6" rx="15.3" fill="none" stroke="#f1c57f" stroke-opacity="0.22"/>
+      <g>
+        <rect x="985" y="429.5" width="198" height="131.4" rx="18" fill="#050505" stroke="#f1c57f" stroke-opacity="0.15"/>
+        <rect x="1010.2" y="452" width="147.6" height="55.800000000000004" rx="9" fill="#1a130b"/>
+        <rect x="1017.4" y="461" width="86.4" height="6.3" rx="3.5" fill="#dca65c" opacity="0.92"/>
+        <rect x="1017.4" y="475.4" width="63" height="4.5" rx="2.5" fill="#f4ddb7" opacity="0.55"/>
+        <rect x="1017.4" y="487.1" width="100.8" height="4.5" rx="2.5" fill="#f4ddb7" opacity="0.35"/>
+        <circle cx="1141.6" cy="479.9" r="11.700000000000001" fill="none" stroke="#dca65c" stroke-width="1.8"/>
+        <path d="M 1135.3 479.9 L 1140.7 485.3 L 1148.8 473.6" fill="none" stroke="#dca65c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="1084" y="534.8" text-anchor="middle" fill="#f2ddbb" font-family="Georgia, serif" font-size="13.5" letter-spacing="3.6">SCENTARIVA</text>
+        <text x="1084" y="550.1" text-anchor="middle" fill="#bca57c" font-family="Georgia, serif" font-size="6.75" letter-spacing="2.61">SMART SCENT SYSTEM</text>
+      </g>
+      <g opacity="0.8">
+        <rect x="1060.6" y="596.9000000000001" width="46.800000000000004" height="3.6" rx="2" fill="#f1d7a6" opacity="0.5"/>
+        <circle cx="1084" cy="632.9000000000001" r="7.2" fill="none" stroke="#f1d7a6" stroke-width="1.1700000000000002" opacity="0.7"/>
+        <circle cx="1084" cy="632.9000000000001" r="2.7" fill="#f1d7a6" opacity="0.9"/>
+      </g>
+      <g opacity="0.42">
+        <line x1="1019.2" y1="686" x2="1148.8000000000002" y2="686" stroke="#fff" stroke-opacity="0.2"/>
+        <line x1="1024.6" y1="700.4000000000001" x2="1143.4" y2="700.4000000000001" stroke="#fff" stroke-opacity="0.14"/>
+        <line x1="1030" y1="714.8" x2="1138" y2="714.8" stroke="#fff" stroke-opacity="0.1"/>
+      </g>
+      <ellipse cx="1084" cy="786.8" rx="86.18400000000001" ry="6.3" fill="#f1d7a6" opacity="0.1" filter="url(#heroblur6)"/>
+    </g>
+
+    <g>
+      <ellipse cx="764.24" cy="823.36" rx="85.4996" ry="13.780000000000001" fill="#000" opacity="0.7" filter="url(#herosoft)"/>
+      <path d="M 709.65 589.0999999999999 Q 709.65 563.66 727.6700000000001 563.66 L 741.45 563.66 L 741.45 544.5799999999999 L 778.55 544.5799999999999 L 778.55 563.66 L 792.3299999999999 563.66 Q 810.35 563.66 810.35 589.0999999999999 L 806.11 809.58 Q 804.52 817 760 817 Q 715.48 817 713.89 809.58 Z"
+        fill="url(#herobottleGlass)"/>
+      <path d="M 720.25 606.06 C 708.59 665.9499999999999, 712.83 749.6899999999999, 720.78 796.86"
+        fill="none" stroke="#fff" stroke-opacity="0.3" stroke-width="4.24" stroke-linecap="round"/>
+      <path d="M 795.51 625.14 C 810.35 688.74, 802.4 749.6899999999999, 796.5699999999999 789.44"
+        fill="none" stroke="#8c5128" stroke-opacity="0.32" stroke-width="2.6500000000000004" stroke-linecap="round"/>
+      <rect x="736.68" y="504.29999999999995" width="46.64" height="42.400000000000006" rx="4.24" fill="url(#herocap)"/>
+      <g opacity="0.7">
+        <line x1="742.51" y1="509.59999999999997" x2="777.49" y2="509.59999999999997" stroke="#fff" stroke-opacity="0.12" stroke-width="0.636"/><line x1="742.51" y1="515.9599999999999" x2="777.49" y2="515.9599999999999" stroke="#fff" stroke-opacity="0.12" stroke-width="0.636"/><line x1="742.51" y1="522.3199999999999" x2="777.49" y2="522.3199999999999" stroke="#fff" stroke-opacity="0.12" stroke-width="0.636"/><line x1="742.51" y1="528.68" x2="777.49" y2="528.68" stroke="#fff" stroke-opacity="0.12" stroke-width="0.636"/><line x1="742.51" y1="535.04" x2="777.49" y2="535.04" stroke="#fff" stroke-opacity="0.12" stroke-width="0.636"/><line x1="742.51" y1="541.4" x2="777.49" y2="541.4" stroke="#fff" stroke-opacity="0.12" stroke-width="0.636"/>
+      </g>
+      <rect x="711.77" y="665.9499999999999" width="96.46000000000001" height="89.04" rx="1.59" fill="#f3ead8"/>
+      <rect x="716.01" y="670.1899999999999" width="87.98" height="80.56" rx="0.795" fill="none" stroke="#2a1d14" stroke-opacity="0.26"/>
+      <text x="760" y="683.9699999999999" text-anchor="middle" fill="#2a1d14" font-family="Georgia, serif" font-size="4.7700000000000005" letter-spacing="1.802">ZHUA</text>
+      <line x1="748.34" y1="690.3299999999999" x2="771.66" y2="690.3299999999999" stroke="#a9682f" stroke-width="0.53"/>
+      <text x="760" y="708.8799999999999" text-anchor="middle" fill="#2a1d14" font-family="Georgia, serif" font-size="11.13" letter-spacing="0.636">Amber Noir</text>
+      <text x="760" y="720.54" text-anchor="middle" fill="#2a1d14" fill-opacity="0.68" font-family="Georgia, serif" font-size="3.3920000000000003" letter-spacing="0.901">AMBER · OUD · VANILLA</text>
+      <line x1="741.45" y1="729.02" x2="778.55" y2="729.02" stroke="#2a1d14" stroke-opacity="0.18"/>
+      <text x="760" y="739.6199999999999" text-anchor="middle" fill="#2a1d14" fill-opacity="0.72" font-family="Georgia, serif" font-size="4.24" letter-spacing="1.06">500 ML</text>
+      <text x="760" y="747.04" text-anchor="middle" fill="#2a1d14" fill-opacity="0.48" font-family="Georgia, serif" font-size="2.968" letter-spacing="0.636">PREMIUM FRAGRANCE OIL</text>
+      <path d="M 718.13 581.68 Q 760 573.7299999999999 801.87 586.4499999999999" fill="none" stroke="#fff" stroke-opacity="0.26" stroke-width="2.6500000000000004" stroke-linecap="round"/>
+      <rect x="707.53" y="798.45" width="104.94" height="11.66" rx="5.300000000000001" fill="#fff" opacity="0.035"/>
+    </g>
+
+    <g>
+      <ellipse cx="914.24" cy="823.36" rx="85.4996" ry="13.780000000000001" fill="#000" opacity="0.7" filter="url(#herosoft)"/>
+      <path d="M 859.65 589.0999999999999 Q 859.65 563.66 877.6700000000001 563.66 L 891.45 563.66 L 891.45 544.5799999999999 L 928.55 544.5799999999999 L 928.55 563.66 L 942.3299999999999 563.66 Q 960.35 563.66 960.35 589.0999999999999 L 956.11 809.58 Q 954.52 817 910 817 Q 865.48 817 863.89 809.58 Z"
+        fill="url(#herobottleGlass)"/>
+      <path d="M 870.25 606.06 C 858.59 665.9499999999999, 862.83 749.6899999999999, 870.78 796.86"
+        fill="none" stroke="#fff" stroke-opacity="0.3" stroke-width="4.24" stroke-linecap="round"/>
+      <path d="M 945.51 625.14 C 960.35 688.74, 952.4 749.6899999999999, 946.5699999999999 789.44"
+        fill="none" stroke="#a7aa88" stroke-opacity="0.32" stroke-width="2.6500000000000004" stroke-linecap="round"/>
+      <rect x="886.68" y="504.29999999999995" width="46.64" height="42.400000000000006" rx="4.24" fill="url(#herocap)"/>
+      <g opacity="0.7">
+        <line x1="892.51" y1="509.59999999999997" x2="927.49" y2="509.59999999999997" stroke="#fff" stroke-opacity="0.12" stroke-width="0.636"/><line x1="892.51" y1="515.9599999999999" x2="927.49" y2="515.9599999999999" stroke="#fff" stroke-opacity="0.12" stroke-width="0.636"/><line x1="892.51" y1="522.3199999999999" x2="927.49" y2="522.3199999999999" stroke="#fff" stroke-opacity="0.12" stroke-width="0.636"/><line x1="892.51" y1="528.68" x2="927.49" y2="528.68" stroke="#fff" stroke-opacity="0.12" stroke-width="0.636"/><line x1="892.51" y1="535.04" x2="927.49" y2="535.04" stroke="#fff" stroke-opacity="0.12" stroke-width="0.636"/><line x1="892.51" y1="541.4" x2="927.49" y2="541.4" stroke="#fff" stroke-opacity="0.12" stroke-width="0.636"/>
+      </g>
+      <rect x="861.77" y="665.9499999999999" width="96.46000000000001" height="89.04" rx="1.59" fill="#f4efdf"/>
+      <rect x="866.01" y="670.1899999999999" width="87.98" height="80.56" rx="0.795" fill="none" stroke="#2c2d21" stroke-opacity="0.26"/>
+      <text x="910" y="683.9699999999999" text-anchor="middle" fill="#2c2d21" font-family="Georgia, serif" font-size="4.7700000000000005" letter-spacing="1.802">ZHUA</text>
+      <line x1="898.34" y1="690.3299999999999" x2="921.66" y2="690.3299999999999" stroke="#9b9c72" stroke-width="0.53"/>
+      <text x="910" y="708.8799999999999" text-anchor="middle" fill="#2c2d21" font-family="Georgia, serif" font-size="9.01" letter-spacing="0.636">White Tea &amp; Fig</text>
+      <text x="910" y="720.54" text-anchor="middle" fill="#2c2d21" fill-opacity="0.68" font-family="Georgia, serif" font-size="3.3920000000000003" letter-spacing="0.901">WHITE TEA · FIG · CEDAR</text>
+      <line x1="891.45" y1="729.02" x2="928.55" y2="729.02" stroke="#2c2d21" stroke-opacity="0.18"/>
+      <text x="910" y="739.6199999999999" text-anchor="middle" fill="#2c2d21" fill-opacity="0.72" font-family="Georgia, serif" font-size="4.24" letter-spacing="1.06">500 ML</text>
+      <text x="910" y="747.04" text-anchor="middle" fill="#2c2d21" fill-opacity="0.48" font-family="Georgia, serif" font-size="2.968" letter-spacing="0.636">PREMIUM FRAGRANCE OIL</text>
+      <path d="M 868.13 581.68 Q 910 573.7299999999999 951.87 586.4499999999999" fill="none" stroke="#fff" stroke-opacity="0.26" stroke-width="2.6500000000000004" stroke-linecap="round"/>
+      <rect x="857.53" y="798.45" width="104.94" height="11.66" rx="5.300000000000001" fill="#fff" opacity="0.035"/>
+    </g>
+
+    <g>
+      <ellipse cx="1310.8" cy="824.54" rx="107.48559999999998" ry="14.499999999999998" fill="#000" opacity="0.68" filter="url(#herosoft)"/>
+      <g stroke-linecap="round">
+        <line x1="1271.36" y1="646.48" x2="1280.7792" y2="442.32" stroke="#9a7449" stroke-width="3.4799999999999995" opacity="0.82"/><line x1="1283.54" y1="646.48" x2="1289.5488" y2="427.82" stroke="#9a7449" stroke-width="3.4799999999999995" opacity="0.82"/><line x1="1296.88" y1="646.48" x2="1299.1536" y2="437.68" stroke="#9a7449" stroke-width="3.4799999999999995" opacity="0.82"/><line x1="1311.96" y1="646.48" x2="1310.0112" y2="424.91999999999996" stroke="#9a7449" stroke-width="3.4799999999999995" opacity="0.82"/><line x1="1326.46" y1="646.48" x2="1320.4512" y2="438.84000000000003" stroke="#9a7449" stroke-width="3.4799999999999995" opacity="0.82"/><line x1="1339.22" y1="646.48" x2="1329.6384" y2="446.38" stroke="#9a7449" stroke-width="3.4799999999999995" opacity="0.82"/>
+      </g>
+      <rect x="1272.52" y="623.28" width="64.96" height="32.48" rx="4.64" fill="url(#herogold)"/>
+      <rect x="1276.58" y="627.34" width="56.839999999999996" height="24.36" rx="2.9" fill="#19130c"/>
+      <path d="M 1248.74 649.96 Q 1248.74 639.52 1266.14 639.52 L 1343.86 639.52 Q 1361.26 639.52 1361.26 649.96 L 1356.04 811.2 Q 1353.1399999999999 817 1305 817 Q 1256.8600000000001 817 1253.96 811.2 Z"
+        fill="url(#heroreedGlass)"/>
+      <path d="M 1258.6000000000001 661.56 C 1248.74 703.3199999999999, 1253.96 766.54, 1262.08 801.92"
+        fill="none" stroke="#fff" stroke-opacity="0.35" stroke-width="4.64" stroke-linecap="round"/>
+      <path d="M 1345.02 677.8 C 1360.1 725.36, 1354.3 765.96, 1346.76 794.96"
+        fill="none" stroke="#d6a85d" stroke-opacity="0.28" stroke-width="2.9" stroke-linecap="round"/>
+      <rect x="1250.48" y="707.96" width="109.03999999999999" height="73.08" rx="1.7399999999999998" fill="#f5edd9"/>
+      <rect x="1255.7" y="713.18" width="98.6" height="62.63999999999999" rx="1.5" fill="none" stroke="#322416" stroke-opacity="0.26"/>
+      <text x="1305" y="726.52" text-anchor="middle" fill="#2e2217" font-family="Georgia, serif" font-size="4.64" letter-spacing="1.7399999999999998">ZHUA</text>
+      <text x="1305" y="743.3399999999999" text-anchor="middle" fill="#2e2217" font-family="Georgia, serif" font-size="11.02" letter-spacing="0.8119999999999999">Absolut Gold</text>
+      <text x="1305" y="754.36" text-anchor="middle" fill="#8e6a2f" font-family="Georgia, serif" font-size="4.06" letter-spacing="1.276">REED DIFFUSER</text>
+      <line x1="1284.12" y1="760.16" x2="1325.88" y2="760.16" stroke="#b98d42" stroke-width="0.696"/>
+      <text x="1305" y="770.02" text-anchor="middle" fill="#5f4a2b" font-family="Georgia, serif" font-size="4.06" letter-spacing="0.9859999999999999">150 ML</text>
+      <rect x="1244.1000000000001" y="797.28" width="121.79999999999998" height="13.919999999999998" rx="5.8" fill="#fff" opacity="0.04"/>
+    </g>
+    <text x="148" y="700" fill="#f3e6d1" fill-opacity=".9" font-family="Georgia, serif" font-size="19" letter-spacing="9">ZHUA</text>
+    <line x1="148" y1="727" x2="380" y2="727" stroke="#d4ad70" stroke-opacity=".55"/>
+    <text x="148" y="764" fill="#cbb38d" fill-opacity=".8" font-family="Georgia, serif" font-size="11" letter-spacing="4.4">THE ART OF ATMOSPHERE</text>
+    <rect width="1600" height="1050" fill="url(#herovignette)"/>
+    <rect x="0" y="0" width="720" height="1050" fill="url(#heroLeftFade)"/>
+    <rect width="1600" height="1050" fill="url(#herovignette)"/>
+    <rect width="1600" height="1050" filter="url(#herograin)" opacity="0.24"/>
+  </svg>

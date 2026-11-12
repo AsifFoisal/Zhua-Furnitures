@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200" role="img" aria-label="ZHUA ScentaRiva Smart Commercial Scent Diffuser Machine in matte black with rising fragrance mist">
+    <defs>
+
+    <filter id="msoft" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="24"/>
+    </filter>
+    <filter id="mshadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+    <filter id="mblur6" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6"/>
+    </filter>
+    <filter id="mblur2" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="1.6"/>
+    </filter>
+    <filter id="mgrain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.78" numOctaves="3" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.16"/></feComponentTransfer>
+      <feBlend in="SourceGraphic" mode="soft-light"/>
+    </filter>
+    <radialGradient id="mhalo" cx="50%" cy="42%" r="58%">
+      <stop offset="0" stop-color="#d3a35f" stop-opacity="0.25"/>
+      <stop offset="0.46" stop-color="#b67c3b" stop-opacity="0.1"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="mvignette" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#000000" stop-opacity="0.2"/>
+      <stop offset="0.45" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.66"/>
+    </linearGradient>
+
+      <linearGradient id="mbg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#2b211c"/>
+        <stop offset="0.55" stop-color="#2b211c"/>
+        <stop offset="1" stop-color="#0c0a09"/>
+      </linearGradient>
+      <linearGradient id="mmachineBody" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#050505"/>
+        <stop offset="0.18" stop-color="#161412"/>
+        <stop offset="0.55" stop-color="#24201c"/>
+        <stop offset="0.82" stop-color="#0a0908"/>
+        <stop offset="1" stop-color="#020202"/>
+      </linearGradient>
+      <linearGradient id="mgold" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#8f6c2d"/>
+        <stop offset="0.28" stop-color="#e1bd78"/>
+        <stop offset="0.56" stop-color="#b78c44"/>
+        <stop offset="0.8" stop-color="#f6ddb0"/>
+        <stop offset="1" stop-color="#8d682c"/>
+      </linearGradient>
+      <linearGradient id="mcap" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#050505"/>
+        <stop offset="0.35" stop-color="#2c2823"/>
+        <stop offset="0.62" stop-color="#151310"/>
+        <stop offset="1" stop-color="#030303"/>
+      </linearGradient>
+      <linearGradient id="mbottleGlass" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#2a1209"/>
+        <stop offset="0.18" stop-color="#5a2f17"/>
+        <stop offset="0.48" stop-color="#8c5128"/>
+        <stop offset="0.72" stop-color="#5a2f17"/>
+        <stop offset="1" stop-color="#2a1209"/>
+      </linearGradient>
+      <linearGradient id="mreedGlass" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#5d4120"/>
+        <stop offset="0.25" stop-color="#b08345"/>
+        <stop offset="0.52" stop-color="#d9b577"/>
+        <stop offset="0.76" stop-color="#8b622e"/>
+        <stop offset="1" stop-color="#4e351a"/>
+      </linearGradient>
+      <linearGradient id="mfade" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#000" stop-opacity="0"/>
+        <stop offset="1" stop-color="#000" stop-opacity=".65"/>
+      </linearGradient>
+    </defs>
+
+
+    <rect width="1200" height="1200" fill="#0c0a09"/>
+    <rect width="1200" height="1200" fill="url(#mbg)"/>
+    <rect width="1200" height="1200" fill="url(#mhalo)"/>
+    <ellipse cx="600" cy="528" rx="360" ry="336.00000000000006" fill="#c98b44" opacity="0.1" filter="url(#msoft)"/>
+
+    <path d="M 216 983.9999999999999 L 216 492 A 384 384 0 0 1 984 492 L 984 983.9999999999999 Z"
+      fill="#c98b44" opacity="0.035"/>
+    <path d="M 216 983.9999999999999 L 216 492 A 384 384 0 0 1 984 492 L 984 983.9999999999999"
+      fill="none" stroke="#f1d8ad" stroke-opacity="0.16" stroke-width="1.2"/>
+
+    <rect x="0" y="972.0000000000001" width="1200" height="227.9999999999999" fill="#080706" opacity="0.52"/>
+    <line x1="120" y1="972.0000000000001" x2="1080" y2="972.0000000000001" stroke="#f1d8ad" stroke-opacity="0.16"/>
+    <ellipse cx="600" cy="982.0000000000001" rx="324" ry="54" fill="#000" opacity="0.5" filter="url(#msoft)"/>
+
+    <g opacity="0.62" filter="url(#mblur6)">
+      <path d="M 593.7 340 C 545.4 282.25, 656.7 243.39999999999998, 589.5 174.1 C 546.45 120.54999999999998, 628.35 82.75, 608.4 19.75"
+        fill="none" stroke="#c98b44" stroke-opacity="0.36" stroke-width="8.4" stroke-linecap="round"/>
+      <path d="M 615.75 331.6 C 668.25 272.8, 576.9 233.95, 640.95 164.65 C 680.85 123.69999999999999, 606.3 67, 623.1 10.300000000000011"
+        fill="none" stroke="#f4e3c4" stroke-opacity="0.2" stroke-width="4.2" stroke-linecap="round"/>
+    </g>
+
+    <g>
+      <ellipse cx="614" cy="1010" rx="183.96" ry="28" fill="#000" opacity="0.72" filter="url(#msoft)"/>
+      <path d="M 508 992 L 692 992 L 706 1012 L 494 1012 Z" fill="#0a0a0a"/>
+      <rect x="474" y="415" width="252" height="585" rx="34" fill="url(#mmachineBody)"/>
+      <rect x="476" y="418" width="248" height="579" rx="32" fill="none" stroke="#f3d7a4" stroke-opacity="0.13"/>
+      <path d="M 502 461 C 482 639, 486 853, 507 966" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="7" stroke-linecap="round"/>
+      <path d="M 702 495 C 721 665, 716 875, 688 952" fill="none" stroke="#f2c27d" stroke-opacity="0.1" stroke-width="5" stroke-linecap="round"/>
+      <rect x="514" y="397" width="172" height="35" rx="17" fill="url(#mgold)"/>
+      <rect x="524" y="403" width="152" height="23" rx="11" fill="#1b1610"/>
+      <rect x="491" y="450" width="218" height="34" rx="17" fill="#080808"/>
+      <rect x="491" y="450" width="218" height="34" rx="17" fill="none" stroke="#f1c57f" stroke-opacity="0.22"/>
+      <g>
+        <rect x="490" y="575" width="220" height="146" rx="20" fill="#050505" stroke="#f1c57f" stroke-opacity="0.15"/>
+        <rect x="518" y="600" width="164" height="62" rx="10" fill="#1a130b"/>
+        <rect x="526" y="610" width="96" height="7" rx="3.5" fill="#dca65c" opacity="0.92"/>
+        <rect x="526" y="626" width="70" height="5" rx="2.5" fill="#f4ddb7" opacity="0.55"/>
+        <rect x="526" y="639" width="112" height="5" rx="2.5" fill="#f4ddb7" opacity="0.35"/>
+        <circle cx="664" cy="631" r="13" fill="none" stroke="#dca65c" stroke-width="2"/>
+        <path d="M 657 631 L 663 637 L 672 624" fill="none" stroke="#dca65c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="600" y="692" text-anchor="middle" fill="#f2ddbb" font-family="Georgia, serif" font-size="15" letter-spacing="4">SCENTARIVA</text>
+        <text x="600" y="709" text-anchor="middle" fill="#bca57c" font-family="Georgia, serif" font-size="7.5" letter-spacing="2.9">SMART SCENT SYSTEM</text>
+      </g>
+      <g opacity="0.8">
+        <rect x="574" y="761" width="52" height="4" rx="2" fill="#f1d7a6" opacity="0.5"/>
+        <circle cx="600" cy="801" r="8" fill="none" stroke="#f1d7a6" stroke-width="1.3" opacity="0.7"/>
+        <circle cx="600" cy="801" r="3" fill="#f1d7a6" opacity="0.9"/>
+      </g>
+      <g opacity="0.42">
+        <line x1="528" y1="860" x2="672" y2="860" stroke="#fff" stroke-opacity="0.2"/>
+        <line x1="534" y1="876" x2="666" y2="876" stroke="#fff" stroke-opacity="0.14"/>
+        <line x1="540" y1="892" x2="660" y2="892" stroke="#fff" stroke-opacity="0.1"/>
+      </g>
+      <ellipse cx="600" cy="972" rx="95.76" ry="7" fill="#f1d7a6" opacity="0.1" filter="url(#mblur6)"/>
+    </g>
+    <text x="600" y="1123" text-anchor="middle" fill="#f0dfc4" font-family="Georgia, serif" font-size="18" letter-spacing="7">SCENTARIVA</text>
+    <text x="600" y="1151" text-anchor="middle" fill="#c9b18c" fill-opacity=".8" font-family="Georgia, serif" font-size="10" letter-spacing="4.2">SMART COMMERCIAL SCENT DIFFUSER</text>
+    <rect width="1200" height="1200" fill="url(#mvignette)"/>
+    <rect width="1200" height="1200" filter="url(#mgrain)" opacity="0.24"/>
+  </svg>

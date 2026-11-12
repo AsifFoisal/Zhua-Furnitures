@@ -47,7 +47,7 @@ export default function SearchModal() {
           <input
             autoFocus
             className={styles.input}
-            placeholder="Search furniture, curtains, accessories..."
+            placeholder="Search furniture, curtains, fragrance..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />

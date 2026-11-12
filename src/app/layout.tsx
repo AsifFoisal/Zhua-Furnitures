@@ -25,8 +25,8 @@ export const metadata: Metadata = {
     default: 'Zhua Furniture — Premium Furniture, Curtains & Interior Design | South Africa',
     template: '%s | Zhua Furniture',
   },
-  description: "South Africa's #1 home solutions platform. Shop premium furniture, custom curtains & blinds, and professional interior design services. Delivered across all 9 provinces.",
-  keywords: ['furniture South Africa', 'curtains', 'blinds', 'interior design', 'home decor', 'Johannesburg furniture', 'Cape Town curtains'],
+  description: "South Africa's #1 home solutions platform. Shop premium furniture, custom curtains & blinds, professional interior design, and the ScentaRiva home & business fragrance collection. Delivered across all 9 provinces.",
+  keywords: ['furniture South Africa', 'curtains', 'blinds', 'interior design', 'home decor', 'home fragrance', 'scent diffuser', 'Johannesburg furniture', 'Cape Town curtains'],
   manifest: '/manifest.webmanifest',
   icons: {
     icon: [
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Zhua Furniture — Premium Furniture, Curtains & Interior Design',
-    description: "South Africa's #1 home solutions platform. Premium furniture, custom curtains, and expert interior design.",
+    description: "Premium furniture, custom curtains & blinds, interior design and the ScentaRiva home & business fragrance collection.",
     type: 'website',
     locale: 'en_ZA',
     url: '/',
@@ -69,7 +69,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Zhua Furniture — Premium Furniture, Curtains & Interior Design',
-    description: "South Africa's #1 home solutions platform. Premium furniture, custom curtains, and expert interior design.",
+    description: "Premium furniture, custom curtains & blinds, interior design and the ScentaRiva home & business fragrance collection.",
     images: ['/logo.jpg'],
   },
 };

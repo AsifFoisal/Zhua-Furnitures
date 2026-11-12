@@ -89,7 +89,8 @@ export default function Footer() {
               </Link>
               <p className={styles.brandDesc}>
                 Complete spaces, made for you. ZHUA designs, makes and installs custom furniture,
-                curtains &amp; blinds, interior design, WALLZ wall finishes and DECKZ outdoor spaces.
+                curtains &amp; blinds, interior design, WALLZ wall finishes, DECKZ outdoor spaces
+                and the ScentaRiva fragrance collection.
               </p>
               <div className={styles.socials}>
                 <a
@@ -112,6 +113,7 @@ export default function Footer() {
               <ul className={styles.linkList}>
                 <li><Link href="/furniture" className={styles.footerLink}>Furniture</Link></li>
                 <li><Link href="/curtains-blinds" className={styles.footerLink}>Curtains &amp; Blinds</Link></li>
+                <li><Link href="/fragrance" className={styles.footerLink}>ScentaRiva Fragrance</Link></li>
                 <li><Link href="/interior-design" className={styles.footerLink}>Interior Design</Link></li>
                 <li><Link href="/wallz-deckz" className={styles.footerLink}>Wallz &amp; Deckz</Link></li>
                 <li><Link href="/design-studio" className={styles.footerLink}>Design Studio</Link></li>
@@ -138,6 +140,7 @@ export default function Footer() {
               <ul className={styles.linkList}>
                 <li><Link href="/furniture" className={styles.footerLink}>Custom Furniture</Link></li>
                 <li><Link href="/curtains-blinds" className={styles.footerLink}>Curtains &amp; Blinds</Link></li>
+                <li><Link href="/fragrance" className={styles.footerLink}>Home &amp; Business Fragrance</Link></li>
                 <li><Link href="/interior-design" className={styles.footerLink}>Interior Design</Link></li>
                 <li><Link href="/wallz" className={styles.footerLink}>Wall Solutions</Link></li>
                 <li><Link href="/deckz" className={styles.footerLink}>Outdoor Spaces</Link></li>

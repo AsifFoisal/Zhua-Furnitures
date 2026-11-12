@@ -33,6 +33,7 @@ type NavLink = {
 const navLinks: NavLink[] = [
   { label: 'Furniture', href: '/furniture' },
   { label: 'Curtains & Blinds', href: '/curtains-blinds' },
+  { label: 'Fragrance', href: '/fragrance' },
   {
     label: 'Wallz & Deckz',
     href: '/wallz-deckz',

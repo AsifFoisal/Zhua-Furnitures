@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Heart, ShoppingBag, Star, SlidersHorizontal, X, ZoomIn } from 'lucide-react';
 import { toast } from 'sonner';
 import { categories, formatPrice } from '@/lib/data';
+import { isFragranceProduct } from '@/lib/fragrance';
 import ProductImageLightbox from '@/components/ui/ProductImageLightbox';
 import { useCartStore, useWishlistStore } from '@/store';
 import { useStorefrontProducts } from '@/lib/use-storefront-products';
@@ -19,6 +20,12 @@ type ImagePreviewState = {
 function toPreviewImages(images: string[]): string[] {
   return images.filter((image) => typeof image === 'string' && image.trim().length > 0);
 }
+
+const categoryFilterOptions = [
+  { id: 'all', name: 'All Products' },
+  ...categories.map(({ id, name }) => ({ id, name })),
+  { id: 'fragrance', name: 'ScentaRiva Fragrance' },
+];
 
 export default function ShopPage() {
   const { products, loading } = useStorefrontProducts();
@@ -48,12 +55,43 @@ export default function ShopPage() {
   };
 
   const allSubcategories = useMemo(
-    () => [...new Set(products.map((product) => product.subcategory))],
-    [products]
+    () => [
+      ...new Set(
+        products
+          .filter((product) => {
+            if (selectedCategory === 'all') {
+              return true;
+            }
+
+            if (selectedCategory === 'fragrance') {
+              return isFragranceProduct(product);
+            }
+
+            return product.category === selectedCategory;
+          })
+          .map((product) => product.subcategory)
+      ),
+    ],
+    [products, selectedCategory]
   );
 
+  const selectCategory = (categoryId: string) => {
+    setSelectedCategory(categoryId);
+    setSelectedSubcategory('all');
+  };
+
   const filtered = products
-    .filter(p => selectedCategory === 'all' || p.category === selectedCategory)
+    .filter((product) => {
+      if (selectedCategory === 'all') {
+        return true;
+      }
+
+      if (selectedCategory === 'fragrance') {
+        return isFragranceProduct(product);
+      }
+
+      return product.category === selectedCategory;
+    })
     .filter(p => selectedSubcategory === 'all' || p.subcategory === selectedSubcategory)
     .filter(p => p.price >= priceRange[0] && p.price <= priceRange[1])
     .sort((a, b) => {
@@ -70,7 +108,7 @@ export default function ShopPage() {
         <div className="container">
           <span className="label-accent">Our Collection</span>
           <h1 className={`heading-xl ${styles.heroTitle}`}>Shop All <span className="heading-accent">Products</span></h1>
-          <p className={styles.heroDesc}>Premium furniture, curtains, blinds, and home accessories — delivered anywhere in South Africa</p>
+          <p className={styles.heroDesc}>Premium furniture, curtains, blinds, fragrance, and home accessories — delivered anywhere in South Africa</p>
         </div>
       </div>
 
@@ -85,11 +123,11 @@ export default function ShopPage() {
 
             <div className={styles.filterGroup}>
               <h4 className={styles.filterGroupTitle}>Category</h4>
-              {[{ id: 'all', name: 'All Products' }, ...categories].map(cat => (
+              {categoryFilterOptions.map(cat => (
                 <button
                   key={cat.id}
                   className={`${styles.filterOption} ${selectedCategory === cat.id ? styles.filterActive : ''}`}
-                  onClick={() => setSelectedCategory(cat.id)}
+                  onClick={() => selectCategory(cat.id)}
                 >
                   {cat.name}
                 </button>
@@ -150,11 +188,14 @@ export default function ShopPage() {
 
             {/* Category Pills */}
             <div className={styles.categoryPills}>
-              {[{ id: 'all', name: 'All' }, ...categories].map(cat => (
+              {[
+                { id: 'all', name: 'All' },
+                ...categoryFilterOptions.filter((category) => category.id !== 'all'),
+              ].map(cat => (
                 <button
                   key={cat.id}
                   className={`${styles.pill} ${selectedCategory === cat.id ? styles.pillActive : ''}`}
-                  onClick={() => setSelectedCategory(cat.id)}
+                  onClick={() => selectCategory(cat.id)}
                 >
                   {cat.name}
                 </button>

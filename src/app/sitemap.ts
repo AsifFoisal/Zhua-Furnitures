@@ -10,6 +10,7 @@ const publicPaths = [
   '/gallery',
   '/furniture',
   '/curtains-blinds',
+  '/fragrance',
   '/interior-design',
   '/wallz-deckz',
   '/wallz',

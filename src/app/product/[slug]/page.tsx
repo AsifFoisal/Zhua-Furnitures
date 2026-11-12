@@ -20,10 +20,15 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatPrice, type Product } from '@/lib/data';
+import {
+  getFragranceKind,
+  isFragranceProduct,
+} from '@/lib/fragrance';
 import { useCartStore, useWishlistStore } from '@/store';
 import { useStorefrontProducts } from '@/lib/use-storefront-products';
 import { DEFAULT_DELIVERY_ZONES, type DeliveryZone } from '@/lib/delivery';
 import { buildWhatsAppUrl } from '@/lib/whatsapp';
+import FragranceCrossSell from '@/components/fragrance/FragranceCrossSell';
 import ProductImageLightbox from '@/components/ui/ProductImageLightbox';
 import Product3DModal from '@/components/product3d/Product3DModal';
 import styles from './page.module.css';
@@ -54,20 +59,28 @@ function imageUrl(url: string, width: number): string {
   return url.replace('/image/upload/', `/image/upload/w_${width},q_auto,f_auto/`);
 }
 
-function categoryHref(category: Product['category']): string {
-  if (category === 'furniture') {
+function categoryHref(product: Product): string {
+  if (isFragranceProduct(product)) {
+    return '/fragrance';
+  }
+
+  if (product.category === 'furniture') {
     return '/furniture';
   }
 
-  return `/shop/${category}`;
+  return `/shop/${product.category}`;
 }
 
-function categoryLabel(category: Product['category']): string {
-  if (category === 'furniture') {
+function categoryLabel(product: Product): string {
+  if (isFragranceProduct(product)) {
+    return 'Fragrance';
+  }
+
+  if (product.category === 'furniture') {
     return 'Furniture';
   }
 
-  if (category === 'curtains') {
+  if (product.category === 'curtains') {
     return 'Curtains & blinds';
   }
 
@@ -79,6 +92,8 @@ export default function ProductPage() {
   const routeParams = useParams<{ slug: string }>();
   const slug = routeParams?.slug ?? '';
   const product = liveProducts.find((entry) => entry.slug === slug) ?? null;
+  const fragranceKind = getFragranceKind(product);
+  const isFragrance = fragranceKind !== null;
 
   const colorOptions =
     product && product.colors.length > 0 ? product.colors : [{ name: 'Default', hex: '#B59241' }];
@@ -179,11 +194,12 @@ export default function ProductPage() {
     setTimeout(() => setAdded(false), 2000);
   };
 
-  const related = product
-    ? liveProducts
-        .filter((entry) => entry.category === product.category && entry.id !== product.id)
-        .slice(0, 4)
-    : [];
+  const related =
+    product && !isFragrance
+      ? liveProducts
+          .filter((entry) => entry.category === product.category && entry.id !== product.id)
+          .slice(0, 4)
+      : [];
   const weightKg = Number(product?.weightKg ?? 0);
   const widthCm = Number(product?.dimensions?.widthCm ?? 0);
   const depthCm = Number(product?.dimensions?.depthCm ?? 0);
@@ -273,7 +289,7 @@ export default function ProductPage() {
           <nav className={styles.breadcrumb} aria-label="Breadcrumb">
             <Link href="/">Home</Link>
             <span aria-hidden="true">/</span>
-            <Link href={categoryHref(product.category)}>{categoryLabel(product.category)}</Link>
+            <Link href={categoryHref(product)}>{categoryLabel(product)}</Link>
             <span aria-hidden="true">/</span>
             <span className={styles.breadcrumbCurrent}>{product.name}</span>
           </nav>
@@ -361,7 +377,9 @@ export default function ProductPage() {
                 <span className={styles.stageCount}>
                   {imgCount > 0
                     ? `${String(safeImgIndex + 1).padStart(2, '0')} / ${String(imgCount).padStart(2, '0')}`
-                    : 'ZHUA Furniture'}
+                    : isFragrance
+                      ? 'ZHUA Fragrance'
+                      : 'ZHUA Furniture'}
                 </span>
                 <div className={styles.stageControls}>
                   {imgCount > 1 ? (
@@ -451,78 +469,84 @@ export default function ProductPage() {
             <p className={styles.desc}>{product.description}</p>
 
             <div className={styles.config}>
-              <div className={styles.field} role="group" aria-labelledby="colour-label">
-                <span id="colour-label" className={styles.fieldLabel}>
-                  Colour <em className={styles.fieldValue}>{selectedColor.name}</em>
-                </span>
-                <div className={styles.swatches}>
-                  {colorOptions.map((color) => (
-                    <button
-                      key={color.name}
-                      type="button"
-                      className={`${styles.swatch} ${
-                        color.name === selectedColor.name ? styles.swatchActive : ''
-                      }`}
-                      style={{ background: color.hex }}
-                      onClick={() => {
-                        if (color.name !== selectedColor.name) {
-                          setImgIndex(0);
-                        }
-                        setSelectedColorName(color.name);
-                      }}
-                      aria-label={`Select ${color.name}`}
-                      aria-pressed={color.name === selectedColor.name}
-                      title={color.name}
-                    />
-                  ))}
+              {colorOptions.length > 1 || !isFragrance ? (
+                <div className={styles.field} role="group" aria-labelledby="colour-label">
+                  <span id="colour-label" className={styles.fieldLabel}>
+                    Colour <em className={styles.fieldValue}>{selectedColor.name}</em>
+                  </span>
+                  <div className={styles.swatches}>
+                    {colorOptions.map((color) => (
+                      <button
+                        key={color.name}
+                        type="button"
+                        className={`${styles.swatch} ${
+                          color.name === selectedColor.name ? styles.swatchActive : ''
+                        }`}
+                        style={{ background: color.hex }}
+                        onClick={() => {
+                          if (color.name !== selectedColor.name) {
+                            setImgIndex(0);
+                          }
+                          setSelectedColorName(color.name);
+                        }}
+                        aria-label={`Select ${color.name}`}
+                        aria-pressed={color.name === selectedColor.name}
+                        title={color.name}
+                      />
+                    ))}
+                  </div>
                 </div>
-              </div>
+              ) : null}
 
-              <div className={styles.field} role="group" aria-labelledby="size-label">
-                <span id="size-label" className={styles.fieldLabel}>
-                  Size <em className={styles.fieldValue}>{hasSizeOptions ? activeSize : 'Not specified'}</em>
-                </span>
-                {hasSizeOptions ? (
-                  <div className={styles.options}>
-                    {sizeOptions.map((size) => (
-                      <button
-                        key={size}
-                        type="button"
-                        className={`${styles.option} ${
-                          size === activeSize ? styles.optionActive : ''
-                        }`}
-                        onClick={() => setSelectedSize(size)}
-                        aria-pressed={size === activeSize}
-                      >
-                        {size}
-                      </button>
-                    ))}
-                  </div>
-                ) : null}
-              </div>
+              {hasSizeOptions || !isFragrance ? (
+                <div className={styles.field} role="group" aria-labelledby="size-label">
+                  <span id="size-label" className={styles.fieldLabel}>
+                    Size <em className={styles.fieldValue}>{hasSizeOptions ? activeSize : 'Not specified'}</em>
+                  </span>
+                  {hasSizeOptions ? (
+                    <div className={styles.options}>
+                      {sizeOptions.map((size) => (
+                        <button
+                          key={size}
+                          type="button"
+                          className={`${styles.option} ${
+                            size === activeSize ? styles.optionActive : ''
+                          }`}
+                          onClick={() => setSelectedSize(size)}
+                          aria-pressed={size === activeSize}
+                        >
+                          {size}
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+              ) : null}
 
-              <div className={styles.field} role="group" aria-labelledby="fabric-label">
-                <span id="fabric-label" className={styles.fieldLabel}>
-                  Fabric <em className={styles.fieldValue}>{hasFabricOptions ? activeFabric : 'Not specified'}</em>
-                </span>
-                {hasFabricOptions ? (
-                  <div className={styles.options}>
-                    {fabricOptions.map((fabric) => (
-                      <button
-                        key={fabric}
-                        type="button"
-                        className={`${styles.option} ${
-                          fabric === activeFabric ? styles.optionActive : ''
-                        }`}
-                        onClick={() => setSelectedFabric(fabric)}
-                        aria-pressed={fabric === activeFabric}
-                      >
-                        {fabric}
-                      </button>
-                    ))}
-                  </div>
-                ) : null}
-              </div>
+              {hasFabricOptions || !isFragrance ? (
+                <div className={styles.field} role="group" aria-labelledby="fabric-label">
+                  <span id="fabric-label" className={styles.fieldLabel}>
+                    Fabric <em className={styles.fieldValue}>{hasFabricOptions ? activeFabric : 'Not specified'}</em>
+                  </span>
+                  {hasFabricOptions ? (
+                    <div className={styles.options}>
+                      {fabricOptions.map((fabric) => (
+                        <button
+                          key={fabric}
+                          type="button"
+                          className={`${styles.option} ${
+                            fabric === activeFabric ? styles.optionActive : ''
+                          }`}
+                          onClick={() => setSelectedFabric(fabric)}
+                          aria-pressed={fabric === activeFabric}
+                        >
+                          {fabric}
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+              ) : null}
 
               <div className={styles.field}>
                 <span className={styles.fieldLabel}>Quantity</span>
@@ -706,11 +730,17 @@ export default function ProductPage() {
           </section>
         </div>
 
+        {isFragrance ? (
+          <FragranceCrossSell currentProduct={product} products={liveProducts} />
+        ) : null}
+
         {story ? (
           <section className={styles.story} aria-labelledby="story-title">
             <div className={styles.storyCopy}>
               <h2 id="story-title" className={styles.storyTitle}>
-                Built around the room it lives in.
+                {isFragrance
+                  ? 'A fragrance wardrobe for the way you live.'
+                  : 'Built around the room it lives in.'}
               </h2>
               <p className={styles.storyText}>{story}</p>
             </div>
@@ -720,11 +750,19 @@ export default function ProductPage() {
                 <dd>{product.deliveryDays || 'Made to order'}</dd>
               </div>
               <div>
-                <dt>Customisation</dt>
+                <dt>{isFragrance ? 'Format' : 'Customisation'}</dt>
                 <dd>
-                  {product.isCustomizable
-                    ? 'Sizes, fabrics and finishes on request'
-                    : 'As shown'}
+                  {isFragrance
+                    ? fragranceKind === 'machine'
+                      ? 'Automatic scent diffuser'
+                      : fragranceKind === 'oil'
+                        ? '500ml fragrance oil refill'
+                        : fragranceKind === 'reed'
+                          ? '150ml reed diffuser'
+                          : 'Curated scent bundle'
+                    : product.isCustomizable
+                      ? 'Sizes, fabrics and finishes on request'
+                      : 'As shown'}
                 </dd>
               </div>
               <div>

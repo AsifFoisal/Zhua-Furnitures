@@ -1,0 +1,210 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200" role="img" aria-label="ZHUA complete home and business scent collection with machine, fragrance oils and reed diffuser">
+    <defs>
+
+    <filter id="ccsoft" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="24"/>
+    </filter>
+    <filter id="ccshadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+    <filter id="ccblur6" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6"/>
+    </filter>
+    <filter id="ccblur2" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="1.6"/>
+    </filter>
+    <filter id="ccgrain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.78" numOctaves="3" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.16"/></feComponentTransfer>
+      <feBlend in="SourceGraphic" mode="soft-light"/>
+    </filter>
+    <radialGradient id="cchalo" cx="50%" cy="42%" r="58%">
+      <stop offset="0" stop-color="#d3a35f" stop-opacity="0.25"/>
+      <stop offset="0.46" stop-color="#b67c3b" stop-opacity="0.1"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ccvignette" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#000000" stop-opacity="0.2"/>
+      <stop offset="0.45" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.66"/>
+    </linearGradient>
+
+      <linearGradient id="ccbg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#2b2219"/>
+        <stop offset="0.55" stop-color="#2b2219"/>
+        <stop offset="1" stop-color="#0c0a09"/>
+      </linearGradient>
+      <linearGradient id="ccmachineBody" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#050505"/>
+        <stop offset="0.18" stop-color="#161412"/>
+        <stop offset="0.55" stop-color="#24201c"/>
+        <stop offset="0.82" stop-color="#0a0908"/>
+        <stop offset="1" stop-color="#020202"/>
+      </linearGradient>
+      <linearGradient id="ccgold" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#8f6c2d"/>
+        <stop offset="0.28" stop-color="#e1bd78"/>
+        <stop offset="0.56" stop-color="#b78c44"/>
+        <stop offset="0.8" stop-color="#f6ddb0"/>
+        <stop offset="1" stop-color="#8d682c"/>
+      </linearGradient>
+      <linearGradient id="cccap" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#050505"/>
+        <stop offset="0.35" stop-color="#2c2823"/>
+        <stop offset="0.62" stop-color="#151310"/>
+        <stop offset="1" stop-color="#030303"/>
+      </linearGradient>
+      <linearGradient id="ccbottleGlass" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#2a1209"/>
+        <stop offset="0.18" stop-color="#5a2f17"/>
+        <stop offset="0.48" stop-color="#8c5128"/>
+        <stop offset="0.72" stop-color="#5a2f17"/>
+        <stop offset="1" stop-color="#2a1209"/>
+      </linearGradient>
+      <linearGradient id="ccreedGlass" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#5d4120"/>
+        <stop offset="0.25" stop-color="#b08345"/>
+        <stop offset="0.52" stop-color="#d9b577"/>
+        <stop offset="0.76" stop-color="#8b622e"/>
+        <stop offset="1" stop-color="#4e351a"/>
+      </linearGradient>
+      <linearGradient id="ccfade" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#000" stop-opacity="0"/>
+        <stop offset="1" stop-color="#000" stop-opacity=".65"/>
+      </linearGradient>
+    </defs>
+
+
+    <rect width="1200" height="1200" fill="#0c0a09"/>
+    <rect width="1200" height="1200" fill="url(#ccbg)"/>
+    <rect width="1200" height="1200" fill="url(#cchalo)"/>
+    <ellipse cx="600" cy="528" rx="360" ry="336.00000000000006" fill="#d3a35f" opacity="0.1" filter="url(#ccsoft)"/>
+
+    <path d="M 216 983.9999999999999 L 216 492 A 384 384 0 0 1 984 492 L 984 983.9999999999999 Z"
+      fill="#d3a35f" opacity="0.035"/>
+    <path d="M 216 983.9999999999999 L 216 492 A 384 384 0 0 1 984 492 L 984 983.9999999999999"
+      fill="none" stroke="#f1d8ad" stroke-opacity="0.16" stroke-width="1.2"/>
+
+    <rect x="0" y="972.0000000000001" width="1200" height="227.9999999999999" fill="#080706" opacity="0.52"/>
+    <line x1="120" y1="972.0000000000001" x2="1080" y2="972.0000000000001" stroke="#f1d8ad" stroke-opacity="0.16"/>
+    <ellipse cx="600" cy="982.0000000000001" rx="324" ry="54" fill="#000" opacity="0.5" filter="url(#ccsoft)"/>
+
+    <g opacity="0.62" filter="url(#ccblur6)">
+      <path d="M 446.28 410 C 417.76 375.9, 483.48 352.96, 443.8 312.04 C 418.38 280.41999999999996, 466.74 258.1, 454.96 220.9"
+        fill="none" stroke="#c98b44" stroke-opacity="0.36" stroke-width="4.96" stroke-linecap="round"/>
+      <path d="M 459.3 405.04 C 490.3 370.32, 436.36 347.38, 474.18 306.46 C 497.74 282.28, 453.72 248.8, 463.64 215.32"
+        fill="none" stroke="#f4e3c4" stroke-opacity="0.2" stroke-width="2.48" stroke-linecap="round"/>
+    </g>
+
+    <g>
+      <ellipse cx="413.96" cy="982.4" rx="117.7344" ry="17.92" fill="#000" opacity="0.72" filter="url(#ccsoft)"/>
+      <path d="M 346.12 970.88 L 463.88 970.88 L 472.84 983.68 L 337.16 983.68 Z" fill="#0a0a0a"/>
+      <rect x="324.36" y="601.5999999999999" width="161.28" height="374.40000000000003" rx="21.76" fill="url(#ccmachineBody)"/>
+      <rect x="325.64" y="603.5199999999999" width="158.72" height="370.56000000000006" rx="20.48" fill="none" stroke="#f3d7a4" stroke-opacity="0.13"/>
+      <path d="M 342.28000000000003 631.04 C 329.48 744.9599999999999, 332.04 881.9199999999998, 345.48 954.24" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="4.48" stroke-linecap="round"/>
+      <path d="M 470.28 652.8 C 482.44 761.5999999999999, 479.24 896, 461.32 945.28" fill="none" stroke="#f2c27d" stroke-opacity="0.1" stroke-width="3.2" stroke-linecap="round"/>
+      <rect x="349.96" y="590.0799999999999" width="110.08" height="22.400000000000002" rx="10.88" fill="url(#ccgold)"/>
+      <rect x="356.36" y="593.92" width="97.28" height="14.72" rx="7.04" fill="#1b1610"/>
+      <rect x="335.24" y="623.9999999999999" width="139.52" height="21.76" rx="10.88" fill="#080808"/>
+      <rect x="335.24" y="623.9999999999999" width="139.52" height="21.76" rx="10.88" fill="none" stroke="#f1c57f" stroke-opacity="0.22"/>
+      <g>
+        <rect x="334.6" y="703.9999999999999" width="140.8" height="93.44" rx="12.8" fill="#050505" stroke="#f1c57f" stroke-opacity="0.15"/>
+        <rect x="352.52" y="719.9999999999999" width="104.96000000000001" height="39.68" rx="6.4" fill="#1a130b"/>
+        <rect x="357.64" y="726.3999999999999" width="61.44" height="4.48" rx="3.5" fill="#dca65c" opacity="0.92"/>
+        <rect x="357.64" y="736.6399999999999" width="44.800000000000004" height="3.2" rx="2.5" fill="#f4ddb7" opacity="0.55"/>
+        <rect x="357.64" y="744.9599999999999" width="71.68" height="3.2" rx="2.5" fill="#f4ddb7" opacity="0.35"/>
+        <circle cx="445.96" cy="739.8399999999999" r="8.32" fill="none" stroke="#dca65c" stroke-width="1.28"/>
+        <path d="M 441.48 739.8399999999999 L 445.32 743.68 L 451.08 735.3599999999999" fill="none" stroke="#dca65c" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="405" y="778.8799999999999" text-anchor="middle" fill="#f2ddbb" font-family="Georgia, serif" font-size="9.6" letter-spacing="2.56">SCENTARIVA</text>
+        <text x="405" y="789.7599999999999" text-anchor="middle" fill="#bca57c" font-family="Georgia, serif" font-size="4.8" letter-spacing="1.8559999999999999">SMART SCENT SYSTEM</text>
+      </g>
+      <g opacity="0.8">
+        <rect x="388.36" y="823.04" width="33.28" height="2.56" rx="2" fill="#f1d7a6" opacity="0.5"/>
+        <circle cx="405" cy="848.6399999999999" r="5.12" fill="none" stroke="#f1d7a6" stroke-width="0.8320000000000001" opacity="0.7"/>
+        <circle cx="405" cy="848.6399999999999" r="1.92" fill="#f1d7a6" opacity="0.9"/>
+      </g>
+      <g opacity="0.42">
+        <line x1="358.92" y1="886.3999999999999" x2="451.08" y2="886.3999999999999" stroke="#fff" stroke-opacity="0.2"/>
+        <line x1="362.76" y1="896.6399999999999" x2="447.24" y2="896.6399999999999" stroke="#fff" stroke-opacity="0.14"/>
+        <line x1="366.6" y1="906.8799999999999" x2="443.4" y2="906.8799999999999" stroke="#fff" stroke-opacity="0.1"/>
+      </g>
+      <ellipse cx="405" cy="958.08" rx="61.2864" ry="4.48" fill="#f1d7a6" opacity="0.1" filter="url(#ccblur6)"/>
+    </g>
+
+    <g>
+      <ellipse cx="667.32" cy="987.48" rx="87.11280000000001" ry="14.040000000000001" fill="#000" opacity="0.7" filter="url(#ccsoft)"/>
+      <path d="M 611.6999999999999 748.8 Q 611.6999999999999 722.88 630.06 722.88 L 644.1 722.88 L 644.1 703.4399999999999 L 681.9 703.4399999999999 L 681.9 722.88 L 695.94 722.88 Q 714.3000000000001 722.88 714.3000000000001 748.8 L 709.98 973.44 Q 708.36 981 663 981 Q 617.64 981 616.02 973.44 Z"
+        fill="url(#ccbottleGlass)"/>
+      <path d="M 622.5 766.0799999999999 C 610.62 827.1, 614.9399999999999 912.42, 623.04 960.48"
+        fill="none" stroke="#fff" stroke-opacity="0.3" stroke-width="4.32" stroke-linecap="round"/>
+      <path d="M 699.1800000000001 785.52 C 714.3000000000001 850.3199999999999, 706.2 912.42, 700.26 952.92"
+        fill="none" stroke="#8c5128" stroke-opacity="0.32" stroke-width="2.7" stroke-linecap="round"/>
+      <rect x="639.24" y="662.4" width="47.52" height="43.2" rx="4.32" fill="url(#cccap)"/>
+      <g opacity="0.7">
+        <line x1="645.1800000000001" y1="667.8" x2="680.8199999999999" y2="667.8" stroke="#fff" stroke-opacity="0.12" stroke-width="0.648"/><line x1="645.1800000000001" y1="674.28" x2="680.8199999999999" y2="674.28" stroke="#fff" stroke-opacity="0.12" stroke-width="0.648"/><line x1="645.1800000000001" y1="680.76" x2="680.8199999999999" y2="680.76" stroke="#fff" stroke-opacity="0.12" stroke-width="0.648"/><line x1="645.1800000000001" y1="687.24" x2="680.8199999999999" y2="687.24" stroke="#fff" stroke-opacity="0.12" stroke-width="0.648"/><line x1="645.1800000000001" y1="693.7199999999999" x2="680.8199999999999" y2="693.7199999999999" stroke="#fff" stroke-opacity="0.12" stroke-width="0.648"/><line x1="645.1800000000001" y1="700.1999999999999" x2="680.8199999999999" y2="700.1999999999999" stroke="#fff" stroke-opacity="0.12" stroke-width="0.648"/>
+      </g>
+      <rect x="613.86" y="827.1" width="98.28000000000002" height="90.72" rx="1.62" fill="#f3ead8"/>
+      <rect x="618.1800000000001" y="831.4200000000001" width="89.64000000000001" height="82.08" rx="0.81" fill="none" stroke="#2a1d14" stroke-opacity="0.26"/>
+      <text x="663" y="845.46" text-anchor="middle" fill="#2a1d14" font-family="Georgia, serif" font-size="4.86" letter-spacing="1.836">ZHUA</text>
+      <line x1="651.12" y1="851.94" x2="674.88" y2="851.94" stroke="#a9682f" stroke-width="0.54"/>
+      <text x="663" y="870.84" text-anchor="middle" fill="#2a1d14" font-family="Georgia, serif" font-size="11.34" letter-spacing="0.648">Amber Noir</text>
+      <text x="663" y="882.72" text-anchor="middle" fill="#2a1d14" fill-opacity="0.68" font-family="Georgia, serif" font-size="3.4560000000000004" letter-spacing="0.918">AMBER · OUD · VANILLA</text>
+      <line x1="644.1" y1="891.36" x2="681.9" y2="891.36" stroke="#2a1d14" stroke-opacity="0.18"/>
+      <text x="663" y="902.1600000000001" text-anchor="middle" fill="#2a1d14" fill-opacity="0.72" font-family="Georgia, serif" font-size="4.32" letter-spacing="1.08">500 ML</text>
+      <text x="663" y="909.72" text-anchor="middle" fill="#2a1d14" fill-opacity="0.48" font-family="Georgia, serif" font-size="3.024" letter-spacing="0.648">PREMIUM FRAGRANCE OIL</text>
+      <path d="M 620.34 741.24 Q 663 733.14 705.66 746.1" fill="none" stroke="#fff" stroke-opacity="0.26" stroke-width="2.7" stroke-linecap="round"/>
+      <rect x="609.54" y="962.1" width="106.92000000000002" height="11.88" rx="5.4" fill="#fff" opacity="0.035"/>
+    </g>
+
+    <g>
+      <ellipse cx="805.32" cy="987.48" rx="87.11280000000001" ry="14.040000000000001" fill="#000" opacity="0.7" filter="url(#ccsoft)"/>
+      <path d="M 749.6999999999999 748.8 Q 749.6999999999999 722.88 768.06 722.88 L 782.1 722.88 L 782.1 703.4399999999999 L 819.9 703.4399999999999 L 819.9 722.88 L 833.94 722.88 Q 852.3000000000001 722.88 852.3000000000001 748.8 L 847.98 973.44 Q 846.36 981 801 981 Q 755.64 981 754.02 973.44 Z"
+        fill="url(#ccbottleGlass)"/>
+      <path d="M 760.5 766.0799999999999 C 748.62 827.1, 752.9399999999999 912.42, 761.04 960.48"
+        fill="none" stroke="#fff" stroke-opacity="0.3" stroke-width="4.32" stroke-linecap="round"/>
+      <path d="M 837.1800000000001 785.52 C 852.3000000000001 850.3199999999999, 844.2 912.42, 838.26 952.92"
+        fill="none" stroke="#8f4658" stroke-opacity="0.32" stroke-width="2.7" stroke-linecap="round"/>
+      <rect x="777.24" y="662.4" width="47.52" height="43.2" rx="4.32" fill="url(#cccap)"/>
+      <g opacity="0.7">
+        <line x1="783.1800000000001" y1="667.8" x2="818.8199999999999" y2="667.8" stroke="#fff" stroke-opacity="0.12" stroke-width="0.648"/><line x1="783.1800000000001" y1="674.28" x2="818.8199999999999" y2="674.28" stroke="#fff" stroke-opacity="0.12" stroke-width="0.648"/><line x1="783.1800000000001" y1="680.76" x2="818.8199999999999" y2="680.76" stroke="#fff" stroke-opacity="0.12" stroke-width="0.648"/><line x1="783.1800000000001" y1="687.24" x2="818.8199999999999" y2="687.24" stroke="#fff" stroke-opacity="0.12" stroke-width="0.648"/><line x1="783.1800000000001" y1="693.7199999999999" x2="818.8199999999999" y2="693.7199999999999" stroke="#fff" stroke-opacity="0.12" stroke-width="0.648"/><line x1="783.1800000000001" y1="700.1999999999999" x2="818.8199999999999" y2="700.1999999999999" stroke="#fff" stroke-opacity="0.12" stroke-width="0.648"/>
+      </g>
+      <rect x="751.86" y="827.1" width="98.28000000000002" height="90.72" rx="1.62" fill="#f4e7df"/>
+      <rect x="756.1800000000001" y="831.4200000000001" width="89.64000000000001" height="82.08" rx="0.81" fill="none" stroke="#331a20" stroke-opacity="0.26"/>
+      <text x="801" y="845.46" text-anchor="middle" fill="#331a20" font-family="Georgia, serif" font-size="4.86" letter-spacing="1.836">ZHUA</text>
+      <line x1="789.12" y1="851.94" x2="812.88" y2="851.94" stroke="#a75a67" stroke-width="0.54"/>
+      <text x="801" y="870.84" text-anchor="middle" fill="#331a20" font-family="Georgia, serif" font-size="11.34" letter-spacing="0.648">Oud &amp; Rose</text>
+      <text x="801" y="882.72" text-anchor="middle" fill="#331a20" fill-opacity="0.68" font-family="Georgia, serif" font-size="3.4560000000000004" letter-spacing="0.918">ROSE · OUD · PATCHOULI</text>
+      <line x1="782.1" y1="891.36" x2="819.9" y2="891.36" stroke="#331a20" stroke-opacity="0.18"/>
+      <text x="801" y="902.1600000000001" text-anchor="middle" fill="#331a20" fill-opacity="0.72" font-family="Georgia, serif" font-size="4.32" letter-spacing="1.08">500 ML</text>
+      <text x="801" y="909.72" text-anchor="middle" fill="#331a20" fill-opacity="0.48" font-family="Georgia, serif" font-size="3.024" letter-spacing="0.648">PREMIUM FRAGRANCE OIL</text>
+      <path d="M 758.34 741.24 Q 801 733.14 843.66 746.1" fill="none" stroke="#fff" stroke-opacity="0.26" stroke-width="2.7" stroke-linecap="round"/>
+      <rect x="747.54" y="962.1" width="106.92000000000002" height="11.88" rx="5.4" fill="#fff" opacity="0.035"/>
+    </g>
+
+    <g>
+      <ellipse cx="957.6" cy="988.28" rx="103.7792" ry="14.000000000000002" fill="#000" opacity="0.68" filter="url(#ccsoft)"/>
+      <g stroke-linecap="round">
+        <line x1="919.52" y1="816.36" x2="928.6144" y2="619.24" stroke="#9a7449" stroke-width="3.3600000000000003" opacity="0.82"/><line x1="931.28" y1="816.36" x2="937.0816" y2="605.24" stroke="#9a7449" stroke-width="3.3600000000000003" opacity="0.82"/><line x1="944.16" y1="816.36" x2="946.3552" y2="614.76" stroke="#9a7449" stroke-width="3.3600000000000003" opacity="0.82"/><line x1="958.72" y1="816.36" x2="956.8384" y2="602.4399999999999" stroke="#9a7449" stroke-width="3.3600000000000003" opacity="0.82"/><line x1="972.72" y1="816.36" x2="966.9184" y2="615.88" stroke="#9a7449" stroke-width="3.3600000000000003" opacity="0.82"/><line x1="985.04" y1="816.36" x2="975.7888" y2="623.16" stroke="#9a7449" stroke-width="3.3600000000000003" opacity="0.82"/>
+      </g>
+      <rect x="920.64" y="793.96" width="62.720000000000006" height="31.360000000000003" rx="4.48" fill="url(#ccgold)"/>
+      <rect x="924.56" y="797.88" width="54.88" height="23.520000000000003" rx="2.8000000000000003" fill="#19130c"/>
+      <path d="M 897.6800000000001 819.72 Q 897.6800000000001 809.64 914.48 809.64 L 989.5200000000001 809.64 Q 1006.32 809.64 1006.32 819.72 L 1001.2800000000001 975.4 Q 998.4800000000001 981 952 981 Q 905.52 981 902.72 975.4 Z"
+        fill="url(#ccreedGlass)"/>
+      <path d="M 907.2 830.92 C 897.6800000000001 871.24, 902.72 932.28, 910.5600000000001 966.44"
+        fill="none" stroke="#fff" stroke-opacity="0.35" stroke-width="4.48" stroke-linecap="round"/>
+      <path d="M 990.6400000000001 846.6 C 1005.2 892.52, 999.6000000000001 931.72, 992.32 959.72"
+        fill="none" stroke="#d6a85d" stroke-opacity="0.28" stroke-width="2.8000000000000003" stroke-linecap="round"/>
+      <rect x="899.36" y="875.72" width="105.28000000000002" height="70.56" rx="1.6800000000000002" fill="#f5edd9"/>
+      <rect x="904.4" y="880.76" width="95.20000000000002" height="60.480000000000004" rx="1.5" fill="none" stroke="#322416" stroke-opacity="0.26"/>
+      <text x="952" y="893.64" text-anchor="middle" fill="#2e2217" font-family="Georgia, serif" font-size="4.48" letter-spacing="1.6800000000000002">ZHUA</text>
+      <text x="952" y="909.88" text-anchor="middle" fill="#2e2217" font-family="Georgia, serif" font-size="10.64" letter-spacing="0.784">Absolut Gold</text>
+      <text x="952" y="920.52" text-anchor="middle" fill="#8e6a2f" font-family="Georgia, serif" font-size="3.9200000000000004" letter-spacing="1.2320000000000002">REED DIFFUSER</text>
+      <line x1="931.84" y1="926.12" x2="972.16" y2="926.12" stroke="#b98d42" stroke-width="0.672"/>
+      <text x="952" y="935.64" text-anchor="middle" fill="#5f4a2b" font-family="Georgia, serif" font-size="3.9200000000000004" letter-spacing="0.9520000000000001">150 ML</text>
+      <rect x="893.2" y="961.96" width="117.60000000000002" height="13.440000000000001" rx="5.6000000000000005" fill="#fff" opacity="0.04"/>
+    </g>
+    <text x="600" y="1100" text-anchor="middle" fill="#f1e6d2" fill-opacity=".9" font-family="Georgia, serif" font-size="14" letter-spacing="5">THE COMPLETE SCENT COLLECTION</text>
+    <rect width="1200" height="1200" fill="url(#ccvignette)"/>
+    <rect width="1200" height="1200" filter="url(#ccgrain)" opacity="0.24"/>
+  </svg>

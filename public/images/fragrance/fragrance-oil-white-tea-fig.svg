@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200" role="img" aria-label="ZHUA White Tea and Fig premium 500 ml fragrance oil bottle">
+    <defs>
+
+    <filter id="wtsoft" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="24"/>
+    </filter>
+    <filter id="wtshadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+    <filter id="wtblur6" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6"/>
+    </filter>
+    <filter id="wtblur2" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="1.6"/>
+    </filter>
+    <filter id="wtgrain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.78" numOctaves="3" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.16"/></feComponentTransfer>
+      <feBlend in="SourceGraphic" mode="soft-light"/>
+    </filter>
+    <radialGradient id="wthalo" cx="50%" cy="42%" r="58%">
+      <stop offset="0" stop-color="#d3a35f" stop-opacity="0.25"/>
+      <stop offset="0.46" stop-color="#b67c3b" stop-opacity="0.1"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="wtvignette" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#000000" stop-opacity="0.2"/>
+      <stop offset="0.45" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.66"/>
+    </linearGradient>
+
+      <linearGradient id="wtbg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#20251f"/>
+        <stop offset="0.55" stop-color="#20251f"/>
+        <stop offset="1" stop-color="#0c0f0c"/>
+      </linearGradient>
+      <linearGradient id="wtmachineBody" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#050505"/>
+        <stop offset="0.18" stop-color="#161412"/>
+        <stop offset="0.55" stop-color="#24201c"/>
+        <stop offset="0.82" stop-color="#0a0908"/>
+        <stop offset="1" stop-color="#020202"/>
+      </linearGradient>
+      <linearGradient id="wtgold" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#8f6c2d"/>
+        <stop offset="0.28" stop-color="#e1bd78"/>
+        <stop offset="0.56" stop-color="#b78c44"/>
+        <stop offset="0.8" stop-color="#f6ddb0"/>
+        <stop offset="1" stop-color="#8d682c"/>
+      </linearGradient>
+      <linearGradient id="wtcap" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#050505"/>
+        <stop offset="0.35" stop-color="#2c2823"/>
+        <stop offset="0.62" stop-color="#151310"/>
+        <stop offset="1" stop-color="#030303"/>
+      </linearGradient>
+      <linearGradient id="wtbottleGlass" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#3c412f"/>
+        <stop offset="0.18" stop-color="#7d8060"/>
+        <stop offset="0.48" stop-color="#a7aa88"/>
+        <stop offset="0.72" stop-color="#7d8060"/>
+        <stop offset="1" stop-color="#3c412f"/>
+      </linearGradient>
+      <linearGradient id="wtreedGlass" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#5d4120"/>
+        <stop offset="0.25" stop-color="#b08345"/>
+        <stop offset="0.52" stop-color="#d9b577"/>
+        <stop offset="0.76" stop-color="#8b622e"/>
+        <stop offset="1" stop-color="#4e351a"/>
+      </linearGradient>
+      <linearGradient id="wtfade" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#000" stop-opacity="0"/>
+        <stop offset="1" stop-color="#000" stop-opacity=".65"/>
+      </linearGradient>
+    </defs>
+
+
+    <rect width="1200" height="1200" fill="#0c0f0c"/>
+    <rect width="1200" height="1200" fill="url(#wtbg)"/>
+    <rect width="1200" height="1200" fill="url(#wthalo)"/>
+    <ellipse cx="600" cy="528" rx="360" ry="336.00000000000006" fill="#c6c49b" opacity="0.1" filter="url(#wtsoft)"/>
+
+    <path d="M 216 983.9999999999999 L 216 492 A 384 384 0 0 1 984 492 L 984 983.9999999999999 Z"
+      fill="#c6c49b" opacity="0.035"/>
+    <path d="M 216 983.9999999999999 L 216 492 A 384 384 0 0 1 984 492 L 984 983.9999999999999"
+      fill="none" stroke="#f1d8ad" stroke-opacity="0.16" stroke-width="1.2"/>
+
+    <rect x="0" y="972.0000000000001" width="1200" height="227.9999999999999" fill="#080706" opacity="0.52"/>
+    <line x1="120" y1="972.0000000000001" x2="1080" y2="972.0000000000001" stroke="#f1d8ad" stroke-opacity="0.16"/>
+    <ellipse cx="600" cy="982.0000000000001" rx="324" ry="54" fill="#000" opacity="0.5" filter="url(#wtsoft)"/>
+
+    <g opacity="0.62" filter="url(#wtblur6)">
+      <path d="M 596.1 470 C 566.2 434.25, 635.1 410.2, 593.5 367.3 C 566.85 334.15, 617.55 310.75, 605.2 271.75"
+        fill="none" stroke="#c6c49b" stroke-opacity="0.36" stroke-width="5.2" stroke-linecap="round"/>
+      <path d="M 609.75 464.8 C 642.25 428.4, 585.7 404.35, 625.35 361.45 C 650.05 336.1, 603.9 301, 614.3 265.9"
+        fill="none" stroke="#f4e3c4" stroke-opacity="0.2" stroke-width="2.6" stroke-linecap="round"/>
+    </g>
+
+    <g>
+      <ellipse cx="608" cy="1014" rx="161.32" ry="26" fill="#000" opacity="0.7" filter="url(#wtsoft)"/>
+      <path d="M 505 572 Q 505 524 539 524 L 565 524 L 565 488 L 635 488 L 635 524 L 661 524 Q 695 524 695 572 L 687 988 Q 684 1002 600 1002 Q 516 1002 513 988 Z"
+        fill="url(#wtbottleGlass)"/>
+      <path d="M 525 604 C 503 717, 511 875, 526 964"
+        fill="none" stroke="#fff" stroke-opacity="0.3" stroke-width="8" stroke-linecap="round"/>
+      <path d="M 667 640 C 695 760, 680 875, 669 950"
+        fill="none" stroke="#a7aa88" stroke-opacity="0.32" stroke-width="5" stroke-linecap="round"/>
+      <rect x="556" y="412" width="88" height="80" rx="8" fill="url(#wtcap)"/>
+      <g opacity="0.7">
+        <line x1="567" y1="422" x2="633" y2="422" stroke="#fff" stroke-opacity="0.12" stroke-width="1.2"/><line x1="567" y1="434" x2="633" y2="434" stroke="#fff" stroke-opacity="0.12" stroke-width="1.2"/><line x1="567" y1="446" x2="633" y2="446" stroke="#fff" stroke-opacity="0.12" stroke-width="1.2"/><line x1="567" y1="458" x2="633" y2="458" stroke="#fff" stroke-opacity="0.12" stroke-width="1.2"/><line x1="567" y1="470" x2="633" y2="470" stroke="#fff" stroke-opacity="0.12" stroke-width="1.2"/><line x1="567" y1="482" x2="633" y2="482" stroke="#fff" stroke-opacity="0.12" stroke-width="1.2"/>
+      </g>
+      <rect x="509" y="717" width="182" height="168" rx="3" fill="#f4efdf"/>
+      <rect x="517" y="725" width="166" height="152" rx="1.5" fill="none" stroke="#2c2d21" stroke-opacity="0.26"/>
+      <text x="600" y="751" text-anchor="middle" fill="#2c2d21" font-family="Georgia, serif" font-size="9" letter-spacing="3.4">ZHUA</text>
+      <line x1="578" y1="763" x2="622" y2="763" stroke="#9b9c72" stroke-width="1"/>
+      <text x="600" y="798" text-anchor="middle" fill="#2c2d21" font-family="Georgia, serif" font-size="17" letter-spacing="1.2">White Tea &amp; Fig</text>
+      <text x="600" y="820" text-anchor="middle" fill="#2c2d21" fill-opacity="0.68" font-family="Georgia, serif" font-size="6.4" letter-spacing="1.7">WHITE TEA · FIG · CEDAR</text>
+      <line x1="565" y1="836" x2="635" y2="836" stroke="#2c2d21" stroke-opacity="0.18"/>
+      <text x="600" y="856" text-anchor="middle" fill="#2c2d21" fill-opacity="0.72" font-family="Georgia, serif" font-size="8" letter-spacing="2">500 ML</text>
+      <text x="600" y="870" text-anchor="middle" fill="#2c2d21" fill-opacity="0.48" font-family="Georgia, serif" font-size="5.6" letter-spacing="1.2">PREMIUM FRAGRANCE OIL</text>
+      <path d="M 521 558 Q 600 543 679 567" fill="none" stroke="#fff" stroke-opacity="0.26" stroke-width="5" stroke-linecap="round"/>
+      <rect x="501" y="967" width="198" height="22" rx="10" fill="#fff" opacity="0.035"/>
+    </g>
+      <text x="600" y="1110" text-anchor="middle" fill="#f1e6d2" fill-opacity=".88" font-family="Georgia, serif" font-size="13" letter-spacing="5.8">ZHUA SIGNATURE SCENTS</text>
+    <rect width="1200" height="1200" fill="url(#wtvignette)"/>
+    <rect width="1200" height="1200" filter="url(#wtgrain)" opacity="0.24"/>
+  </svg>

@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200" role="img" aria-label="ZHUA Absolut Gold 150 ml reed diffuser with natural reeds">
+    <defs>
+
+    <filter id="rdsoft" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="24"/>
+    </filter>
+    <filter id="rdshadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+    <filter id="rdblur6" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6"/>
+    </filter>
+    <filter id="rdblur2" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="1.6"/>
+    </filter>
+    <filter id="rdgrain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.78" numOctaves="3" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.16"/></feComponentTransfer>
+      <feBlend in="SourceGraphic" mode="soft-light"/>
+    </filter>
+    <radialGradient id="rdhalo" cx="50%" cy="42%" r="58%">
+      <stop offset="0" stop-color="#d3a35f" stop-opacity="0.25"/>
+      <stop offset="0.46" stop-color="#b67c3b" stop-opacity="0.1"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="rdvignette" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#000000" stop-opacity="0.2"/>
+      <stop offset="0.45" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.66"/>
+    </linearGradient>
+
+      <linearGradient id="rdbg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#2c2416"/>
+        <stop offset="0.55" stop-color="#2c2416"/>
+        <stop offset="1" stop-color="#0c0a09"/>
+      </linearGradient>
+      <linearGradient id="rdmachineBody" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#050505"/>
+        <stop offset="0.18" stop-color="#161412"/>
+        <stop offset="0.55" stop-color="#24201c"/>
+        <stop offset="0.82" stop-color="#0a0908"/>
+        <stop offset="1" stop-color="#020202"/>
+      </linearGradient>
+      <linearGradient id="rdgold" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#8f6c2d"/>
+        <stop offset="0.28" stop-color="#e1bd78"/>
+        <stop offset="0.56" stop-color="#b78c44"/>
+        <stop offset="0.8" stop-color="#f6ddb0"/>
+        <stop offset="1" stop-color="#8d682c"/>
+      </linearGradient>
+      <linearGradient id="rdcap" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#050505"/>
+        <stop offset="0.35" stop-color="#2c2823"/>
+        <stop offset="0.62" stop-color="#151310"/>
+        <stop offset="1" stop-color="#030303"/>
+      </linearGradient>
+      <linearGradient id="rdbottleGlass" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#2a1209"/>
+        <stop offset="0.18" stop-color="#5a2f17"/>
+        <stop offset="0.48" stop-color="#8c5128"/>
+        <stop offset="0.72" stop-color="#5a2f17"/>
+        <stop offset="1" stop-color="#2a1209"/>
+      </linearGradient>
+      <linearGradient id="rdreedGlass" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#5d4120"/>
+        <stop offset="0.25" stop-color="#b08345"/>
+        <stop offset="0.52" stop-color="#d9b577"/>
+        <stop offset="0.76" stop-color="#8b622e"/>
+        <stop offset="1" stop-color="#4e351a"/>
+      </linearGradient>
+      <linearGradient id="rdfade" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#000" stop-opacity="0"/>
+        <stop offset="1" stop-color="#000" stop-opacity=".65"/>
+      </linearGradient>
+    </defs>
+
+
+    <rect width="1200" height="1200" fill="#0c0a09"/>
+    <rect width="1200" height="1200" fill="url(#rdbg)"/>
+    <rect width="1200" height="1200" fill="url(#rdhalo)"/>
+    <ellipse cx="600" cy="528" rx="360" ry="336.00000000000006" fill="#d3a85e" opacity="0.1" filter="url(#rdsoft)"/>
+
+    <path d="M 216 983.9999999999999 L 216 492 A 384 384 0 0 1 984 492 L 984 983.9999999999999 Z"
+      fill="#d3a85e" opacity="0.035"/>
+    <path d="M 216 983.9999999999999 L 216 492 A 384 384 0 0 1 984 492 L 984 983.9999999999999"
+      fill="none" stroke="#f1d8ad" stroke-opacity="0.16" stroke-width="1.2"/>
+
+    <rect x="0" y="972.0000000000001" width="1200" height="227.9999999999999" fill="#080706" opacity="0.52"/>
+    <line x1="120" y1="972.0000000000001" x2="1080" y2="972.0000000000001" stroke="#f1d8ad" stroke-opacity="0.16"/>
+    <ellipse cx="600" cy="982.0000000000001" rx="324" ry="54" fill="#000" opacity="0.5" filter="url(#rdsoft)"/>
+
+    <g>
+      <ellipse cx="610" cy="1009" rx="185.32" ry="25" fill="#000" opacity="0.68" filter="url(#rdsoft)"/>
+      <g stroke-linecap="round">
+        <line x1="542" y1="702" x2="558.24" y2="350" stroke="#9a7449" stroke-width="6" opacity="0.82"/><line x1="563" y1="702" x2="573.36" y2="325" stroke="#9a7449" stroke-width="6" opacity="0.82"/><line x1="586" y1="702" x2="589.92" y2="342" stroke="#9a7449" stroke-width="6" opacity="0.82"/><line x1="612" y1="702" x2="608.64" y2="320" stroke="#9a7449" stroke-width="6" opacity="0.82"/><line x1="637" y1="702" x2="626.64" y2="344" stroke="#9a7449" stroke-width="6" opacity="0.82"/><line x1="659" y1="702" x2="642.48" y2="357" stroke="#9a7449" stroke-width="6" opacity="0.82"/>
+      </g>
+      <rect x="544" y="662" width="112" height="56" rx="8" fill="url(#rdgold)"/>
+      <rect x="551" y="669" width="98" height="42" rx="5" fill="#19130c"/>
+      <path d="M 503 708 Q 503 690 533 690 L 667 690 Q 697 690 697 708 L 688 986 Q 683 996 600 996 Q 517 996 512 986 Z"
+        fill="url(#rdreedGlass)"/>
+      <path d="M 520 728 C 503 800, 512 909, 526 970"
+        fill="none" stroke="#fff" stroke-opacity="0.35" stroke-width="8" stroke-linecap="round"/>
+      <path d="M 669 756 C 695 838, 685 908, 672 958"
+        fill="none" stroke="#d6a85d" stroke-opacity="0.28" stroke-width="5" stroke-linecap="round"/>
+      <rect x="506" y="808" width="188" height="126" rx="3" fill="#f5edd9"/>
+      <rect x="515" y="817" width="170" height="108" rx="1.5" fill="none" stroke="#322416" stroke-opacity="0.26"/>
+      <text x="600" y="840" text-anchor="middle" fill="#2e2217" font-family="Georgia, serif" font-size="8" letter-spacing="3">ZHUA</text>
+      <text x="600" y="869" text-anchor="middle" fill="#2e2217" font-family="Georgia, serif" font-size="19" letter-spacing="1.4">Absolut Gold</text>
+      <text x="600" y="888" text-anchor="middle" fill="#8e6a2f" font-family="Georgia, serif" font-size="7" letter-spacing="2.2">REED DIFFUSER</text>
+      <line x1="564" y1="898" x2="636" y2="898" stroke="#b98d42" stroke-width="1.2"/>
+      <text x="600" y="915" text-anchor="middle" fill="#5f4a2b" font-family="Georgia, serif" font-size="7" letter-spacing="1.7">150 ML</text>
+      <rect x="495" y="962" width="210" height="24" rx="10" fill="#fff" opacity="0.04"/>
+    </g>
+    <text x="600" y="1112" text-anchor="middle" fill="#f3e7cf" font-family="Georgia, serif" font-size="15" letter-spacing="6">ABSOLUT GOLD</text>
+    <text x="600" y="1139" text-anchor="middle" fill="#c9ae7d" fill-opacity=".78" font-family="Georgia, serif" font-size="9.5" letter-spacing="4">150 ML REED DIFFUSER</text>
+    <rect width="1200" height="1200" fill="url(#rdvignette)"/>
+    <rect width="1200" height="1200" filter="url(#rdgrain)" opacity="0.24"/>
+  </svg>

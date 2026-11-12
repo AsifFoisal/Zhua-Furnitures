@@ -1,0 +1,187 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200" role="img" aria-label="ZHUA ScentaRiva home and business bundle with diffuser machine and two fragrance oils">
+    <defs>
+
+    <filter id="bdsoft" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="24"/>
+    </filter>
+    <filter id="bdshadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+    <filter id="bdblur6" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6"/>
+    </filter>
+    <filter id="bdblur2" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="1.6"/>
+    </filter>
+    <filter id="bdgrain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.78" numOctaves="3" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.16"/></feComponentTransfer>
+      <feBlend in="SourceGraphic" mode="soft-light"/>
+    </filter>
+    <radialGradient id="bdhalo" cx="50%" cy="42%" r="58%">
+      <stop offset="0" stop-color="#d3a35f" stop-opacity="0.25"/>
+      <stop offset="0.46" stop-color="#b67c3b" stop-opacity="0.1"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="bdvignette" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#000000" stop-opacity="0.2"/>
+      <stop offset="0.45" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.66"/>
+    </linearGradient>
+
+      <linearGradient id="bdbg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#2b211c"/>
+        <stop offset="0.55" stop-color="#2b211c"/>
+        <stop offset="1" stop-color="#0c0a09"/>
+      </linearGradient>
+      <linearGradient id="bdmachineBody" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#050505"/>
+        <stop offset="0.18" stop-color="#161412"/>
+        <stop offset="0.55" stop-color="#24201c"/>
+        <stop offset="0.82" stop-color="#0a0908"/>
+        <stop offset="1" stop-color="#020202"/>
+      </linearGradient>
+      <linearGradient id="bdgold" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#8f6c2d"/>
+        <stop offset="0.28" stop-color="#e1bd78"/>
+        <stop offset="0.56" stop-color="#b78c44"/>
+        <stop offset="0.8" stop-color="#f6ddb0"/>
+        <stop offset="1" stop-color="#8d682c"/>
+      </linearGradient>
+      <linearGradient id="bdcap" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#050505"/>
+        <stop offset="0.35" stop-color="#2c2823"/>
+        <stop offset="0.62" stop-color="#151310"/>
+        <stop offset="1" stop-color="#030303"/>
+      </linearGradient>
+      <linearGradient id="bdbottleGlass" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#2a1209"/>
+        <stop offset="0.18" stop-color="#5a2f17"/>
+        <stop offset="0.48" stop-color="#8c5128"/>
+        <stop offset="0.72" stop-color="#5a2f17"/>
+        <stop offset="1" stop-color="#2a1209"/>
+      </linearGradient>
+      <linearGradient id="bdreedGlass" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#5d4120"/>
+        <stop offset="0.25" stop-color="#b08345"/>
+        <stop offset="0.52" stop-color="#d9b577"/>
+        <stop offset="0.76" stop-color="#8b622e"/>
+        <stop offset="1" stop-color="#4e351a"/>
+      </linearGradient>
+      <linearGradient id="bdfade" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#000" stop-opacity="0"/>
+        <stop offset="1" stop-color="#000" stop-opacity=".65"/>
+      </linearGradient>
+    </defs>
+
+
+    <rect width="1200" height="1200" fill="#0c0a09"/>
+    <rect width="1200" height="1200" fill="url(#bdbg)"/>
+    <rect width="1200" height="1200" fill="url(#bdhalo)"/>
+    <ellipse cx="600" cy="528" rx="360" ry="336.00000000000006" fill="#c98b44" opacity="0.1" filter="url(#bdsoft)"/>
+
+    <path d="M 216 983.9999999999999 L 216 492 A 384 384 0 0 1 984 492 L 984 983.9999999999999 Z"
+      fill="#c98b44" opacity="0.035"/>
+    <path d="M 216 983.9999999999999 L 216 492 A 384 384 0 0 1 984 492 L 984 983.9999999999999"
+      fill="none" stroke="#f1d8ad" stroke-opacity="0.16" stroke-width="1.2"/>
+
+    <rect x="0" y="972.0000000000001" width="1200" height="227.9999999999999" fill="#080706" opacity="0.52"/>
+    <line x1="120" y1="972.0000000000001" x2="1080" y2="972.0000000000001" stroke="#f1d8ad" stroke-opacity="0.16"/>
+    <ellipse cx="600" cy="982.0000000000001" rx="324" ry="54" fill="#000" opacity="0.5" filter="url(#bdsoft)"/>
+
+    <g opacity="0.62" filter="url(#bdblur6)">
+      <path d="M 526.8 395 C 494.6 356.5, 568.8 330.6, 524 284.4 C 495.3 248.70000000000002, 549.9 223.5, 536.6 181.5"
+        fill="none" stroke="#c98b44" stroke-opacity="0.36" stroke-width="5.6" stroke-linecap="round"/>
+      <path d="M 541.5 389.4 C 576.5 350.2, 515.6 324.3, 558.3 278.1 C 584.9 250.8, 535.2 213, 546.4 175.20000000000002"
+        fill="none" stroke="#f4e3c4" stroke-opacity="0.2" stroke-width="2.8" stroke-linecap="round"/>
+    </g>
+
+    <g>
+      <ellipse cx="520.08" cy="999.2" rx="132.4512" ry="20.16" fill="#000" opacity="0.72" filter="url(#bdsoft)"/>
+      <path d="M 443.76 986.24 L 576.24 986.24 L 586.32 1000.64 L 433.67999999999995 1000.64 Z" fill="#0a0a0a"/>
+      <rect x="419.28" y="570.8" width="181.44" height="421.2" rx="24.48" fill="url(#bdmachineBody)"/>
+      <rect x="420.71999999999997" y="572.9599999999999" width="178.56" height="416.88" rx="23.04" fill="none" stroke="#f3d7a4" stroke-opacity="0.13"/>
+      <path d="M 439.44 603.92 C 425.03999999999996 732.0799999999999, 427.91999999999996 886.16, 443.03999999999996 967.52" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="5.04" stroke-linecap="round"/>
+      <path d="M 583.44 628.4 C 597.12 750.8, 593.52 902, 573.36 957.44" fill="none" stroke="#f2c27d" stroke-opacity="0.1" stroke-width="3.5999999999999996" stroke-linecap="round"/>
+      <rect x="448.08" y="557.8399999999999" width="123.83999999999999" height="25.2" rx="12.24" fill="url(#bdgold)"/>
+      <rect x="455.28" y="562.16" width="109.44" height="16.56" rx="7.92" fill="#1b1610"/>
+      <rect x="431.52" y="596" width="156.96" height="24.48" rx="12.24" fill="#080808"/>
+      <rect x="431.52" y="596" width="156.96" height="24.48" rx="12.24" fill="none" stroke="#f1c57f" stroke-opacity="0.22"/>
+      <g>
+        <rect x="430.8" y="686" width="158.4" height="105.11999999999999" rx="14.399999999999999" fill="#050505" stroke="#f1c57f" stroke-opacity="0.15"/>
+        <rect x="450.96" y="704" width="118.08" height="44.64" rx="7.199999999999999" fill="#1a130b"/>
+        <rect x="456.72" y="711.1999999999999" width="69.12" height="5.04" rx="3.5" fill="#dca65c" opacity="0.92"/>
+        <rect x="456.72" y="722.7199999999999" width="50.4" height="3.5999999999999996" rx="2.5" fill="#f4ddb7" opacity="0.55"/>
+        <rect x="456.72" y="732.0799999999999" width="80.64" height="3.5999999999999996" rx="2.5" fill="#f4ddb7" opacity="0.35"/>
+        <circle cx="556.08" cy="726.3199999999999" r="9.36" fill="none" stroke="#dca65c" stroke-width="1.44"/>
+        <path d="M 551.04 726.3199999999999 L 555.36 730.64 L 561.84 721.28" fill="none" stroke="#dca65c" stroke-width="1.44" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="510" y="770.24" text-anchor="middle" fill="#f2ddbb" font-family="Georgia, serif" font-size="10.799999999999999" letter-spacing="2.88">SCENTARIVA</text>
+        <text x="510" y="782.4799999999999" text-anchor="middle" fill="#bca57c" font-family="Georgia, serif" font-size="5.3999999999999995" letter-spacing="2.088">SMART SCENT SYSTEM</text>
+      </g>
+      <g opacity="0.8">
+        <rect x="491.28" y="819.92" width="37.44" height="2.88" rx="2" fill="#f1d7a6" opacity="0.5"/>
+        <circle cx="510" cy="848.72" r="5.76" fill="none" stroke="#f1d7a6" stroke-width="0.9359999999999999" opacity="0.7"/>
+        <circle cx="510" cy="848.72" r="2.16" fill="#f1d7a6" opacity="0.9"/>
+      </g>
+      <g opacity="0.42">
+        <line x1="458.15999999999997" y1="891.1999999999999" x2="561.84" y2="891.1999999999999" stroke="#fff" stroke-opacity="0.2"/>
+        <line x1="462.47999999999996" y1="902.72" x2="557.52" y2="902.72" stroke="#fff" stroke-opacity="0.14"/>
+        <line x1="466.79999999999995" y1="914.24" x2="553.2" y2="914.24" stroke="#fff" stroke-opacity="0.1"/>
+      </g>
+      <ellipse cx="510" cy="971.84" rx="68.9472" ry="5.04" fill="#f1d7a6" opacity="0.1" filter="url(#bdblur6)"/>
+    </g>
+
+    <g>
+      <ellipse cx="810.28" cy="1004.92" rx="106.4712" ry="17.16" fill="#000" opacity="0.7" filter="url(#bdsoft)"/>
+      <path d="M 742.3 713.1999999999999 Q 742.3 681.5199999999999 764.7399999999999 681.5199999999999 L 781.9 681.5199999999999 L 781.9 657.7599999999999 L 828.1 657.7599999999999 L 828.1 681.5199999999999 L 845.26 681.5199999999999 Q 867.6999999999999 681.5199999999999 867.6999999999999 713.1999999999999 L 862.42 987.76 Q 860.4399999999999 997 805 997 Q 749.56 997 747.5799999999999 987.76 Z"
+        fill="url(#bdbottleGlass)"/>
+      <path d="M 755.5 734.3199999999999 C 740.9799999999999 808.8999999999999, 746.26 913.18, 756.16 971.92"
+        fill="none" stroke="#fff" stroke-opacity="0.3" stroke-width="5.28" stroke-linecap="round"/>
+      <path d="M 849.2199999999999 758.0799999999999 C 867.6999999999999 837.28, 857.8 913.18, 850.54 962.68"
+        fill="none" stroke="#8c5128" stroke-opacity="0.32" stroke-width="3.3000000000000003" stroke-linecap="round"/>
+      <rect x="775.96" y="607.5999999999999" width="58.080000000000005" height="52.800000000000004" rx="5.28" fill="url(#bdcap)"/>
+      <g opacity="0.7">
+        <line x1="783.22" y1="614.1999999999999" x2="826.78" y2="614.1999999999999" stroke="#fff" stroke-opacity="0.12" stroke-width="0.792"/><line x1="783.22" y1="622.1199999999999" x2="826.78" y2="622.1199999999999" stroke="#fff" stroke-opacity="0.12" stroke-width="0.792"/><line x1="783.22" y1="630.04" x2="826.78" y2="630.04" stroke="#fff" stroke-opacity="0.12" stroke-width="0.792"/><line x1="783.22" y1="637.9599999999999" x2="826.78" y2="637.9599999999999" stroke="#fff" stroke-opacity="0.12" stroke-width="0.792"/><line x1="783.22" y1="645.8799999999999" x2="826.78" y2="645.8799999999999" stroke="#fff" stroke-opacity="0.12" stroke-width="0.792"/><line x1="783.22" y1="653.8" x2="826.78" y2="653.8" stroke="#fff" stroke-opacity="0.12" stroke-width="0.792"/>
+      </g>
+      <rect x="744.9399999999999" y="808.8999999999999" width="120.11999999999999" height="110.88000000000001" rx="1.98" fill="#f3ead8"/>
+      <rect x="750.2199999999999" y="814.1799999999998" width="109.55999999999999" height="100.32000000000001" rx="0.99" fill="none" stroke="#2a1d14" stroke-opacity="0.26"/>
+      <text x="805" y="831.3399999999999" text-anchor="middle" fill="#2a1d14" font-family="Georgia, serif" font-size="5.94" letter-spacing="2.244">ZHUA</text>
+      <line x1="790.48" y1="839.2599999999999" x2="819.52" y2="839.2599999999999" stroke="#a9682f" stroke-width="0.66"/>
+      <text x="805" y="862.3599999999999" text-anchor="middle" fill="#2a1d14" font-family="Georgia, serif" font-size="13.860000000000001" letter-spacing="0.792">Amber Noir</text>
+      <text x="805" y="876.8799999999999" text-anchor="middle" fill="#2a1d14" fill-opacity="0.68" font-family="Georgia, serif" font-size="4.224" letter-spacing="1.122">AMBER · OUD · VANILLA</text>
+      <line x1="781.9" y1="887.4399999999998" x2="828.1" y2="887.4399999999998" stroke="#2a1d14" stroke-opacity="0.18"/>
+      <text x="805" y="900.6399999999999" text-anchor="middle" fill="#2a1d14" fill-opacity="0.72" font-family="Georgia, serif" font-size="5.28" letter-spacing="1.32">500 ML</text>
+      <text x="805" y="909.8799999999999" text-anchor="middle" fill="#2a1d14" fill-opacity="0.48" font-family="Georgia, serif" font-size="3.6959999999999997" letter-spacing="0.792">PREMIUM FRAGRANCE OIL</text>
+      <path d="M 752.8599999999999 703.9599999999999 Q 805 694.06 857.14 709.8999999999999" fill="none" stroke="#fff" stroke-opacity="0.26" stroke-width="3.3000000000000003" stroke-linecap="round"/>
+      <rect x="739.66" y="973.9" width="130.68" height="14.520000000000001" rx="6.6000000000000005" fill="#fff" opacity="0.035"/>
+    </g>
+
+    <g>
+      <ellipse cx="980.28" cy="1004.92" rx="106.4712" ry="17.16" fill="#000" opacity="0.7" filter="url(#bdsoft)"/>
+      <path d="M 912.3 713.1999999999999 Q 912.3 681.5199999999999 934.7399999999999 681.5199999999999 L 951.9 681.5199999999999 L 951.9 657.7599999999999 L 998.1 657.7599999999999 L 998.1 681.5199999999999 L 1015.2600000000001 681.5199999999999 Q 1037.7 681.5199999999999 1037.7 713.1999999999999 L 1032.42 987.76 Q 1030.44 997 975 997 Q 919.56 997 917.5799999999999 987.76 Z"
+        fill="url(#bdbottleGlass)"/>
+      <path d="M 925.5 734.3199999999999 C 910.9799999999999 808.8999999999999, 916.26 913.18, 926.16 971.92"
+        fill="none" stroke="#fff" stroke-opacity="0.3" stroke-width="5.28" stroke-linecap="round"/>
+      <path d="M 1019.22 758.0799999999999 C 1037.7 837.28, 1027.8 913.18, 1020.5400000000001 962.68"
+        fill="none" stroke="#a7aa88" stroke-opacity="0.32" stroke-width="3.3000000000000003" stroke-linecap="round"/>
+      <rect x="945.96" y="607.5999999999999" width="58.080000000000005" height="52.800000000000004" rx="5.28" fill="url(#bdcap)"/>
+      <g opacity="0.7">
+        <line x1="953.22" y1="614.1999999999999" x2="996.78" y2="614.1999999999999" stroke="#fff" stroke-opacity="0.12" stroke-width="0.792"/><line x1="953.22" y1="622.1199999999999" x2="996.78" y2="622.1199999999999" stroke="#fff" stroke-opacity="0.12" stroke-width="0.792"/><line x1="953.22" y1="630.04" x2="996.78" y2="630.04" stroke="#fff" stroke-opacity="0.12" stroke-width="0.792"/><line x1="953.22" y1="637.9599999999999" x2="996.78" y2="637.9599999999999" stroke="#fff" stroke-opacity="0.12" stroke-width="0.792"/><line x1="953.22" y1="645.8799999999999" x2="996.78" y2="645.8799999999999" stroke="#fff" stroke-opacity="0.12" stroke-width="0.792"/><line x1="953.22" y1="653.8" x2="996.78" y2="653.8" stroke="#fff" stroke-opacity="0.12" stroke-width="0.792"/>
+      </g>
+      <rect x="914.9399999999999" y="808.8999999999999" width="120.11999999999999" height="110.88000000000001" rx="1.98" fill="#f4efdf"/>
+      <rect x="920.2199999999999" y="814.1799999999998" width="109.55999999999999" height="100.32000000000001" rx="0.99" fill="none" stroke="#2c2d21" stroke-opacity="0.26"/>
+      <text x="975" y="831.3399999999999" text-anchor="middle" fill="#2c2d21" font-family="Georgia, serif" font-size="5.94" letter-spacing="2.244">ZHUA</text>
+      <line x1="960.48" y1="839.2599999999999" x2="989.52" y2="839.2599999999999" stroke="#9b9c72" stroke-width="0.66"/>
+      <text x="975" y="862.3599999999999" text-anchor="middle" fill="#2c2d21" font-family="Georgia, serif" font-size="13.860000000000001" letter-spacing="0.792">White Tea</text>
+      <text x="975" y="876.8799999999999" text-anchor="middle" fill="#2c2d21" fill-opacity="0.68" font-family="Georgia, serif" font-size="4.224" letter-spacing="1.122">WHITE TEA · FIG · CEDAR</text>
+      <line x1="951.9" y1="887.4399999999998" x2="998.1" y2="887.4399999999998" stroke="#2c2d21" stroke-opacity="0.18"/>
+      <text x="975" y="900.6399999999999" text-anchor="middle" fill="#2c2d21" fill-opacity="0.72" font-family="Georgia, serif" font-size="5.28" letter-spacing="1.32">500 ML</text>
+      <text x="975" y="909.8799999999999" text-anchor="middle" fill="#2c2d21" fill-opacity="0.48" font-family="Georgia, serif" font-size="3.6959999999999997" letter-spacing="0.792">PREMIUM FRAGRANCE OIL</text>
+      <path d="M 922.8599999999999 703.9599999999999 Q 975 694.06 1027.14 709.8999999999999" fill="none" stroke="#fff" stroke-opacity="0.26" stroke-width="3.3000000000000003" stroke-linecap="round"/>
+      <rect x="909.66" y="973.9" width="130.68" height="14.520000000000001" rx="6.6000000000000005" fill="#fff" opacity="0.035"/>
+    </g>
+    <text x="600" y="1110" text-anchor="middle" fill="#f1e6d2" fill-opacity=".9" font-family="Georgia, serif" font-size="14" letter-spacing="5">THE SIGNATURE PAIRING</text>
+    <rect width="1200" height="1200" fill="url(#bdvignette)"/>
+    <rect width="1200" height="1200" filter="url(#bdgrain)" opacity="0.24"/>
+  </svg>

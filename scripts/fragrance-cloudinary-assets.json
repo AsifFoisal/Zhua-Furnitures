@@ -1,0 +1,82 @@
+{
+  "scentariva-machine.jpg": {
+    "publicId": "zhua/products/fragrance/scentariva-machine",
+    "secureUrl": "https://res.cloudinary.com/djxdl0d7x/image/upload/v1794515646/zhua/products/fragrance/scentariva-machine.jpg",
+    "alt": "ScentaRiva smart commercial scent diffuser machine in matte black",
+    "width": 2400,
+    "height": 2400,
+    "format": "jpg",
+    "bytes": 580802,
+    "createdAt": "2026-11-12T20:34:06Z"
+  },
+  "fragrance-oil-amber-noir.jpg": {
+    "publicId": "zhua/products/fragrance/fragrance-oil-amber-noir",
+    "secureUrl": "https://res.cloudinary.com/djxdl0d7x/image/upload/v1794515647/zhua/products/fragrance/fragrance-oil-amber-noir.jpg",
+    "alt": "ZHUA Amber Noir 500 ml fragrance oil",
+    "width": 2400,
+    "height": 2400,
+    "format": "jpg",
+    "bytes": 570827,
+    "createdAt": "2026-11-12T20:34:07Z"
+  },
+  "fragrance-oil-white-tea-fig.jpg": {
+    "publicId": "zhua/products/fragrance/fragrance-oil-white-tea-fig",
+    "secureUrl": "https://res.cloudinary.com/djxdl0d7x/image/upload/v1794515648/zhua/products/fragrance/fragrance-oil-white-tea-fig.jpg",
+    "alt": "ZHUA White Tea and Fig 500 ml fragrance oil",
+    "width": 2400,
+    "height": 2400,
+    "format": "jpg",
+    "bytes": 568064,
+    "createdAt": "2026-11-12T20:34:08Z"
+  },
+  "fragrance-oil-oud-rose.jpg": {
+    "publicId": "zhua/products/fragrance/fragrance-oil-oud-rose",
+    "secureUrl": "https://res.cloudinary.com/djxdl0d7x/image/upload/v1794515649/zhua/products/fragrance/fragrance-oil-oud-rose.jpg",
+    "alt": "ZHUA Oud and Rose 500 ml fragrance oil",
+    "width": 2400,
+    "height": 2400,
+    "format": "jpg",
+    "bytes": 569367,
+    "createdAt": "2026-11-12T20:34:09Z"
+  },
+  "fragrance-oil-coastal-linen.jpg": {
+    "publicId": "zhua/products/fragrance/fragrance-oil-coastal-linen",
+    "secureUrl": "https://res.cloudinary.com/djxdl0d7x/image/upload/v1794515651/zhua/products/fragrance/fragrance-oil-coastal-linen.jpg",
+    "alt": "ZHUA Coastal Linen 500 ml fragrance oil",
+    "width": 2400,
+    "height": 2400,
+    "format": "jpg",
+    "bytes": 571616,
+    "createdAt": "2026-11-12T20:34:11Z"
+  },
+  "absolut-gold-reed-diffuser.jpg": {
+    "publicId": "zhua/products/fragrance/absolut-gold-reed-diffuser",
+    "secureUrl": "https://res.cloudinary.com/djxdl0d7x/image/upload/v1794515651/zhua/products/fragrance/absolut-gold-reed-diffuser.jpg",
+    "alt": "ZHUA Absolut Gold 150 ml reed diffuser",
+    "width": 2400,
+    "height": 2400,
+    "format": "jpg",
+    "bytes": 575129,
+    "createdAt": "2026-11-12T20:34:11Z"
+  },
+  "scentariva-home-business-bundle.jpg": {
+    "publicId": "zhua/products/fragrance/scentariva-home-business-bundle",
+    "secureUrl": "https://res.cloudinary.com/djxdl0d7x/image/upload/v1794515653/zhua/products/fragrance/scentariva-home-business-bundle.jpg",
+    "alt": "ScentaRiva machine and two fragrance oils bundle",
+    "width": 2400,
+    "height": 2400,
+    "format": "jpg",
+    "bytes": 589527,
+    "createdAt": "2026-11-12T20:34:13Z"
+  },
+  "complete-scent-collection.jpg": {
+    "publicId": "zhua/products/fragrance/complete-scent-collection",
+    "secureUrl": "https://res.cloudinary.com/djxdl0d7x/image/upload/v1794515653/zhua/products/fragrance/complete-scent-collection.jpg",
+    "alt": "Complete ScentaRiva machine, oils and reed diffuser collection",
+    "width": 2400,
+    "height": 2400,
+    "format": "jpg",
+    "bytes": 596960,
+    "createdAt": "2026-11-12T20:34:13Z"
+  }
+}
