@@ -33,7 +33,6 @@ export default function CartDrawer() {
 
         setFreeShippingThreshold(Number(data.delivery.freeShippingThreshold ?? DEFAULT_FREE_SHIPPING_THRESHOLD));
       } catch {
-        // Keep fallback threshold.
       }
     };
 
