@@ -15,7 +15,8 @@ import { getOptionalUser } from '@/lib/auth';
 import { findAuthUserIdByEmail } from '@/lib/order-linking';
 import { validatePromoCode } from '@/lib/promo';
 import { logUserActivity } from '@/lib/user-activity';
-import { sendAdminNewOrderNotification } from '@/lib/order-notifications';
+import { sendAdminNewOrderNotification, sendOrderPaymentLinkEmail } from '@/lib/order-notifications';
+import { getCanonicalSiteUrl } from '@/lib/site-url';
 import { PAYFAST_LIVE_MINIMUM_AMOUNT_CENTS } from '@/lib/payments/payfast';
 import {
   DEFAULT_DELIVERY_ZONES_DB,
@@ -399,6 +400,8 @@ export async function POST(request: Request) {
   }
 
   if (hasResendEnv) {
+    const paymentUrl = `${getCanonicalSiteUrl()}/order-payment?id=${order.id}`;
+
     try {
       await sendAdminNewOrderNotification({
         event: 'placement',
@@ -427,9 +430,28 @@ export async function POST(request: Request) {
           selectedFabric: item.selectedFabric,
           customNote: item.customNote,
         })),
+        paymentUrl,
       });
     } catch (notificationError) {
       console.error('[Orders API] Failed to send admin new-order email.', {
+        orderId: order.id,
+        orderNumber: order.order_number,
+        error:
+          notificationError instanceof Error
+            ? notificationError.message
+            : 'Unknown notification error',
+      });
+    }
+
+    try {
+      await sendOrderPaymentLinkEmail({
+        customerEmail: normalizedDeliveryEmail,
+        customerName: delivery.name,
+        orderNumber: order.order_number,
+        paymentUrl,
+      });
+    } catch (notificationError) {
+      console.error('[Orders API] Failed to send customer payment-link email.', {
         orderId: order.id,
         orderNumber: order.order_number,
         error:

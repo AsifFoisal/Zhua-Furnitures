@@ -144,6 +144,58 @@ export async function sendOrderStatusNotification(input: OrderStatusNotification
   });
 }
 
+type OrderPaymentLinkInput = {
+  customerEmail: string;
+  customerName: string;
+  orderNumber: string;
+  paymentUrl: string;
+};
+
+/**
+ * Email sent when an order is created but the payment is not confirmed yet.
+ * Carries a secure PayFast link so the customer can complete the payment
+ * without going through checkout again.
+ */
+export async function sendOrderPaymentLinkEmail(input: OrderPaymentLinkInput): Promise<void> {
+  const safeCustomerName = escapeHtml(input.customerName || 'Customer');
+  const safeOrderNumber = escapeHtml(input.orderNumber);
+  const safePaymentUrl = escapeHtml(input.paymentUrl);
+
+  const subject = `Complete your payment — order ${input.orderNumber}`;
+  const html = `
+    <div style="margin:0;padding:0;background:#f4f1ea;font-family:Arial,Helvetica,sans-serif;color:#1b2b3a;">
+      <div style="max-width:640px;margin:0 auto;padding:40px 20px;">
+        <div style="background:#163250;border-radius:20px;padding:32px;border:1px solid rgba(181,146,65,0.18);">
+          <p style="margin:0 0 12px;color:#b59241;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;">Zhua Furnitures</p>
+          <h1 style="margin:0 0 16px;color:#eaf0f8;font-size:28px;line-height:1.25;">Complete your payment</h1>
+          <p style="margin:0 0 14px;color:#a9b7c9;font-size:16px;line-height:1.7;">Hi ${safeCustomerName},</p>
+          <p style="margin:0 0 14px;color:#a9b7c9;font-size:16px;line-height:1.7;">Your order has been received and your items are reserved. We are just waiting for the payment to go through.</p>
+          <p style="margin:0 0 18px;color:#a9b7c9;font-size:16px;line-height:1.7;">Order number: <strong style="color:#eaf0f8;">${safeOrderNumber}</strong></p>
+          <p style="margin:0 0 22px;color:#a9b7c9;font-size:16px;line-height:1.7;">If your payment didn&apos;t complete, or you closed the page before finishing, use the secure PayFast button below to pay for your order.</p>
+          <a href="${safePaymentUrl}" style="display:inline-block;background:#b59241;color:#0f1720;text-decoration:none;font-weight:700;padding:14px 22px;border-radius:999px;">Complete your payment</a>
+          <p style="margin:22px 0 0;color:#8ca0b8;font-size:13px;line-height:1.7;">If you have already paid, please ignore this email — your confirmation is on its way.</p>
+        </div>
+      </div>
+    </div>
+  `;
+  const text = [
+    'Complete your payment',
+    `Hi ${input.customerName || 'Customer'},`,
+    'Your order has been received and your items are reserved. We are just waiting for the payment to go through.',
+    `Order number: ${input.orderNumber}`,
+    "If your payment didn't complete, or you closed the page before finishing, use the link below to pay securely through PayFast.",
+    `Complete your payment: ${input.paymentUrl}`,
+    'If you have already paid, please ignore this email — your confirmation is on its way.',
+  ].join('\n\n');
+
+  await sendResendEmail({
+    to: input.customerEmail,
+    subject,
+    html,
+    text,
+  });
+}
+
 type AdminOrderEvent = 'placement' | 'paid';
 
 export type AdminOrderItem = {
@@ -175,6 +227,8 @@ export type AdminNewOrderNotificationInput = {
   promoCode?: string | null;
   totalCents: number;
   items: AdminOrderItem[];
+  /** Secure PayFast link for the order, shown so the admin can share it with the customer. */
+  paymentUrl?: string;
 };
 
 type AdminOrderCopy = {
@@ -259,6 +313,7 @@ function buildAdminEmailContent(input: AdminNewOrderNotificationInput): {
   const safePaymentMethod = escapeHtml((input.paymentMethod || '').toUpperCase());
   const safePaymentStatus = escapeHtml(input.paymentStatus || '');
   const safePromoCode = input.promoCode ? escapeHtml(input.promoCode) : '';
+  const safePaymentUrl = input.paymentUrl ? escapeHtml(input.paymentUrl) : '';
   const itemRows = buildAdminOrderRows(input.items);
   const discountRow =
     input.discountCents && input.discountCents > 0
@@ -305,6 +360,12 @@ function buildAdminEmailContent(input: AdminNewOrderNotificationInput): {
           <p style="margin:0 0 18px;color:#a9b7c9;font-size:16px;line-height:1.7;">${copy.intro}</p>
           <p style="margin:0 0 6px;color:#eaf0f8;font-size:14px;line-height:1.6;">Order number: <strong>${safeOrderNumber}</strong></p>
           <p style="margin:0;color:#a9b7c9;font-size:13px;line-height:1.6;">Payment: <strong style="color:#eaf0f8;">${safePaymentMethod}</strong> · Status: <strong style="color:${copy.accent};">${safePaymentStatus}</strong></p>
+          ${safePaymentUrl ? `
+          <div style="margin:16px 0 0;padding:14px;border:1px solid rgba(181,146,65,0.35);border-radius:12px;background:rgba(181,146,65,0.08);">
+            <p style="margin:0 0 10px;color:#a9b7c9;font-size:12px;line-height:1.6;">Customer has not paid yet — share this secure PayFast link with them to collect the payment:</p>
+            <a href="${safePaymentUrl}" style="display:inline-block;background:#b59241;color:#0f1720;text-decoration:none;font-weight:700;padding:10px 18px;border-radius:999px;font-size:13px;">Open payment link</a>
+            <p style="margin:10px 0 0;color:#8ca0b8;font-size:11px;line-height:1.6;word-break:break-all;">${safePaymentUrl}</p>
+          </div>` : ''}
           <h2 style="margin:24px 0 6px;color:#b59241;font-size:13px;letter-spacing:0.14em;text-transform:uppercase;">Customer</h2>
           <p style="margin:0;color:#eaf0f8;font-size:14px;line-height:1.7;"><strong>${safeCustomerName}</strong></p>
           <p style="margin:0;color:#a9b7c9;font-size:14px;line-height:1.7;">${safeCustomerEmail}${safeCustomerPhone ? ` · ${safeCustomerPhone}` : ''}</p>
@@ -322,6 +383,7 @@ function buildAdminEmailContent(input: AdminNewOrderNotificationInput): {
     copy.intro,
     `Order: ${input.orderNumber}`,
     `Payment: ${(input.paymentMethod || '').toUpperCase()} · ${input.paymentStatus}`,
+    ...(input.paymentUrl ? [`Payment link: ${input.paymentUrl}`] : []),
     '',
     'Customer',
     `${input.customerName || 'Customer'}`,

@@ -57,20 +57,6 @@ export default function CheckoutPage() {
       sub: 'Visa, Mastercard, EFT',
       enabled: true,
     },
-    {
-      id: 'yoco',
-      label: 'Yoco',
-      desc: 'Pay with Yoco card gateway',
-      sub: 'Coming soon',
-      enabled: false,
-    },
-    {
-      id: 'payflex',
-      label: 'Payflex (BNPL)',
-      desc: 'Buy now, pay in 4 instalments',
-      sub: 'Coming soon',
-      enabled: false,
-    },
   ] as const;
 
   useEffect(() => {
@@ -402,13 +388,6 @@ export default function CheckoutPage() {
                   ))}
                 </div>
 
-                {paymentMethod === 'payflex' && (
-                  <div className={styles.payflex}>
-                    <p className={styles.payflexTitle}>Pay {formatPrice(hydratedGrandTotal / 4)} today, then 3 x {formatPrice(hydratedGrandTotal / 4)} over 6 weeks</p>
-                    <p className={styles.payflexNote}>Interest-free. No hidden fees. Approval is instant.</p>
-                  </div>
-                )}
-
                 <div className={styles.stepBtns}>
                   <button className="btn btn-ghost" onClick={() => setStep(0)}>← Back</button>
                   <button className="btn btn-primary btn-lg" onClick={() => setStep(2)} style={{ flex: 1, justifyContent: 'center' }}>
@@ -450,7 +429,7 @@ export default function CheckoutPage() {
                     onClick={placeOrder}
                     disabled={placingOrder}
                   >
-                    Place Order → Pay with {paymentMethod === 'payfast' ? 'PayFast' : paymentMethod === 'yoco' ? 'Yoco' : 'Payflex'}
+                    Place Order → Pay with PayFast
                   </button>
                 </div>
                 {submitError ? <p style={{ marginTop: '0.8rem', color: 'var(--status-danger)' }}>{submitError}</p> : null}
