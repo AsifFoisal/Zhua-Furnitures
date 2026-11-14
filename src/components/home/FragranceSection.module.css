@@ -28,6 +28,8 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* Keep the bottle band of the portrait photo in frame inside the 4/3 crop. */
+  object-position: center 72%;
   transition: transform 800ms var(--ease-out);
 }
 

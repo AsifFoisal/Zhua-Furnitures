@@ -16,8 +16,8 @@ export default function FragranceSection() {
       <div className={`container ${styles.grid}`}>
         <div className={styles.visual}>
           <img
-            src="/images/fragrance/fragrance-hero.jpg"
-            alt="ZHUA ScentaRiva scent diffuser machine, fragrance oil and Absolut Gold reed diffuser"
+            src="/images/fragrance/scentariva-collection-trio.jpg"
+            alt="ScentaRiva reed diffuser collection — ZHUA Signature, Vertical Pulse and Absolut Gold"
             loading="lazy"
             className={styles.image}
           />

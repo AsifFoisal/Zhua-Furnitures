@@ -23,9 +23,10 @@
   position: absolute;
   inset: 0;
   z-index: -2;
-  background-image: url('/images/fragrance/fragrance-hero.jpg');
+  background-image: url('/images/fragrance/scentariva-collection-trio.jpg');
   background-size: cover;
-  background-position: center 44%;
+  /* Portrait source photo in a wide cover position — keep the bottle band visible. */
+  background-position: center 70%;
   transform: scale(1.01);
 }
 
@@ -991,9 +992,9 @@
   position: absolute;
   inset: 0;
   z-index: -2;
-  background-image: url('/images/fragrance/fragrance-collection.jpg');
+  background-image: url('/images/fragrance/scentariva-machine-photo.jpg');
   background-size: cover;
-  background-position: center;
+  background-position: center 58%;
   opacity: 0.62;
 }
 
