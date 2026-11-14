@@ -10,19 +10,14 @@ import {
   BedDouble,
   ImageOff,
   MessageCircle,
-  Ruler,
-  ShieldCheck,
   Sofa,
   Star,
   Trees,
-  Truck,
   Tv,
   UtensilsCrossed,
   type LucideIcon,
 } from 'lucide-react';
-import ImagePlaceholder from '@/components/ui/ImagePlaceholder';
 import { formatPrice, type Product } from '@/lib/data';
-import { homeImagery } from '@/lib/home-imagery';
 import { buildWhatsAppUrl } from '@/lib/whatsapp';
 import styles from './FurnitureLanding.module.css';
 
@@ -186,58 +181,7 @@ export default function FurnitureLanding({ initialProducts }: FurnitureLandingPr
 
   return (
     <div className={styles.page}>
-      <section className={styles.hero}>
-        <div className={`container ${styles.heroGrid}`}>
-          <div className={styles.heroCopy}>
-            <div className={styles.eyebrowRow}>
-              <span className={styles.eyebrowRule} aria-hidden="true" />
-              <span className="label-accent">ZHUA Furniture</span>
-            </div>
-            <h1 className={styles.title}>
-              Furniture made
-              <br />
-              <em>around you.</em>
-            </h1>
-            <p className={styles.description}>
-              From statement modular sofas to dining furniture, beds, TV units and custom cabinetry —
-              every ZHUA piece is designed around your space, your style and how you live.
-            </p>
-            <div className={styles.ctaGroup}>
-              <a href="#collection" className="btn btn-primary">
-                Browse the Collection <ArrowDown size={16} />
-              </a>
-              <Link href="/contact" className="btn btn-outline">
-                Request Custom Furniture
-              </Link>
-            </div>
-            <ul className={styles.heroNotes}>
-              <li>
-                <Ruler size={15} aria-hidden="true" /> Made to measure
-              </li>
-              <li>
-                <ShieldCheck size={15} aria-hidden="true" /> Built in our workshop
-              </li>
-              <li>
-                <Truck size={15} aria-hidden="true" /> Delivery &amp; install
-              </li>
-            </ul>
-          </div>
-
-          <div className={styles.heroVisualWrap}>
-            <div className={styles.heroVisual}>
-              <ImagePlaceholder
-                slot={homeImagery.divisionFurniture}
-                loading="eager"
-                showCaption={false}
-              />
-              <div className={styles.heroStamp}>
-                <span>Crafted by ZHUA</span>
-                <strong>One team, from first sketch to final install</strong>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <h1 className="sr-only">Furniture made around you.</h1>
 
       <section id="collection" className={`section ${styles.collection}`}>
         <div className="container">

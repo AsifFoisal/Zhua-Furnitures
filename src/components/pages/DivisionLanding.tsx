@@ -24,6 +24,8 @@ interface DivisionLandingProps {
   note?: string;
   /** Optional extra section (e.g. DB-driven showcase) rendered between highlights and the quote band. */
   children?: ReactNode;
+  /** Hide the hero banner; the title stays in the document as a screen-reader-only h1. */
+  showHero?: boolean;
 }
 
 function CtaLink({ cta }: { cta: DivisionCta }) {
@@ -62,27 +64,32 @@ export default function DivisionLanding({
   ctas,
   note,
   children,
+  showHero = true,
 }: DivisionLandingProps) {
   return (
     <div className={styles.page}>
-      <section className={styles.hero}>
-        <div className={`container ${styles.heroGrid}`}>
-          <div className={styles.heroCopy}>
-            <span className="label-accent">{eyebrow}</span>
-            <h1 className={styles.title}>{title}</h1>
-            <p className={styles.description}>{description}</p>
-            {note ? <p className={styles.note}>{note}</p> : null}
-            <div className={styles.ctaGroup}>
-              {ctas.map((cta) => (
-                <CtaLink key={cta.label} cta={cta} />
-              ))}
+      {showHero ? (
+        <section className={styles.hero}>
+          <div className={`container ${styles.heroGrid}`}>
+            <div className={styles.heroCopy}>
+              <span className="label-accent">{eyebrow}</span>
+              <h1 className={styles.title}>{title}</h1>
+              <p className={styles.description}>{description}</p>
+              {note ? <p className={styles.note}>{note}</p> : null}
+              <div className={styles.ctaGroup}>
+                {ctas.map((cta) => (
+                  <CtaLink key={cta.label} cta={cta} />
+                ))}
+              </div>
+            </div>
+            <div className={styles.heroVisual}>
+              <ImagePlaceholder slot={visual} loading="eager" />
             </div>
           </div>
-          <div className={styles.heroVisual}>
-            <ImagePlaceholder slot={visual} loading="eager" />
-          </div>
-        </div>
-      </section>
+        </section>
+      ) : (
+        <h1 className="sr-only">{title}</h1>
+      )}
 
       {children}
 

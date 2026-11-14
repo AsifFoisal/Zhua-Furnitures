@@ -15,6 +15,7 @@ export default function CurtainsBlindsPage() {
       title={<>Dress Your <span className="heading-accent">Windows</span></>}
       description="Made-to-measure curtains and blinds, professionally measured, manufactured and installed. You don't have to know exactly what you need — we guide you through the whole process."
       visual={homeImagery.divisionCurtains}
+      showHero={false}
       ctas={[
         { label: 'Design My Curtains', href: '/design-studio/curtain-customizer' },
         { label: 'Shop Curtains & Blinds', href: '/shop/curtains', variant: 'outline' },

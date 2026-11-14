@@ -29,6 +29,7 @@ export default async function DeckzPage() {
       description="Custom decking and outdoor spaces designed for entertaining, relaxing and living — built to the same standard we bring to every ZHUA interior."
       note="Every catalog item can be customized to your space — request a quote from any detail and we'll confirm what's possible."
       visual={homeImagery.divisionDeckz}
+      showHero={false}
       ctas={[
         { label: 'Request a Quote', href: '/contact' },
         { label: 'Book a Site Measurement', href: '/book-installation', variant: 'outline' },
