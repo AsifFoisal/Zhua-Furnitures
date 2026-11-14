@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
-import { Playfair_Display } from 'next/font/google';
+import { Manrope, Playfair_Display } from 'next/font/google';
 import './globals.css';
 import ClientChrome from '@/components/layout/ClientChrome';
 import AppToaster from '@/components/ui/AppToaster';
@@ -10,10 +10,19 @@ import { THEME_STORAGE_KEY } from '@/lib/theme';
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800', '900'],
+  weight: ['400', '500', '600', '700', '800'],
   style: ['normal', 'italic'],
   display: 'swap',
   variable: '--font-playfair',
+});
+
+// Body/UI voice — a quiet geometric sans that stays readable at small sizes
+// and in task surfaces (admin, checkout), while Playfair keeps the headings.
+const manrope = Manrope({
+  subsets: ['latin'],
+  style: ['normal'],
+  display: 'swap',
+  variable: '--font-manrope',
 });
 
 const canonicalSiteUrl = getCanonicalSiteUrl();
@@ -84,7 +93,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       lang="en-ZA"
       data-theme={themeMode}
       data-scroll-behavior="smooth"
-      className={playfair.variable}
+      className={`${playfair.variable} ${manrope.variable}`}
       suppressHydrationWarning
     >
       <body suppressHydrationWarning>
