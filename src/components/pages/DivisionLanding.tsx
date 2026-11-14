@@ -84,6 +84,8 @@ export default function DivisionLanding({
         </div>
       </section>
 
+      {children}
+
       <section className={`section ${styles.highlightsSection}`}>
         <div className="container">
           <h2 className={styles.highlightsTitle}>What we do</h2>
@@ -97,8 +99,6 @@ export default function DivisionLanding({
           </div>
         </div>
       </section>
-
-      {children}
 
       <section className={`section-sm ${styles.quoteBand}`}>
         <div className={`container ${styles.quoteInner}`}>

@@ -138,7 +138,7 @@ export default function WallzDeckzPage() {
           </div>
           <div className={styles.sectionFoot}>
             <Link href="/wallz" className={styles.textLink}>
-              See WALLZ in real spaces <ArrowRight size={14} />
+              Explore the WALLZ catalog <ArrowRight size={14} />
             </Link>
           </div>
         </div>
@@ -165,7 +165,7 @@ export default function WallzDeckzPage() {
           </div>
           <div className={styles.sectionFoot}>
             <Link href="/deckz" className={styles.textLink}>
-              See DECKZ in real spaces <ArrowRight size={14} />
+              Explore the DECKZ catalog <ArrowRight size={14} />
             </Link>
           </div>
         </div>

@@ -1,0 +1,115 @@
+.bar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-2xl);
+}
+
+.typeRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  padding: 4px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-full);
+  background: var(--tint-soft);
+  width: fit-content;
+  max-width: 100%;
+}
+
+.typeTab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1.2rem;
+  border-radius: var(--radius-full);
+  font-family: var(--font-accent);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.typeTab:hover {
+  color: var(--text-primary);
+}
+
+.typeTabActive {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+  color: var(--midnight);
+}
+
+.typeTabActive:hover {
+  color: var(--midnight);
+}
+
+.categoryRow {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: var(--spacing-sm);
+  overflow-x: auto;
+  padding-bottom: var(--spacing-xs);
+  scrollbar-width: thin;
+}
+
+.categoryPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 1rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-light);
+  background: transparent;
+  font-family: var(--font-accent);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.categoryPill:hover {
+  border-color: var(--border);
+  color: var(--text-primary);
+}
+
+.categoryPillActive {
+  border-color: var(--gold);
+  background: rgba(181, 146, 65, 0.12);
+  color: var(--gold-light);
+}
+
+.count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.4rem;
+  padding: 0.05rem 0.4rem;
+  border-radius: var(--radius-full);
+  background: var(--tint);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.typeTabActive .count {
+  background: rgba(15, 36, 59, 0.25);
+  color: var(--midnight);
+}
+
+@media (max-width: 640px) {
+  .typeRow {
+    width: 100%;
+  }
+
+  .typeTab {
+    flex: 1;
+    justify-content: center;
+    padding: 0.55rem 0.6rem;
+    font-size: 0.64rem;
+  }
+}
