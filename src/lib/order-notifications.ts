@@ -1,8 +1,8 @@
 import 'server-only';
 
-import { Resend } from 'resend';
 import { getCanonicalSiteUrl } from '@/lib/site-url';
-import { getAdminNotificationEmail, getResendEnv, hasResendEnv } from '@/lib/supabase/env';
+import { getAdminNotificationEmail } from '@/lib/supabase/env';
+import { sendResendEmail } from '@/lib/resend';
 
 type OrderStatusNotificationInput = {
   customerEmail: string;
@@ -78,8 +78,6 @@ const paymentStatusCopy: Record<
   },
 };
 
-const resendClient = hasResendEnv ? new Resend(getResendEnv().apiKey) : null;
-
 function escapeHtml(value: string): string {
   return value
     .replace(/&/g, '&amp;')
@@ -136,15 +134,9 @@ function buildEmailContent(input: OrderStatusNotificationInput): { subject: stri
 }
 
 export async function sendOrderStatusNotification(input: OrderStatusNotificationInput): Promise<void> {
-  if (!resendClient) {
-    throw new Error('Resend is not configured.');
-  }
-
-  const { fromEmail } = getResendEnv();
   const content = buildEmailContent(input);
 
-  await resendClient.emails.send({
-    from: `Zhua Furnitures <${fromEmail}>`,
+  await sendResendEmail({
     to: input.customerEmail,
     subject: content.subject,
     html: content.html,
@@ -369,16 +361,10 @@ function buildAdminEmailContent(input: AdminNewOrderNotificationInput): {
 }
 
 export async function sendAdminNewOrderNotification(input: AdminNewOrderNotificationInput): Promise<void> {
-  if (!resendClient) {
-    throw new Error('Resend is not configured.');
-  }
-
-  const { fromEmail } = getResendEnv();
   const adminEmail = getAdminNotificationEmail();
   const content = buildAdminEmailContent(input);
 
-  await resendClient.emails.send({
-    from: `Zhua Furnitures <${fromEmail}>`,
+  await sendResendEmail({
     to: adminEmail,
     replyTo: input.customerEmail || undefined,
     subject: content.subject,

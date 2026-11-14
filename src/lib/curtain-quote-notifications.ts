@@ -1,9 +1,7 @@
 import 'server-only';
 
-import { Resend } from 'resend';
-import { getAdminNotificationEmail, getResendEnv, hasResendEnv } from '@/lib/supabase/env';
-
-const resendClient = hasResendEnv ? new Resend(getResendEnv().apiKey) : null;
+import { getAdminNotificationEmail } from '@/lib/supabase/env';
+import { sendResendEmail } from '@/lib/resend';
 
 function escapeHtml(value: string): string {
   return value
@@ -128,16 +126,10 @@ function buildAdminCurtainQuoteEmailContent(input: AdminCurtainQuoteNotification
 }
 
 export async function sendAdminCurtainQuoteNotification(input: AdminCurtainQuoteNotificationInput): Promise<void> {
-  if (!resendClient) {
-    throw new Error('Resend is not configured.');
-  }
-
-  const { fromEmail } = getResendEnv();
   const adminEmail = getAdminNotificationEmail();
   const content = buildAdminCurtainQuoteEmailContent(input);
 
-  await resendClient.emails.send({
-    from: `Zhua Furnitures <${fromEmail}>`,
+  await sendResendEmail({
     to: adminEmail,
     replyTo: input.customerEmail || undefined,
     subject: content.subject,
@@ -227,15 +219,9 @@ function buildCustomerFinalQuoteEmailContent(input: CustomerFinalQuoteInput): {
 }
 
 export async function sendCustomerFinalQuote(input: CustomerFinalQuoteInput): Promise<void> {
-  if (!resendClient) {
-    throw new Error('Resend is not configured.');
-  }
-
-  const { fromEmail } = getResendEnv();
   const content = buildCustomerFinalQuoteEmailContent(input);
 
-  await resendClient.emails.send({
-    from: `Zhua Furnitures <${fromEmail}>`,
+  await sendResendEmail({
     to: input.customerEmail,
     replyTo: getAdminNotificationEmail(),
     subject: content.subject,
@@ -309,16 +295,10 @@ function buildQuotePaymentEmailContent(
 }
 
 export async function sendAdminQuotePaymentNotification(input: QuotePaymentNotificationInput): Promise<void> {
-  if (!resendClient) {
-    throw new Error('Resend is not configured.');
-  }
-
-  const { fromEmail } = getResendEnv();
   const adminEmail = getAdminNotificationEmail();
   const content = buildQuotePaymentEmailContent(input);
 
-  await resendClient.emails.send({
-    from: `Zhua Furnitures <${fromEmail}>`,
+  await sendResendEmail({
     to: adminEmail,
     replyTo: input.customerEmail || undefined,
     subject: content.subject,
