@@ -1,0 +1,52 @@
+{
+  "scentariva-machine-photo.jpg": {
+    "publicId": "zhua/products/fragrance/scentariva-machine-photo",
+    "secureUrl": "https://res.cloudinary.com/djxdl0d7x/image/upload/v1794687912/zhua/products/fragrance/scentariva-machine-photo.jpg",
+    "alt": "ScentaRiva smart commercial scent diffuser machine in matte black on a kitchen counter",
+    "width": 880,
+    "height": 1188,
+    "format": "jpg",
+    "bytes": 467457,
+    "createdAt": "2026-11-14T20:25:12Z"
+  },
+  "scentariva-collection-trio.jpg": {
+    "publicId": "zhua/products/fragrance/scentariva-collection-trio",
+    "secureUrl": "https://res.cloudinary.com/djxdl0d7x/image/upload/v1794687913/zhua/products/fragrance/scentariva-collection-trio.jpg",
+    "alt": "ScentaRiva reed diffuser collection — ZHUA Signature, Vertical Pulse and Absolut Gold",
+    "width": 891,
+    "height": 1200,
+    "format": "jpg",
+    "bytes": 724792,
+    "createdAt": "2026-11-14T20:25:13Z"
+  },
+  "scentariva-absolut-gold-150ml.jpg": {
+    "publicId": "zhua/products/fragrance/scentariva-absolut-gold-150ml",
+    "secureUrl": "https://res.cloudinary.com/djxdl0d7x/image/upload/v1794687913/zhua/products/fragrance/scentariva-absolut-gold-150ml.jpg",
+    "alt": "Absolut Gold 150ml ScentaRiva reed diffuser with gold cap and gift box",
+    "width": 891,
+    "height": 1200,
+    "format": "jpg",
+    "bytes": 106712,
+    "createdAt": "2026-11-14T20:25:13Z"
+  },
+  "scentariva-vertical-pulse-150ml.jpg": {
+    "publicId": "zhua/products/fragrance/scentariva-vertical-pulse-150ml",
+    "secureUrl": "https://res.cloudinary.com/djxdl0d7x/image/upload/v1794687914/zhua/products/fragrance/scentariva-vertical-pulse-150ml.jpg",
+    "alt": "Vertical Pulse 150ml ScentaRiva reed diffuser with gold cap and gift box",
+    "width": 891,
+    "height": 1200,
+    "format": "jpg",
+    "bytes": 703496,
+    "createdAt": "2026-11-14T20:25:14Z"
+  },
+  "scentariva-zhua-signature-150ml.jpg": {
+    "publicId": "zhua/products/fragrance/scentariva-zhua-signature-150ml",
+    "secureUrl": "https://res.cloudinary.com/djxdl0d7x/image/upload/v1794687915/zhua/products/fragrance/scentariva-zhua-signature-150ml.jpg",
+    "alt": "ZHUA Signature 150ml ScentaRiva reed diffuser with gold cap and gift box",
+    "width": 891,
+    "height": 1200,
+    "format": "jpg",
+    "bytes": 613226,
+    "createdAt": "2026-11-14T20:25:15Z"
+  }
+}

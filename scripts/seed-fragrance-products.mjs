@@ -15,6 +15,12 @@ const assetMap = JSON.parse(
   await readFile('scripts/fragrance-cloudinary-assets.json', 'utf8')
 );
 
+// Real product photos (uploaded via upload-fragrance-photos.mjs) take
+// precedence over the illustrated mock assets for machine, reed and bundles.
+const photoAssets = JSON.parse(
+  await readFile('scripts/fragrance-photo-assets.json', 'utf8')
+);
+
 function image(key) {
   const asset = assetMap[key];
   if (!asset) {
@@ -24,14 +30,23 @@ function image(key) {
   return { ...asset };
 }
 
-const machineImage = image('scentariva-machine.jpg');
+function photo(filename) {
+  const asset = photoAssets[filename];
+  if (!asset) {
+    throw new Error(`Missing photo asset: ${filename} (run upload-fragrance-photos.mjs first)`);
+  }
+
+  return { ...asset };
+}
+
+const machineImage = photo('scentariva-machine-photo.jpg');
 const amberNoirImage = image('fragrance-oil-amber-noir.jpg');
 const whiteTeaImage = image('fragrance-oil-white-tea-fig.jpg');
 const oudRoseImage = image('fragrance-oil-oud-rose.jpg');
 const coastalImage = image('fragrance-oil-coastal-linen.jpg');
-const reedImage = image('absolut-gold-reed-diffuser.jpg');
-const bundleImage = image('scentariva-home-business-bundle.jpg');
-const completeImage = image('complete-scent-collection.jpg');
+const reedImage = photo('scentariva-absolut-gold-150ml.jpg');
+const bundleImage = photo('scentariva-machine-photo.jpg');
+const completeImage = photo('scentariva-collection-trio.jpg');
 
 const common = {
   category: 'accessories',

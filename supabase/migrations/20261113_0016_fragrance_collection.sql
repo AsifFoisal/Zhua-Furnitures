@@ -24,8 +24,8 @@ The ZHUA ScentaRiva Smart Commercial Scent Diffuser Machine makes this possible.
 With its sleek matte-black finish, ScentaRiva fits beautifully into modern homes and commercial spaces. Refill it with compatible ZHUA ScentaRiva fragrance oils and enjoy a welcoming atmosphere every day.
 
 Your space creates a first impression before you even say a word. With ZHUA ScentaRiva, make that impression unforgettable.',
-    '[{"publicId":"zhua/products/fragrance/scentariva-machine","secureUrl":"https://res.cloudinary.com/djxdl0d7x/image/upload/v1794515646/zhua/products/fragrance/scentariva-machine.jpg","alt":"ScentaRiva smart commercial scent diffuser machine in matte black","width":2400,"height":2400,"format":"jpg","bytes":580802,"createdAt":"2026-11-12T20:34:06Z"}]'::jsonb,
-    '[{"name":"Matte Black","hex":"#151412","images":[{"publicId":"zhua/products/fragrance/scentariva-machine","secureUrl":"https://res.cloudinary.com/djxdl0d7x/image/upload/v1794515646/zhua/products/fragrance/scentariva-machine.jpg","alt":"ScentaRiva smart commercial scent diffuser machine in matte black","width":2400,"height":2400,"format":"jpg","bytes":580802,"createdAt":"2026-11-12T20:34:06Z"}]}]'::jsonb,
+    '[{"publicId":"zhua/products/fragrance/scentariva-machine-photo","secureUrl":"https://res.cloudinary.com/djxdl0d7x/image/upload/v1794687912/zhua/products/fragrance/scentariva-machine-photo.jpg","alt":"ScentaRiva smart commercial scent diffuser machine in matte black on a kitchen counter","width":880,"height":1188,"format":"jpg","bytes":467457,"createdAt":"2026-11-14T20:25:12Z"}]'::jsonb,
+    '[{"name":"Matte Black","hex":"#151412","images":[{"publicId":"zhua/products/fragrance/scentariva-machine-photo","secureUrl":"https://res.cloudinary.com/djxdl0d7x/image/upload/v1794687912/zhua/products/fragrance/scentariva-machine-photo.jpg","alt":"ScentaRiva smart commercial scent diffuser machine in matte black on a kitchen counter","width":880,"height":1188,"format":"jpg","bytes":467457,"createdAt":"2026-11-14T20:25:12Z"}]}]'::jsonb,
     array[]::text[],
     array[]::text[],
     true,
@@ -149,8 +149,8 @@ Includes:
 • 1 × ZHUA ScentaRiva Smart Commercial Scent Diffuser Machine
 • 1 × ZHUA Amber Noir Fragrance Oil 500ml
 • 1 × ZHUA White Tea & Fig Fragrance Oil 500ml',
-    '[{"publicId":"zhua/products/fragrance/scentariva-home-business-bundle","secureUrl":"https://res.cloudinary.com/djxdl0d7x/image/upload/v1794515653/zhua/products/fragrance/scentariva-home-business-bundle.jpg","alt":"ScentaRiva machine and two fragrance oils bundle","width":2400,"height":2400,"format":"jpg","bytes":589527,"createdAt":"2026-11-12T20:34:13Z"}]'::jsonb,
-    '[{"name":"Signature Pairing","hex":"#B59241","images":[{"publicId":"zhua/products/fragrance/scentariva-home-business-bundle","secureUrl":"https://res.cloudinary.com/djxdl0d7x/image/upload/v1794515653/zhua/products/fragrance/scentariva-home-business-bundle.jpg","alt":"ScentaRiva machine and two fragrance oils bundle","width":2400,"height":2400,"format":"jpg","bytes":589527,"createdAt":"2026-11-12T20:34:13Z"}]}]'::jsonb,
+    '[{"publicId":"zhua/products/fragrance/scentariva-machine-photo","secureUrl":"https://res.cloudinary.com/djxdl0d7x/image/upload/v1794687912/zhua/products/fragrance/scentariva-machine-photo.jpg","alt":"ScentaRiva smart commercial scent diffuser machine in matte black on a kitchen counter","width":880,"height":1188,"format":"jpg","bytes":467457,"createdAt":"2026-11-14T20:25:12Z"}]'::jsonb,
+    '[{"name":"Signature Pairing","hex":"#B59241","images":[{"publicId":"zhua/products/fragrance/scentariva-machine-photo","secureUrl":"https://res.cloudinary.com/djxdl0d7x/image/upload/v1794687912/zhua/products/fragrance/scentariva-machine-photo.jpg","alt":"ScentaRiva smart commercial scent diffuser machine in matte black on a kitchen counter","width":880,"height":1188,"format":"jpg","bytes":467457,"createdAt":"2026-11-14T20:25:12Z"}]}]'::jsonb,
     array[]::text[],
     array[]::text[],
     true,
@@ -173,8 +173,8 @@ Includes:
     'Absolut Gold is a warm, polished home fragrance designed to diffuse continuously without electricity or flames. The natural reeds draw fragrance up from the 150ml vessel and release it gently into the room, creating a subtle, welcoming atmosphere.
 
 Place it in a hallway, bathroom, bedroom, office or reception area. For a more intense scent, turn the reeds after the first day. Absolut Gold is also the perfect low-maintenance companion to the ScentaRiva machine — use the machine for larger spaces and the reed diffuser for quiet corners, guest bathrooms and bedside tables.',
-    '[{"publicId":"zhua/products/fragrance/absolut-gold-reed-diffuser","secureUrl":"https://res.cloudinary.com/djxdl0d7x/image/upload/v1794515651/zhua/products/fragrance/absolut-gold-reed-diffuser.jpg","alt":"ZHUA Absolut Gold 150 ml reed diffuser","width":2400,"height":2400,"format":"jpg","bytes":575129,"createdAt":"2026-11-12T20:34:11Z"}]'::jsonb,
-    '[{"name":"Absolut Gold","hex":"#B58A3F","images":[{"publicId":"zhua/products/fragrance/absolut-gold-reed-diffuser","secureUrl":"https://res.cloudinary.com/djxdl0d7x/image/upload/v1794515651/zhua/products/fragrance/absolut-gold-reed-diffuser.jpg","alt":"ZHUA Absolut Gold 150 ml reed diffuser","width":2400,"height":2400,"format":"jpg","bytes":575129,"createdAt":"2026-11-12T20:34:11Z"}]}]'::jsonb,
+    '[{"publicId":"zhua/products/fragrance/scentariva-absolut-gold-150ml","secureUrl":"https://res.cloudinary.com/djxdl0d7x/image/upload/v1794687913/zhua/products/fragrance/scentariva-absolut-gold-150ml.jpg","alt":"Absolut Gold 150ml ScentaRiva reed diffuser with gold cap and gift box","width":891,"height":1200,"format":"jpg","bytes":106712,"createdAt":"2026-11-14T20:25:13Z"}]'::jsonb,
+    '[{"name":"Absolut Gold","hex":"#B58A3F","images":[{"publicId":"zhua/products/fragrance/scentariva-absolut-gold-150ml","secureUrl":"https://res.cloudinary.com/djxdl0d7x/image/upload/v1794687913/zhua/products/fragrance/scentariva-absolut-gold-150ml.jpg","alt":"Absolut Gold 150ml ScentaRiva reed diffuser with gold cap and gift box","width":891,"height":1200,"format":"jpg","bytes":106712,"createdAt":"2026-11-14T20:25:13Z"}]}]'::jsonb,
     array[]::text[],
     array[]::text[],
     true,
@@ -205,8 +205,8 @@ Includes:
 • 1 × ZHUA Absolut Gold 150ml Reed Diffuser
 
 The complete collection saves R447 compared with buying each item separately.',
-    '[{"publicId":"zhua/products/fragrance/complete-scent-collection","secureUrl":"https://res.cloudinary.com/djxdl0d7x/image/upload/v1794515653/zhua/products/fragrance/complete-scent-collection.jpg","alt":"Complete ScentaRiva machine, oils and reed diffuser collection","width":2400,"height":2400,"format":"jpg","bytes":596960,"createdAt":"2026-11-12T20:34:13Z"}]'::jsonb,
-    '[{"name":"Complete Collection","hex":"#B59241","images":[{"publicId":"zhua/products/fragrance/complete-scent-collection","secureUrl":"https://res.cloudinary.com/djxdl0d7x/image/upload/v1794515653/zhua/products/fragrance/complete-scent-collection.jpg","alt":"Complete ScentaRiva machine, oils and reed diffuser collection","width":2400,"height":2400,"format":"jpg","bytes":596960,"createdAt":"2026-11-12T20:34:13Z"}]}]'::jsonb,
+    '[{"publicId":"zhua/products/fragrance/scentariva-collection-trio","secureUrl":"https://res.cloudinary.com/djxdl0d7x/image/upload/v1794687913/zhua/products/fragrance/scentariva-collection-trio.jpg","alt":"ScentaRiva reed diffuser collection — ZHUA Signature, Vertical Pulse and Absolut Gold","width":891,"height":1200,"format":"jpg","bytes":724792,"createdAt":"2026-11-14T20:25:13Z"}]'::jsonb,
+    '[{"name":"Complete Collection","hex":"#B59241","images":[{"publicId":"zhua/products/fragrance/scentariva-collection-trio","secureUrl":"https://res.cloudinary.com/djxdl0d7x/image/upload/v1794687913/zhua/products/fragrance/scentariva-collection-trio.jpg","alt":"ScentaRiva reed diffuser collection — ZHUA Signature, Vertical Pulse and Absolut Gold","width":891,"height":1200,"format":"jpg","bytes":724792,"createdAt":"2026-11-14T20:25:13Z"}]}]'::jsonb,
     array[]::text[],
     array[]::text[],
     true,

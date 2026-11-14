@@ -1,0 +1,130 @@
+{
+  "zhua-scentariva-smart-commercial-scent-diffuser-machine": {
+    "images": [
+      {
+        "alt": "ScentaRiva smart commercial scent diffuser machine in matte black",
+        "bytes": 580802,
+        "width": 2400,
+        "format": "jpg",
+        "height": 2400,
+        "publicId": "zhua/products/fragrance/scentariva-machine",
+        "createdAt": "2026-11-12T20:34:06Z",
+        "secureUrl": "https://res.cloudinary.com/djxdl0d7x/image/upload/v1794515646/zhua/products/fragrance/scentariva-machine.jpg"
+      }
+    ],
+    "colors": [
+      {
+        "hex": "#151412",
+        "name": "Matte Black",
+        "images": [
+          {
+            "alt": "ScentaRiva smart commercial scent diffuser machine in matte black",
+            "bytes": 580802,
+            "width": 2400,
+            "format": "jpg",
+            "height": 2400,
+            "publicId": "zhua/products/fragrance/scentariva-machine",
+            "createdAt": "2026-11-12T20:34:06Z",
+            "secureUrl": "https://res.cloudinary.com/djxdl0d7x/image/upload/v1794515646/zhua/products/fragrance/scentariva-machine.jpg"
+          }
+        ]
+      }
+    ]
+  },
+  "zhua-scentariva-home-business-bundle": {
+    "images": [
+      {
+        "alt": "ScentaRiva machine and two fragrance oils bundle",
+        "bytes": 589527,
+        "width": 2400,
+        "format": "jpg",
+        "height": 2400,
+        "publicId": "zhua/products/fragrance/scentariva-home-business-bundle",
+        "createdAt": "2026-11-12T20:34:13Z",
+        "secureUrl": "https://res.cloudinary.com/djxdl0d7x/image/upload/v1794515653/zhua/products/fragrance/scentariva-home-business-bundle.jpg"
+      }
+    ],
+    "colors": [
+      {
+        "hex": "#B59241",
+        "name": "Signature Pairing",
+        "images": [
+          {
+            "alt": "ScentaRiva machine and two fragrance oils bundle",
+            "bytes": 589527,
+            "width": 2400,
+            "format": "jpg",
+            "height": 2400,
+            "publicId": "zhua/products/fragrance/scentariva-home-business-bundle",
+            "createdAt": "2026-11-12T20:34:13Z",
+            "secureUrl": "https://res.cloudinary.com/djxdl0d7x/image/upload/v1794515653/zhua/products/fragrance/scentariva-home-business-bundle.jpg"
+          }
+        ]
+      }
+    ]
+  },
+  "zhua-absolut-gold-150ml-reed-diffuser": {
+    "images": [
+      {
+        "alt": "ZHUA Absolut Gold 150 ml reed diffuser",
+        "bytes": 575129,
+        "width": 2400,
+        "format": "jpg",
+        "height": 2400,
+        "publicId": "zhua/products/fragrance/absolut-gold-reed-diffuser",
+        "createdAt": "2026-11-12T20:34:11Z",
+        "secureUrl": "https://res.cloudinary.com/djxdl0d7x/image/upload/v1794515651/zhua/products/fragrance/absolut-gold-reed-diffuser.jpg"
+      }
+    ],
+    "colors": [
+      {
+        "hex": "#B58A3F",
+        "name": "Absolut Gold",
+        "images": [
+          {
+            "alt": "ZHUA Absolut Gold 150 ml reed diffuser",
+            "bytes": 575129,
+            "width": 2400,
+            "format": "jpg",
+            "height": 2400,
+            "publicId": "zhua/products/fragrance/absolut-gold-reed-diffuser",
+            "createdAt": "2026-11-12T20:34:11Z",
+            "secureUrl": "https://res.cloudinary.com/djxdl0d7x/image/upload/v1794515651/zhua/products/fragrance/absolut-gold-reed-diffuser.jpg"
+          }
+        ]
+      }
+    ]
+  },
+  "zhua-complete-scent-collection": {
+    "images": [
+      {
+        "alt": "Complete ScentaRiva machine, oils and reed diffuser collection",
+        "bytes": 596960,
+        "width": 2400,
+        "format": "jpg",
+        "height": 2400,
+        "publicId": "zhua/products/fragrance/complete-scent-collection",
+        "createdAt": "2026-11-12T20:34:13Z",
+        "secureUrl": "https://res.cloudinary.com/djxdl0d7x/image/upload/v1794515653/zhua/products/fragrance/complete-scent-collection.jpg"
+      }
+    ],
+    "colors": [
+      {
+        "hex": "#B59241",
+        "name": "Complete Collection",
+        "images": [
+          {
+            "alt": "Complete ScentaRiva machine, oils and reed diffuser collection",
+            "bytes": 596960,
+            "width": 2400,
+            "format": "jpg",
+            "height": 2400,
+            "publicId": "zhua/products/fragrance/complete-scent-collection",
+            "createdAt": "2026-11-12T20:34:13Z",
+            "secureUrl": "https://res.cloudinary.com/djxdl0d7x/image/upload/v1794515653/zhua/products/fragrance/complete-scent-collection.jpg"
+          }
+        ]
+      }
+    ]
+  }
+}
