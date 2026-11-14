@@ -57,7 +57,12 @@ interface AdminProductRow {
   modelUrl: string | null;
 }
 
-type ProductPatchPayload = {
+/**
+ * Unified shape for the create & edit product form — every numeric input is a
+ * string so the fields behave identically in both modes and empty inputs stay
+ * empty instead of flashing "0".
+ */
+interface ProductFormValues {
   sku: string;
   slug: string;
   name: string;
@@ -79,7 +84,7 @@ type ProductPatchPayload = {
   sizes: string[];
   fabrics: string[];
   images: CloudinaryImageAsset[];
-};
+}
 
 const DEFAULT_COLOR_HEX = 'var(--gold)';
 
@@ -160,7 +165,7 @@ function normalizeStringList(value: unknown): string[] {
     .filter((entry) => entry.length > 0);
 }
 
-const defaultNewProduct: ProductPatchPayload = {
+const defaultNewProduct: ProductFormValues = {
   sku: '',
   slug: '',
   name: '',
@@ -178,11 +183,41 @@ const defaultNewProduct: ProductPatchPayload = {
   widthCm: '',
   depthCm: '',
   heightCm: '',
-  colors: [{ name: '', hex: DEFAULT_COLOR_HEX, images: [] }],
+  colors: [],
   sizes: [],
   fabrics: [],
   images: [],
 };
+
+/** Row → form values (numbers become strings, ready for the unified form). */
+function formValuesFromRow(row: AdminProductRow): ProductFormValues {
+  return {
+    sku: row.sku,
+    slug: row.slug,
+    name: row.name,
+    category: row.category,
+    subcategory: row.subcategory,
+    status: row.status,
+    badge: row.badge,
+    price: String(row.price),
+    offerPercentage: String(row.offerPercentage),
+    stock: String(row.stock),
+    description: row.description,
+    longDescription: row.longDescription,
+    deliveryDays: row.deliveryDays,
+    weightKg: String(row.weightKg),
+    widthCm: String(row.widthCm),
+    depthCm: String(row.depthCm),
+    heightCm: String(row.heightCm),
+    colors: row.colors.map((color) => ({
+      ...color,
+      images: (color.images ?? []).map((image) => ({ ...image })),
+    })),
+    sizes: [...row.sizes],
+    fabrics: [...row.fabrics],
+    images: row.images.map((image) => ({ ...image })),
+  };
+}
 
 function toSafeMeasure(value: unknown): number {
   const parsed =
@@ -212,6 +247,28 @@ function calculateOfferPrice(basePrice: number, offerPercentage: number): number
   const safeOfferPercentage = clampOfferPercentage(offerPercentage);
 
   return Math.max(0, Math.round(safeBasePrice * ((100 - safeOfferPercentage) / 100)));
+}
+
+/** Price/offer edits auto-manage the sale badge, mirroring the server rules. */
+function withOffer(
+  values: ProductFormValues,
+  nextPrice: string,
+  nextOfferPercentage: string
+): ProductFormValues {
+  const pct = clampOfferPercentage(Number(nextOfferPercentage) || 0);
+  const badge =
+    pct > 0
+      ? values.badge ?? 'sale'
+      : values.badge === 'sale'
+        ? null
+        : values.badge;
+
+  return {
+    ...values,
+    price: nextPrice,
+    offerPercentage: nextOfferPercentage,
+    badge,
+  };
 }
 
 function normalizeProductRow(row: AdminProductRow): AdminProductRow {
@@ -256,29 +313,29 @@ function normalizeProductRow(row: AdminProductRow): AdminProductRow {
   };
 }
 
-function buildSavePayload(product: AdminProductRow) {
+function buildSavePayload(values: ProductFormValues) {
   return {
-    sku: product.sku.trim(),
-    slug: product.slug.trim(),
-    name: product.name.trim(),
-    category: product.category,
-    subcategory: product.subcategory.trim() || 'General',
-    status: product.status,
-    badge: product.badge,
-    price: Math.max(0, Math.round(product.price)),
-    offerPercentage: clampOfferPercentage(product.offerPercentage),
-    stock: Math.max(0, Math.round(product.stock)),
-    description: product.description.trim(),
-    longDescription: product.longDescription.trim(),
-    deliveryDays: product.deliveryDays.trim() || '7-10 business days',
-    weightKg: toSafeMeasure(product.weightKg),
-    widthCm: toSafeMeasure(product.widthCm),
-    depthCm: toSafeMeasure(product.depthCm),
-    heightCm: toSafeMeasure(product.heightCm),
-    colors: normalizeProductColors(product.colors),
-    sizes: normalizeStringList(product.sizes),
-    fabrics: normalizeStringList(product.fabrics),
-    images: product.images,
+    sku: values.sku.trim(),
+    slug: values.slug.trim(),
+    name: values.name.trim(),
+    category: values.category,
+    subcategory: values.subcategory.trim() || 'General',
+    status: values.status,
+    badge: values.badge,
+    price: Math.max(0, Math.round(Number(values.price) || 0)),
+    offerPercentage: clampOfferPercentage(Number(values.offerPercentage) || 0),
+    stock: Math.max(0, Math.round(Number(values.stock) || 0)),
+    description: values.description.trim(),
+    longDescription: values.longDescription.trim(),
+    deliveryDays: values.deliveryDays.trim() || '7-10 business days',
+    weightKg: toSafeMeasure(values.weightKg),
+    widthCm: toSafeMeasure(values.widthCm),
+    depthCm: toSafeMeasure(values.depthCm),
+    heightCm: toSafeMeasure(values.heightCm),
+    colors: normalizeProductColors(values.colors),
+    sizes: normalizeStringList(values.sizes),
+    fabrics: normalizeStringList(values.fabrics),
+    images: values.images,
   };
 }
 
@@ -369,6 +426,10 @@ async function uploadImageAsset(file: File, baseName: string): Promise<Cloudinar
   };
 }
 
+/* ============================================================
+   Field editors (colours, string lists, 3D model)
+   ============================================================ */
+
 interface ProductColorFieldsProps {
   colors: AdminProductColor[];
   onChange: (colors: AdminProductColor[]) => void;
@@ -383,7 +444,7 @@ function ProductColorFields({
   galleryImages = [],
 }: ProductColorFieldsProps) {
   const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
-  const rows = colors.length > 0 ? colors : [{ name: '', hex: DEFAULT_COLOR_HEX, images: [] }];
+  const rows = colors.length > 0 ? colors : [];
 
   const updateRow = (index: number, patch: Partial<AdminProductColor>) => {
     onChange(rows.map((row, rowIndex) => (rowIndex === index ? { ...row, ...patch } : row)));
@@ -447,54 +508,53 @@ function ProductColorFields({
     }
   };
 
+  if (rows.length === 0) {
+    return (
+      <button className={styles.ghostButton} type="button" onClick={addRow}>
+        + Add colour option
+      </button>
+    );
+  }
+
   return (
-    <div style={{ display: 'grid', gap: '0.5rem' }}>
+    <div style={{ display: 'grid', gap: '0.55rem' }}>
       {rows.map((color, index) => (
         <div
           key={index}
           style={{
             display: 'grid',
-            gap: '0.45rem',
-            padding: '0.6rem',
-            border: '1px solid rgba(148, 163, 184, 0.25)',
+            gap: '0.5rem',
+            padding: '0.65rem',
+            border: '1px solid var(--border-light)',
             borderRadius: '10px',
           }}
         >
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 180px) auto',
+              gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 170px) auto',
               gap: '0.5rem',
               alignItems: 'center',
             }}
           >
             <input
               className={styles.input}
-              placeholder="Color name"
+              placeholder="Colour name"
               value={color.name}
               onChange={(event) => updateRow(index, { name: event.target.value })}
             />
-            <div style={{ display: 'grid', gridTemplateColumns: '50px minmax(0, 1fr)', gap: '0.4rem' }}>
-              <input
-                className={styles.input}
-                type="color"
-                aria-label={`Select swatch color ${index + 1}`}
-                value={toSafeColorHex(color.hex)}
-                onChange={(event) => updateRow(index, { hex: event.target.value })}
-                style={{ minHeight: '40px', padding: '0.15rem' }}
-              />
-              <input
-                className={styles.input}
-                placeholder="var(--gold)"
-                value={color.hex}
-                onChange={(event) => updateRow(index, { hex: event.target.value })}
-              />
-            </div>
+            <input
+              className={styles.input}
+              type="color"
+              aria-label={`Select swatch colour ${index + 1}`}
+              value={toSafeColorHex(color.hex)}
+              onChange={(event) => updateRow(index, { hex: event.target.value })}
+              style={{ minHeight: '40px', padding: '0.15rem' }}
+            />
             <button
               className={styles.ghostButton}
               type="button"
               onClick={() => removeRow(index)}
-              disabled={rows.length === 1}
             >
               Remove
             </button>
@@ -502,7 +562,7 @@ function ProductColorFields({
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap' }}>
             {(color.images ?? []).map((image) => (
-              <div key={image.publicId} style={{ position: 'relative' }}>
+              <span key={image.publicId} className={styles.thumbBox}>
                 <img
                   src={image.secureUrl}
                   alt={`${color.name || 'Colour'} preview`}
@@ -511,38 +571,25 @@ function ProductColorFields({
                     height: '52px',
                     objectFit: 'cover',
                     borderRadius: '6px',
-                    border: '1px solid rgba(148, 163, 184, 0.4)',
+                    border: '1px solid var(--border-light)',
                     display: 'block',
                   }}
                 />
                 <button
                   type="button"
                   aria-label={`Remove ${color.name || 'colour'} image`}
+                  className={styles.thumbRemove}
                   onClick={() => removeImage(index, image.publicId)}
-                  style={{
-                    position: 'absolute',
-                    top: '-6px',
-                    right: '-6px',
-                    width: '18px',
-                    height: '18px',
-                    borderRadius: '50%',
-                    border: 'none',
-                    background: '#1F2937',
-                    color: '#FFFFFF',
-                    fontSize: '12px',
-                    lineHeight: 1,
-                    cursor: 'pointer',
-                  }}
                 >
                   ×
                 </button>
-              </div>
+              </span>
             ))}
             <label
               className={styles.ghostButton}
               style={{ cursor: uploadingIndex === index ? 'wait' : 'pointer' }}
             >
-              {uploadingIndex === index ? 'Uploading...' : 'Add colour image'}
+              {uploadingIndex === index ? 'Uploading...' : 'Add image'}
               <input
                 type="file"
                 accept="image/*"
@@ -558,9 +605,6 @@ function ProductColorFields({
                 }}
               />
             </label>
-            <span style={{ fontSize: '0.72rem', opacity: 0.65 }}>
-              Shown on the product page when this colour is selected.
-            </span>
           </div>
 
           {galleryImages.length > 0 ? (
@@ -570,11 +614,11 @@ function ProductColorFields({
                 alignItems: 'center',
                 gap: '0.4rem',
                 flexWrap: 'wrap',
-                borderTop: '1px dashed rgba(148, 163, 184, 0.3)',
-                paddingTop: '0.45rem',
+                borderTop: '1px dashed var(--border-light)',
+                paddingTop: '0.5rem',
               }}
             >
-              <span style={{ fontSize: '0.72rem', opacity: 0.65 }}>Attach from gallery:</span>
+              <span className={styles.fieldHint}>Attach from product images:</span>
               {galleryImages.map((image) => {
                 const isAttached = (color.images ?? []).some(
                   (entry) => entry.publicId === image.publicId
@@ -591,12 +635,12 @@ function ProductColorFields({
                         ? `Detach gallery image from ${color.name || 'colour'}`
                         : `Attach gallery image to ${color.name || 'colour'}`
                     }
-                    title={isAttached ? 'Attached - click to detach' : 'Click to attach'}
+                    title={isAttached ? 'Attached — click to detach' : 'Click to attach'}
                     style={{
                       padding: 0,
                       border: isAttached
                         ? '2px solid var(--gold)'
-                        : '2px solid rgba(148, 163, 184, 0.35)',
+                        : '2px solid var(--border-light)',
                       borderRadius: '6px',
                       background: 'none',
                       cursor: 'pointer',
@@ -624,7 +668,7 @@ function ProductColorFields({
       ))}
       <div>
         <button className={styles.ghostButton} type="button" onClick={addRow}>
-          Add Color
+          + Add colour option
         </button>
       </div>
     </div>
@@ -639,7 +683,7 @@ interface ProductStringListFieldsProps {
 }
 
 function ProductStringListFields({ values, onChange, placeholder, addLabel }: ProductStringListFieldsProps) {
-  const rows = values.length > 0 ? values : [''];
+  const rows = values.length > 0 ? values : [];
 
   const updateRow = (index: number, value: string) => {
     onChange(rows.map((entry, entryIndex) => (entryIndex === index ? value : entry)));
@@ -652,6 +696,14 @@ function ProductStringListFields({ values, onChange, placeholder, addLabel }: Pr
   const removeRow = (index: number) => {
     onChange(rows.filter((_, entryIndex) => entryIndex !== index));
   };
+
+  if (rows.length === 0) {
+    return (
+      <button className={styles.ghostButton} type="button" onClick={addRow}>
+        + {addLabel}
+      </button>
+    );
+  }
 
   return (
     <div style={{ display: 'grid', gap: '0.5rem' }}>
@@ -675,7 +727,6 @@ function ProductStringListFields({ values, onChange, placeholder, addLabel }: Pr
             className={styles.ghostButton}
             type="button"
             onClick={() => removeRow(index)}
-            disabled={rows.length === 1}
           >
             Remove
           </button>
@@ -683,7 +734,7 @@ function ProductStringListFields({ values, onChange, placeholder, addLabel }: Pr
       ))}
       <div>
         <button className={styles.ghostButton} type="button" onClick={addRow}>
-          {addLabel}
+          + {addLabel}
         </button>
       </div>
     </div>
@@ -843,17 +894,8 @@ function ProductModelFields({ productId, modelUrl, onModelChange, onError }: Pro
   };
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '0.5rem',
-        border: '1px dashed rgba(148, 163, 184, 0.4)',
-        borderRadius: '8px',
-        padding: '0.75rem',
-      }}
-    >
-      <span style={{ fontSize: '0.78rem', opacity: 0.85 }}>
+    <div style={{ display: 'grid', gap: '0.5rem' }}>
+      <span className={styles.fieldHint}>
         {modelUrl
           ? '3D model attached — it shows as a “View 3D” card on the product page.'
           : 'No 3D model yet. Upload a .glb file (max 50MB) to show a “View 3D” card on the product page.'}
@@ -864,13 +906,13 @@ function ProductModelFields({ productId, modelUrl, onModelChange, onError }: Pro
           href={modelUrl}
           target="_blank"
           rel="noopener noreferrer"
-          style={{ fontSize: '0.72rem', color: 'var(--gold)', wordBreak: 'break-all' }}
+          style={{ fontSize: '0.74rem', color: 'var(--gold)', wordBreak: 'break-all' }}
         >
           Open current model file
         </a>
       ) : null}
 
-      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
         <label className={styles.ghostButton} style={{ cursor: busy ? 'wait' : 'pointer' }}>
           {busy ? 'Working...' : modelUrl ? 'Replace model' : 'Upload GLB'}
           <input
@@ -903,6 +945,399 @@ function ProductModelFields({ productId, modelUrl, onModelChange, onError }: Pro
   );
 }
 
+/* ============================================================
+   Unified product form (create + edit) — grouped sections
+   ============================================================ */
+
+interface ProductFormFieldsProps {
+  values: ProductFormValues;
+  onPatch: (patch: Partial<ProductFormValues>) => void;
+  mode: 'create' | 'edit';
+  productId?: string;
+  modelUrl?: string | null;
+  onModelChange?: (modelUrl: string | null) => void;
+  onError: (message: string) => void;
+  uploading: boolean;
+  uploadProgress: { done: number; total: number } | null;
+  onUploadImages: (files: File[], asMain: boolean) => void;
+  onRemoveImage?: (publicId: string) => void;
+}
+
+function ProductFormFields({
+  values,
+  onPatch,
+  mode,
+  productId,
+  modelUrl,
+  onModelChange,
+  onError,
+  uploading,
+  uploadProgress,
+  onUploadImages,
+  onRemoveImage,
+}: ProductFormFieldsProps) {
+  const offerPrice = calculateOfferPrice(
+    Number(values.price) || 0,
+    Number(values.offerPercentage) || 0
+  );
+
+  const uploadLabel = uploading
+    ? uploadProgress && uploadProgress.total > 1
+      ? `Uploading ${uploadProgress.done}/${uploadProgress.total}...`
+      : 'Uploading...'
+    : null;
+
+  return (
+    <div>
+      {/* — Identity — */}
+      <div className={styles.fieldSection}>
+        <h4 className={styles.fieldSectionTitle}>Identity</h4>
+        <div className={styles.fieldGrid}>
+          <div className={`${styles.formRow} ${styles.fieldFull}`}>
+            <label className={styles.label}>Name</label>
+            <input
+              className={styles.input}
+              placeholder="Product name"
+              value={values.name}
+              onChange={(e) => onPatch({ name: e.target.value })}
+            />
+          </div>
+          <div className={styles.formRow}>
+            <label className={styles.label}>Category</label>
+            <select
+              className={styles.select}
+              value={values.category}
+              onChange={(e) => onPatch({ category: e.target.value as AdminCategory })}
+            >
+              <option>Furniture</option>
+              <option>Curtains</option>
+              <option>Accessories</option>
+            </select>
+          </div>
+          <div className={styles.formRow}>
+            <label className={styles.label}>Subcategory</label>
+            <input
+              className={styles.input}
+              placeholder="General"
+              value={values.subcategory}
+              onChange={(e) => onPatch({ subcategory: e.target.value })}
+            />
+          </div>
+          <div className={styles.formRow}>
+            <label className={styles.label}>SKU (optional)</label>
+            <input
+              className={styles.input}
+              placeholder="ZH-XXXX-000"
+              value={values.sku}
+              onChange={(e) => onPatch({ sku: e.target.value })}
+            />
+          </div>
+          <div className={styles.formRow}>
+            <label className={styles.label}>Slug (optional)</label>
+            <input
+              className={styles.input}
+              placeholder="auto-generated when empty"
+              value={values.slug}
+              onChange={(e) => onPatch({ slug: e.target.value })}
+            />
+          </div>
+          <div className={styles.formRow}>
+            <label className={styles.label}>Status</label>
+            <select
+              className={styles.select}
+              value={values.status}
+              onChange={(e) => onPatch({ status: e.target.value as AdminStatus })}
+            >
+              <option>Active</option>
+              <option>Draft</option>
+              <option>Archived</option>
+            </select>
+          </div>
+          <div className={styles.formRow}>
+            <label className={styles.label}>Badge</label>
+            <select
+              className={styles.select}
+              value={values.badge ?? ''}
+              onChange={(e) =>
+                onPatch({ badge: e.target.value ? (e.target.value as Exclude<AdminBadge, null>) : null })
+              }
+            >
+              <option value="">None</option>
+              <option value="new">new</option>
+              <option value="sale">sale</option>
+              <option value="custom">custom</option>
+              <option value="bestseller">bestseller</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* — Pricing & stock — */}
+      <div className={styles.fieldSection}>
+        <h4 className={styles.fieldSectionTitle}>Pricing &amp; Stock</h4>
+        <div className={styles.fieldGrid}>
+          <div className={styles.formRow}>
+            <label className={styles.label}>Price (R)</label>
+            <input
+              className={styles.input}
+              inputMode="numeric"
+              placeholder="e.g. 4999"
+              value={values.price}
+              onChange={(e) => onPatch(withOffer(values, e.target.value, values.offerPercentage))}
+            />
+          </div>
+          <div className={styles.formRow}>
+            <label className={styles.label}>Offer (%)</label>
+            <input
+              className={styles.input}
+              inputMode="decimal"
+              placeholder="0"
+              value={values.offerPercentage}
+              onChange={(e) => onPatch(withOffer(values, values.price, e.target.value))}
+            />
+          </div>
+          <div className={styles.formRow}>
+            <label className={styles.label}>Stock</label>
+            <input
+              className={styles.input}
+              inputMode="numeric"
+              placeholder="e.g. 12"
+              value={values.stock}
+              onChange={(e) => onPatch({ stock: e.target.value })}
+            />
+          </div>
+          <div className={styles.formRow}>
+            <label className={styles.label}>Delivery estimate</label>
+            <input
+              className={styles.input}
+              placeholder="7-10 business days"
+              value={values.deliveryDays}
+              onChange={(e) => onPatch({ deliveryDays: e.target.value })}
+            />
+          </div>
+          <p className={`${styles.fieldHint} ${styles.fieldFull}`}>
+            Selling price at this offer: <strong>{formatCurrency(offerPrice)}</strong>
+            {Number(values.offerPercentage) > 0
+              ? ` — ${values.offerPercentage}% off ${formatCurrency(Number(values.price) || 0)}. The “sale” badge is applied automatically.`
+              : ''}
+          </p>
+        </div>
+      </div>
+
+      {/* — Media — */}
+      <div className={styles.fieldSection}>
+        <h4 className={styles.fieldSectionTitle}>Media</h4>
+        <div className={styles.fieldGrid}>
+          <div className={styles.fieldFull}>
+            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+              <label className={styles.ghostButton} style={{ cursor: uploading ? 'wait' : 'pointer' }}>
+                {uploadLabel ?? (mode === 'create' ? 'Upload main image' : 'Upload images')}
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple={mode === 'edit'}
+                  style={{ display: 'none' }}
+                  disabled={uploading}
+                  onChange={(e) => {
+                    const files = Array.from(e.currentTarget.files ?? []);
+                    if (files.length > 0) {
+                      onUploadImages(files, mode === 'create');
+                    }
+                    e.currentTarget.value = '';
+                  }}
+                />
+              </label>
+              {mode === 'create' ? (
+                <label className={styles.ghostButton} style={{ cursor: uploading ? 'wait' : 'pointer' }}>
+                  {uploadLabel ?? 'Upload gallery images'}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    style={{ display: 'none' }}
+                    disabled={uploading}
+                    onChange={(e) => {
+                      const files = Array.from(e.currentTarget.files ?? []);
+                      if (files.length > 0) {
+                        onUploadImages(files, false);
+                      }
+                      e.currentTarget.value = '';
+                    }}
+                  />
+                </label>
+              ) : null}
+              <span className={styles.fieldHint}>
+                {mode === 'create'
+                  ? 'The main image is shown first on the product page.'
+                  : 'New images are added after you save. Remove images from the list row → Images.'}
+              </span>
+            </div>
+
+            {values.images.length > 0 ? (
+              <div className={styles.thumbStrip} style={{ marginTop: '0.65rem' }}>
+                {values.images.map((image, imageIndex) => (
+                  <span key={image.publicId} className={styles.thumbBox}>
+                    <img
+                      src={image.secureUrl}
+                      alt={imageIndex === 0 ? 'Main product image' : `Product image ${imageIndex + 1}`}
+                      style={{
+                        width: '84px',
+                        height: '64px',
+                        objectFit: 'cover',
+                        borderRadius: '8px',
+                        border:
+                          imageIndex === 0 ? '2px solid var(--gold)' : '1px solid var(--border-light)',
+                        display: 'block',
+                      }}
+                    />
+                    <span className={styles.thumbTag}>
+                      {imageIndex === 0 ? 'Main' : `#${imageIndex + 1}`}
+                    </span>
+                    {mode === 'create' && onRemoveImage ? (
+                      <button
+                        type="button"
+                        aria-label={`Remove product image ${imageIndex + 1}`}
+                        className={styles.thumbRemove}
+                        disabled={uploading}
+                        onClick={() => onRemoveImage(image.publicId)}
+                      >
+                        ×
+                      </button>
+                    ) : null}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <p className={styles.fieldHint} style={{ marginTop: '0.55rem' }}>
+                No images yet.
+              </p>
+            )}
+          </div>
+
+          {mode === 'edit' && productId ? (
+            <div className={styles.fieldFull}>
+              <ProductModelFields
+                productId={productId}
+                modelUrl={modelUrl ?? null}
+                onModelChange={(url) => onModelChange?.(url)}
+                onError={onError}
+              />
+            </div>
+          ) : null}
+        </div>
+      </div>
+
+      {/* — Options — */}
+      <div className={styles.fieldSection}>
+        <h4 className={styles.fieldSectionTitle}>Options</h4>
+        <div className={styles.fieldGrid}>
+          <div className={`${styles.formRow} ${styles.fieldFull}`}>
+            <label className={styles.label}>Colour options</label>
+            <ProductColorFields
+              colors={values.colors}
+              onChange={(colors) => onPatch({ colors })}
+              uploadBaseName={values.name || 'product'}
+              galleryImages={mode === 'edit' ? values.images : []}
+            />
+          </div>
+          <div className={`${styles.formRow} ${styles.fieldFull}`}>
+            <label className={styles.label}>Size options</label>
+            <ProductStringListFields
+              values={values.sizes}
+              onChange={(sizes) => onPatch({ sizes })}
+              placeholder="e.g. Queen (152cm)"
+              addLabel="Add size"
+            />
+          </div>
+          <div className={`${styles.formRow} ${styles.fieldFull}`}>
+            <label className={styles.label}>Fabric options</label>
+            <ProductStringListFields
+              values={values.fabrics}
+              onChange={(fabrics) => onPatch({ fabrics })}
+              placeholder="e.g. Linen Blend"
+              addLabel="Add fabric"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* — Dimensions — */}
+      <div className={styles.fieldSection}>
+        <h4 className={styles.fieldSectionTitle}>Dimensions</h4>
+        <div className={styles.fieldGrid}>
+          <div className={styles.formRow}>
+            <label className={styles.label}>Weight (kg)</label>
+            <input
+              className={styles.input}
+              inputMode="decimal"
+              placeholder="0"
+              value={values.weightKg}
+              onChange={(e) => onPatch({ weightKg: e.target.value })}
+            />
+          </div>
+          <div className={styles.formRow}>
+            <label className={styles.label}>Width (cm)</label>
+            <input
+              className={styles.input}
+              inputMode="decimal"
+              placeholder="0"
+              value={values.widthCm}
+              onChange={(e) => onPatch({ widthCm: e.target.value })}
+            />
+          </div>
+          <div className={styles.formRow}>
+            <label className={styles.label}>Depth (cm)</label>
+            <input
+              className={styles.input}
+              inputMode="decimal"
+              placeholder="0"
+              value={values.depthCm}
+              onChange={(e) => onPatch({ depthCm: e.target.value })}
+            />
+          </div>
+          <div className={styles.formRow}>
+            <label className={styles.label}>Height (cm)</label>
+            <input
+              className={styles.input}
+              inputMode="decimal"
+              placeholder="0"
+              value={values.heightCm}
+              onChange={(e) => onPatch({ heightCm: e.target.value })}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* — Description — */}
+      <div className={styles.fieldSection}>
+        <h4 className={styles.fieldSectionTitle}>Description</h4>
+        <div className={styles.fieldGrid}>
+          <div className={`${styles.formRow} ${styles.fieldFull}`}>
+            <label className={styles.label}>Short description</label>
+            <textarea
+              className={styles.textarea}
+              rows={3}
+              placeholder="A short summary shown near the product title"
+              value={values.description}
+              onChange={(e) => onPatch({ description: e.target.value })}
+            />
+          </div>
+          <div className={`${styles.formRow} ${styles.fieldFull}`}>
+            <label className={styles.label}>Long description (optional)</label>
+            <textarea
+              className={styles.textarea}
+              rows={5}
+              placeholder="Detailed copy for the product detail page"
+              value={values.longDescription}
+              onChange={(e) => onPatch({ longDescription: e.target.value })}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function ProductsAdminPage() {
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('All');
@@ -910,11 +1345,11 @@ export default function ProductsAdminPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [savingId, setSavingId] = useState<string | null>(null);
-  const [uploadingNew, setUploadingNew] = useState(false);
-  const [newUploadProgress, setNewUploadProgress] = useState<{ done: number; total: number } | null>(null);
-  const [editingProductId, setEditingProductId] = useState<string | null>(null);
-  const [editDraft, setEditDraft] = useState<AdminProductRow | null>(null);
-  const [newProduct, setNewProduct] = useState<ProductPatchPayload>(defaultNewProduct);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<{ done: number; total: number } | null>(null);
+  const [formMode, setFormMode] = useState<'create' | 'edit' | null>(null);
+  const [formProductId, setFormProductId] = useState<string | null>(null);
+  const [productForm, setProductForm] = useState<ProductFormValues | null>(null);
   const [imageManagerProductId, setImageManagerProductId] = useState<string | null>(null);
   const [selectedImageIds, setSelectedImageIds] = useState<string[]>([]);
   const [deletingImages, setDeletingImages] = useState(false);
@@ -946,21 +1381,23 @@ export default function ProductsAdminPage() {
     void loadProducts();
   }, []);
 
+  const formOpen = formMode !== null && productForm !== null;
+
   useEffect(() => {
-    if (!editingProductId) {
+    if (!formOpen) {
       return;
     }
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && savingId !== editingProductId) {
-        setEditingProductId(null);
-        setEditDraft(null);
+      if (event.key === 'Escape' && !(formMode === 'edit' && savingId === formProductId)) {
+        closeForm();
       }
     };
 
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [editingProductId, savingId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formOpen, formMode, formProductId, savingId]);
 
   useEffect(() => {
     if (!imageManagerProductId) {
@@ -989,42 +1426,6 @@ export default function ProductsAdminPage() {
       return matchesQuery && matchesCategory;
     });
   }, [products, query, category]);
-
-  const setLocalProduct = (
-    id: string,
-    updater: (current: AdminProductRow) => AdminProductRow
-  ) => {
-    setProducts((prev) =>
-      prev.map((product) =>
-        product.id === id ? normalizeProductRow(updater(product)) : product
-      )
-    );
-  };
-
-  const applyOfferToProduct = (
-    product: AdminProductRow,
-    nextBasePrice: number,
-    nextOfferPercentage: number
-  ): AdminProductRow => {
-    const safeBasePrice = Number.isFinite(nextBasePrice) ? Math.max(0, Math.round(nextBasePrice)) : product.price;
-    const safeOfferPercentage = clampOfferPercentage(nextOfferPercentage);
-    const nextOfferPrice = calculateOfferPrice(safeBasePrice, safeOfferPercentage);
-    const nextBadge =
-      safeOfferPercentage > 0
-        ? product.badge ?? 'sale'
-        : product.badge === 'sale'
-          ? null
-          : product.badge;
-
-    return {
-      ...product,
-      price: safeBasePrice,
-      offerPercentage: safeOfferPercentage,
-      offerPrice: nextOfferPrice,
-      originalPrice: safeOfferPercentage > 0 ? safeBasePrice : null,
-      badge: nextBadge,
-    };
-  };
 
   const updateProduct = async (
     id: string,
@@ -1073,59 +1474,102 @@ export default function ProductsAdminPage() {
     await updateProduct(product.id, { stock: nextStock }, `Stock updated to ${nextStock}.`);
   };
 
-  const openEditModal = (product: AdminProductRow) => {
+  const openCreateForm = () => {
     setError('');
-    setEditingProductId(product.id);
-    setEditDraft(
-      normalizeProductRow({
-        ...product,
-        colors: product.colors.map((color) => ({
-          ...color,
-          images: (color.images ?? []).map((image) => ({ ...image })),
-        })),
-        sizes: [...product.sizes],
-        fabrics: [...product.fabrics],
-        images: product.images.map((image) => ({ ...image })),
-      })
-    );
+    setFormMode('create');
+    setFormProductId(null);
+    setProductForm({ ...defaultNewProduct, colors: [] });
   };
 
-  const closeEditModal = () => {
-    if (editingProductId && savingId === editingProductId) {
+  const openEditForm = (product: AdminProductRow) => {
+    setError('');
+    setFormMode('edit');
+    setFormProductId(product.id);
+    setProductForm(formValuesFromRow(product));
+  };
+
+  const closeForm = () => {
+    if (formMode === 'edit' && formProductId && savingId === formProductId) {
       return;
     }
 
-    setEditingProductId(null);
-    setEditDraft(null);
+    setFormMode(null);
+    setFormProductId(null);
+    setProductForm(null);
   };
 
-  const saveEditModal = async () => {
-    if (!editingProductId || !editDraft) {
+  const saveForm = async () => {
+    if (!productForm || !formMode) {
+      return;
+    }
+
+    if (!productForm.name.trim()) {
+      setError('Product name is required.');
+      return;
+    }
+
+    const payload = buildSavePayload(productForm);
+
+    if (formMode === 'create') {
+      setSavingId('new');
+      setError('');
+
+      try {
+        const res = await fetch('/api/admin/products', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        const data = (await res.json()) as { product?: AdminProductRow; error?: string };
+        if (!res.ok || !data.product) {
+          throw new Error(data.error ?? 'Could not create product.');
+        }
+
+        setProducts((prev) => [normalizeProductRow(data.product!), ...prev]);
+        setFormMode(null);
+        setFormProductId(null);
+        setProductForm(null);
+        toast.success('Product created successfully.');
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Could not create product.';
+        setError(message);
+      } finally {
+        setSavingId(null);
+      }
+      return;
+    }
+
+    if (!formProductId) {
       return;
     }
 
     const didSave = await updateProduct(
-      editingProductId,
-      buildSavePayload(editDraft),
+      formProductId,
+      payload,
       'Product changes saved successfully.'
     );
     if (!didSave) {
       return;
     }
 
-    setEditingProductId(null);
-    setEditDraft(null);
+    setFormMode(null);
+    setFormProductId(null);
+    setProductForm(null);
+  };
+
+  const patchForm = (patch: Partial<ProductFormValues>) => {
+    setProductForm((prev) => (prev ? { ...prev, ...patch } : prev));
   };
 
   const applyModelChange = (productId: string, modelUrl: string | null) => {
     setProducts((prev) =>
       prev.map((row) => (row.id === productId ? { ...row, modelUrl } : row))
     );
-    setEditDraft((prev) => (prev && prev.id === productId ? { ...prev, modelUrl } : prev));
   };
 
-  const uploadNewProductImages = async (files: File[], asMain: boolean) => {
-    if (files.length === 0) {
+  const uploadFormImages = async (files: File[], asMain: boolean) => {
+    if (!productForm || files.length === 0) {
       return;
     }
 
@@ -1136,16 +1580,16 @@ export default function ProductsAdminPage() {
       return;
     }
 
-    setUploadingNew(true);
-    setNewUploadProgress({ done: 0, total: picked.length });
+    setUploading(true);
+    setUploadProgress({ done: 0, total: picked.length });
     setError('');
 
     try {
       const assets: CloudinaryImageAsset[] = [];
 
       for (const file of picked) {
-        assets.push(await uploadImageAsset(file, newProduct.name.trim() || 'product'));
-        setNewUploadProgress({ done: assets.length, total: picked.length });
+        assets.push(await uploadImageAsset(file, productForm.name.trim() || 'product'));
+        setUploadProgress({ done: assets.length, total: picked.length });
       }
 
       if (assets.length === 0) {
@@ -1154,7 +1598,7 @@ export default function ProductsAdminPage() {
 
       if (asMain) {
         const [newMain, ...extra] = assets;
-        const previousMain = newProduct.images[0];
+        const previousMain = productForm.images[0];
         // Replace the current main image — delete the old main asset and
         // drop any staged copy of it so images[0] stays the single main.
         if (previousMain && previousMain.publicId !== newMain.publicId) {
@@ -1168,13 +1612,10 @@ export default function ProductsAdminPage() {
             // Non-fatal: keep the new main image even if the old delete fails.
           }
         }
-        setNewProduct((prev) => ({
-          ...prev,
-          images: [newMain, ...extra, ...prev.images.slice(1)],
-        }));
+        patchForm({ images: [newMain, ...extra, ...productForm.images.slice(1)] });
         toast.success('Main product image uploaded.');
       } else {
-        setNewProduct((prev) => ({ ...prev, images: [...prev.images, ...assets] }));
+        patchForm({ images: [...productForm.images, ...assets] });
         toast.success(
           `${assets.length} gallery image${assets.length === 1 ? '' : 's'} uploaded.`
         );
@@ -1183,12 +1624,12 @@ export default function ProductsAdminPage() {
       const message = err instanceof Error ? err.message : 'Could not upload image.';
       setError(message);
     } finally {
-      setUploadingNew(false);
-      setNewUploadProgress(null);
+      setUploading(false);
+      setUploadProgress(null);
     }
   };
 
-  const removeNewProductImage = async (publicId: string) => {
+  const removeFormImage = async (publicId: string) => {
     setError('');
 
     try {
@@ -1203,11 +1644,14 @@ export default function ProductsAdminPage() {
         throw new Error(deleteData.error ?? 'Could not delete image from Cloudinary.');
       }
 
-      setNewProduct((prev) => ({
-        ...prev,
-        images: prev.images.filter((image) => image.publicId !== publicId),
-      }));
-      toast.success('Product image removed.');
+      setProductForm((prev) =>
+        prev
+          ? {
+              ...prev,
+              images: prev.images.filter((image) => image.publicId !== publicId),
+            }
+          : prev
+      );
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Could not remove image.';
       setError(message);
@@ -1308,741 +1752,147 @@ export default function ProductsAdminPage() {
     }
   };
 
-  const createProduct = async () => {
-    setError('');
-
-    if (!newProduct.name.trim()) {
-      setError('Product name is required.');
-      return;
-    }
-
-    const basePrice = Number(newProduct.price || 0);
-    const offerPercentage = clampOfferPercentage(Number(newProduct.offerPercentage || 0));
-    const badge = newProduct.badge ?? (offerPercentage > 0 ? 'sale' : null);
-
-    try {
-      const res = await fetch('/api/admin/products', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: newProduct.name,
-          slug: newProduct.slug,
-          sku: newProduct.sku,
-          category: newProduct.category,
-          subcategory: newProduct.subcategory,
-          status: newProduct.status,
-          badge,
-          price: Number.isFinite(basePrice) ? Math.max(0, basePrice) : 0,
-          offerPercentage,
-          stock: Number(newProduct.stock || 0),
-          colors: normalizeProductColors(newProduct.colors),
-          sizes: normalizeStringList(newProduct.sizes),
-          fabrics: normalizeStringList(newProduct.fabrics),
-          images: newProduct.images,
-          deliveryDays: newProduct.deliveryDays,
-          weightKg: Number(newProduct.weightKg || 0),
-          widthCm: Number(newProduct.widthCm || 0),
-          depthCm: Number(newProduct.depthCm || 0),
-          heightCm: Number(newProduct.heightCm || 0),
-          description: newProduct.description,
-          longDescription: newProduct.longDescription,
-        }),
-      });
-
-      const data = (await res.json()) as { product?: AdminProductRow; error?: string };
-      if (!res.ok || !data.product) {
-        throw new Error(data.error ?? 'Could not create product.');
-      }
-
-      setProducts((prev) => [normalizeProductRow(data.product!), ...prev]);
-      setNewProduct(defaultNewProduct);
-      toast.success('Product created successfully.');
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Could not create product.';
-      setError(message);
-    }
-  };
+  const formSaving = savingId === (formMode === 'create' ? 'new' : formProductId);
 
   return (
     <>
+      {/* — Catalog toolbar + list — */}
       <section className={styles.card}>
-        <h2 className={styles.sectionTitle}>Catalog Controls</h2>
-        <div className={styles.formGrid}>
-          <div className={styles.formRow}>
-            <label className={styles.label}>Search Products</label>
-            <input
-              className={styles.input}
-              placeholder="Type product name"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
-          </div>
-          <div className={styles.formRow}>
-            <label className={styles.label}>Category</label>
-            <select className={styles.select} value={category} onChange={(e) => setCategory(e.target.value)}>
-              <option>All</option>
-              <option>Furniture</option>
-              <option>Curtains</option>
-              <option>Accessories</option>
-            </select>
-          </div>
-          <div className={styles.formRow}>
-            <label className={styles.label}>New Product Name</label>
-            <input
-              className={styles.input}
-              placeholder="New product name"
-              value={newProduct.name}
-              onChange={(e) => setNewProduct((prev) => ({ ...prev, name: e.target.value }))}
-            />
-          </div>
-          <div className={styles.formRow}>
-            <label className={styles.label}>New Product Slug (Optional)</label>
-            <input
-              className={styles.input}
-              placeholder="auto-generated-when-empty"
-              value={newProduct.slug}
-              onChange={(e) => setNewProduct((prev) => ({ ...prev, slug: e.target.value }))}
-            />
-          </div>
-          <div className={styles.formRow}>
-            <label className={styles.label}>New Product SKU (Optional)</label>
-            <input
-              className={styles.input}
-              placeholder="ZH-XXXX-000"
-              value={newProduct.sku}
-              onChange={(e) => setNewProduct((prev) => ({ ...prev, sku: e.target.value }))}
-            />
-          </div>
-          <div className={styles.formRow}>
-            <label className={styles.label}>New Product Category</label>
-            <select
-              className={styles.select}
-              value={newProduct.category}
-              onChange={(e) =>
-                setNewProduct((prev) => ({
-                  ...prev,
-                  category: e.target.value as 'Furniture' | 'Curtains' | 'Accessories',
-                }))
-              }
-            >
-              <option>Furniture</option>
-              <option>Curtains</option>
-              <option>Accessories</option>
-            </select>
-          </div>
-          <div className={styles.formRow}>
-            <label className={styles.label}>Subcategory</label>
-            <input
-              className={styles.input}
-              placeholder="General"
-              value={newProduct.subcategory}
-              onChange={(e) => setNewProduct((prev) => ({ ...prev, subcategory: e.target.value }))}
-            />
-          </div>
-          <div className={styles.formRow}>
-            <label className={styles.label}>Original Price (R)</label>
-            <input
-              className={styles.input}
-              inputMode="numeric"
-              value={newProduct.price}
-              onChange={(e) => setNewProduct((prev) => ({ ...prev, price: e.target.value }))}
-            />
-          </div>
-          <div className={styles.formRow}>
-            <label className={styles.label}>Offer Percentage (%)</label>
-            <input
-              className={styles.input}
-              inputMode="decimal"
-              placeholder="0"
-              value={newProduct.offerPercentage}
-              onChange={(e) => setNewProduct((prev) => ({ ...prev, offerPercentage: e.target.value }))}
-            />
-          </div>
-          <div className={styles.formRow}>
-            <label className={styles.label}>New Product Stock</label>
-            <input
-              className={styles.input}
-              inputMode="numeric"
-              value={newProduct.stock}
-              onChange={(e) => setNewProduct((prev) => ({ ...prev, stock: e.target.value }))}
-            />
-          </div>
-          <div className={styles.formRow}>
-            <label className={styles.label}>Status</label>
-            <select
-              className={styles.select}
-              value={newProduct.status}
-              onChange={(e) =>
-                setNewProduct((prev) => ({
-                  ...prev,
-                  status: e.target.value as AdminStatus,
-                }))
-              }
-            >
-              <option>Active</option>
-              <option>Draft</option>
-              <option>Archived</option>
-            </select>
-          </div>
-          <div className={styles.formRow}>
-            <label className={styles.label}>Badge</label>
-            <select
-              className={styles.select}
-              value={newProduct.badge ?? ''}
-              onChange={(e) =>
-                setNewProduct((prev) => ({
-                  ...prev,
-                  badge: e.target.value ? (e.target.value as Exclude<AdminBadge, null>) : null,
-                }))
-              }
-            >
-              <option value="">None</option>
-              <option value="new">new</option>
-              <option value="sale">sale</option>
-              <option value="custom">custom</option>
-              <option value="bestseller">bestseller</option>
-            </select>
-          </div>
-          <div className={styles.formRow} style={{ gridColumn: '1 / -1' }}>
-            <label className={styles.label}>Color Options</label>
-            <ProductColorFields
-              colors={newProduct.colors}
-              onChange={(colors) => setNewProduct((prev) => ({ ...prev, colors }))}
-              uploadBaseName={newProduct.name || 'product'}
-            />
-          </div>
-          <div className={styles.formRow} style={{ gridColumn: '1 / -1' }}>
-            <label className={styles.label}>Size Options</label>
-            <ProductStringListFields
-              values={newProduct.sizes}
-              onChange={(sizes) => setNewProduct((prev) => ({ ...prev, sizes }))}
-              placeholder="e.g. Queen (152cm)"
-              addLabel="Add Size"
-            />
-          </div>
-          <div className={styles.formRow} style={{ gridColumn: '1 / -1' }}>
-            <label className={styles.label}>Fabric Options</label>
-            <ProductStringListFields
-              values={newProduct.fabrics}
-              onChange={(fabrics) => setNewProduct((prev) => ({ ...prev, fabrics }))}
-              placeholder="e.g. Linen Blend"
-              addLabel="Add Fabric"
-            />
-          </div>
-          <div className={styles.formRow} style={{ gridColumn: '1 / -1' }}>
-            <label className={styles.label}>Product Images</label>
-            <div style={{ display: 'grid', gap: '0.6rem' }}>
-              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
-                <label className={styles.ghostButton} style={{ cursor: uploadingNew ? 'wait' : 'pointer' }}>
-                  {uploadingNew
-                    ? newUploadProgress && newUploadProgress.total > 1
-                      ? `Uploading ${newUploadProgress.done}/${newUploadProgress.total}...`
-                      : 'Uploading...'
-                    : 'Upload main image'}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    style={{ display: 'none' }}
-                    disabled={uploadingNew}
-                    onChange={(e) => {
-                      const files = Array.from(e.currentTarget.files ?? []);
-                      if (files.length > 0) {
-                        void uploadNewProductImages(files, true);
-                      }
-                      e.currentTarget.value = '';
-                    }}
-                  />
-                </label>
-                <label className={styles.ghostButton} style={{ cursor: uploadingNew ? 'wait' : 'pointer' }}>
-                  {uploadingNew
-                    ? newUploadProgress && newUploadProgress.total > 1
-                      ? `Uploading ${newUploadProgress.done}/${newUploadProgress.total}...`
-                      : 'Uploading...'
-                    : 'Upload gallery images'}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    style={{ display: 'none' }}
-                    disabled={uploadingNew}
-                    onChange={(e) => {
-                      const files = Array.from(e.currentTarget.files ?? []);
-                      if (files.length > 0) {
-                        void uploadNewProductImages(files, false);
-                      }
-                      e.currentTarget.value = '';
-                    }}
-                  />
-                </label>
-                <span style={{ fontSize: '0.72rem', opacity: 0.65 }}>
-                  The main image is shown first on the product page.
+        <div className={styles.toolbar}>
+          <input
+            className={`${styles.input} ${styles.toolbarSearch}`}
+            placeholder="Search products"
+            aria-label="Search products"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          <select
+            className={styles.select}
+            style={{ maxWidth: 170 }}
+            aria-label="Filter by category"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+          >
+            <option>All</option>
+            <option>Furniture</option>
+            <option>Curtains</option>
+            <option>Accessories</option>
+          </select>
+          <button className={styles.primaryButton} type="button" onClick={openCreateForm}>
+            + Add Product
+          </button>
+          <span className={styles.toolbarCount}>
+            {loading ? 'Loading…' : `${filtered.length} of ${products.length}`}
+          </span>
+        </div>
+        {error ? <p style={{ color: 'var(--status-danger)', marginTop: '0.75rem' }}>{error}</p> : null}
+
+        <div style={{ marginTop: '0.75rem' }}>
+          {filtered.map((product) => (
+            <div key={product.id} className={styles.listRow}>
+              {product.primaryImage ? (
+                <img
+                  className={styles.listThumb}
+                  src={product.primaryImage}
+                  alt={product.name}
+                />
+              ) : (
+                <div className={styles.listThumbEmpty} aria-hidden="true" />
+              )}
+
+              <div className={styles.listMain}>
+                <span className={styles.listTitle}>{product.name}</span>
+                <span className={styles.listMeta}>
+                  <span className={styles.chip}>{product.category}</span>
+                  {product.subcategory && product.subcategory !== 'General' ? (
+                    <span className={styles.chip}>{product.subcategory}</span>
+                  ) : null}
+                  {product.badge ? (
+                    <span className={`${styles.chip} ${styles.chipGold}`}>{product.badge}</span>
+                  ) : null}
+                  <span className={styles.chip}>{product.status}</span>
+                  {product.sku ? <span>{product.sku}</span> : null}
+                  {product.imageCount > 0 ? <span>{product.imageCount} image{product.imageCount === 1 ? '' : 's'}</span> : null}
                 </span>
               </div>
 
-              {newProduct.images.length > 0 ? (
-                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                  {newProduct.images.map((image, imageIndex) => (
-                    <div key={image.publicId} style={{ position: 'relative' }}>
-                      <img
-                        src={image.secureUrl}
-                        alt={imageIndex === 0 ? 'Main product image' : `Product image ${imageIndex + 1}`}
-                        style={{
-                          width: '84px',
-                          height: '64px',
-                          objectFit: 'cover',
-                          borderRadius: '8px',
-                          border: imageIndex === 0
-                            ? '2px solid var(--gold)'
-                            : '1px solid rgba(148, 163, 184, 0.4)',
-                          display: 'block',
-                        }}
-                      />
-                      <span
-                        style={{
-                          position: 'absolute',
-                          left: '4px',
-                          bottom: '4px',
-                          fontSize: '0.62rem',
-                          padding: '0.1rem 0.35rem',
-                          borderRadius: '999px',
-                          background: 'rgba(0,0,0,0.65)',
-                          color: 'var(--text-primary)',
-                        }}
-                      >
-                        {imageIndex === 0 ? 'Main' : `#${imageIndex + 1}`}
-                      </span>
-                      <button
-                        type="button"
-                        aria-label={`Remove product image ${imageIndex + 1}`}
-                        disabled={uploadingNew}
-                        onClick={() => void removeNewProductImage(image.publicId)}
-                        style={{
-                          position: 'absolute',
-                          top: '-6px',
-                          right: '-6px',
-                          width: '20px',
-                          height: '20px',
-                          borderRadius: '50%',
-                          border: 'none',
-                          background: '#1F2937',
-                          color: '#FFFFFF',
-                          fontSize: '13px',
-                          lineHeight: 1,
-                          cursor: 'pointer',
-                        }}
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <span style={{ fontSize: '0.78rem', opacity: 0.65 }}>
-                  No images yet — upload a main image and gallery images above.
-                </span>
-              )}
-            </div>
-          </div>
-          <div className={styles.formRow}>
-            <label className={styles.label}>Delivery Days</label>
-            <input
-              className={styles.input}
-              placeholder="7-10 business days"
-              value={newProduct.deliveryDays}
-              onChange={(e) => setNewProduct((prev) => ({ ...prev, deliveryDays: e.target.value }))}
-            />
-          </div>
-          <div className={styles.formRow}>
-            <label className={styles.label}>Weight (kg)</label>
-            <input
-              className={styles.input}
-              inputMode="decimal"
-              placeholder="0"
-              value={newProduct.weightKg}
-              onChange={(e) => setNewProduct((prev) => ({ ...prev, weightKg: e.target.value }))}
-            />
-          </div>
-          <div className={styles.formRow}>
-            <label className={styles.label}>Width (cm)</label>
-            <input
-              className={styles.input}
-              inputMode="decimal"
-              placeholder="0"
-              value={newProduct.widthCm}
-              onChange={(e) => setNewProduct((prev) => ({ ...prev, widthCm: e.target.value }))}
-            />
-          </div>
-          <div className={styles.formRow}>
-            <label className={styles.label}>Depth (cm)</label>
-            <input
-              className={styles.input}
-              inputMode="decimal"
-              placeholder="0"
-              value={newProduct.depthCm}
-              onChange={(e) => setNewProduct((prev) => ({ ...prev, depthCm: e.target.value }))}
-            />
-          </div>
-          <div className={styles.formRow}>
-            <label className={styles.label}>Height (cm)</label>
-            <input
-              className={styles.input}
-              inputMode="decimal"
-              placeholder="0"
-              value={newProduct.heightCm}
-              onChange={(e) => setNewProduct((prev) => ({ ...prev, heightCm: e.target.value }))}
-            />
-          </div>
-          <div className={styles.formRow} style={{ gridColumn: '1 / -1' }}>
-            <label className={styles.label}>Short Description</label>
-            <textarea
-              className={styles.textarea}
-              placeholder="A short summary shown near the product title"
-              value={newProduct.description}
-              onChange={(e) => setNewProduct((prev) => ({ ...prev, description: e.target.value }))}
-            />
-          </div>
-          <div className={styles.formRow} style={{ gridColumn: '1 / -1' }}>
-            <label className={styles.label}>Long Description (Optional)</label>
-            <textarea
-              className={styles.textarea}
-              placeholder="Detailed copy for the product detail page"
-              value={newProduct.longDescription}
-              onChange={(e) => setNewProduct((prev) => ({ ...prev, longDescription: e.target.value }))}
-            />
-          </div>
-          <div className={styles.formRow}>
-            <label className={styles.label}>Create</label>
-            <button className={styles.ghostButton} type="button" onClick={createProduct}>
-              Add Product
-            </button>
-          </div>
-        </div>
-        {error ? <p style={{ color: 'var(--status-danger)', marginTop: '0.75rem' }}>{error}</p> : null}
-      </section>
-
-      <section className={styles.card}>
-        <h2 className={styles.sectionTitle}>Products ({filtered.length})</h2>
-        {loading ? <p style={{ color: 'var(--text-dim)' }}>Loading products...</p> : null}
-        <div className={`${styles.tableWrap} ${styles.productTableWrap}`}>
-          <table className={`${styles.table} ${styles.productTable}`}>
-            <thead>
-              <tr>
-                <th>SKU</th>
-                <th>Name</th>
-                <th>Category</th>
-                <th>Media</th>
-                <th>Stock</th>
-                <th>Specs</th>
-                <th>Price</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((product) => (
-                <tr key={product.id}>
-                  <td data-label="SKU">
-                    <input
-                      className={styles.input}
-                      readOnly
-                      value={product.sku}
-                      onChange={(e) =>
-                        setLocalProduct(product.id, (current) => ({
-                          ...current,
-                          sku: e.target.value,
-                        }))
-                      }
-                    />
-                  </td>
-                  <td data-label="Name">
-                    <div style={{ display: 'grid', gap: '0.4rem', minWidth: '220px' }}>
-                      <input
-                        className={styles.input}
-                        readOnly
-                        value={product.name}
-                        onChange={(e) =>
-                          setLocalProduct(product.id, (current) => ({
-                            ...current,
-                            name: e.target.value,
-                          }))
-                        }
-                      />
-                      <input
-                        className={styles.input}
-                        readOnly
-                        value={product.slug}
-                        onChange={(e) =>
-                          setLocalProduct(product.id, (current) => ({
-                            ...current,
-                            slug: e.target.value,
-                          }))
-                        }
-                      />
-                    </div>
-                  </td>
-                  <td data-label="Category">
-                    <div style={{ display: 'grid', gap: '0.4rem', minWidth: '180px' }}>
-                      <select
-                        className={styles.select}
-                        disabled
-                        value={product.category}
-                        onChange={(e) =>
-                          setLocalProduct(product.id, (current) => ({
-                            ...current,
-                            category: e.target.value as AdminCategory,
-                          }))
-                        }
-                      >
-                        <option>Furniture</option>
-                        <option>Curtains</option>
-                        <option>Accessories</option>
-                      </select>
-                      <input
-                        className={styles.input}
-                        readOnly
-                        value={product.subcategory}
-                        onChange={(e) =>
-                          setLocalProduct(product.id, (current) => ({
-                            ...current,
-                            subcategory: e.target.value,
-                          }))
-                        }
-                      />
-                    </div>
-                  </td>
-                  <td data-label="Media">
-                    <div style={{ display: 'grid', gap: '0.42rem' }}>
-                      {product.primaryImage ? (
-                        <img
-                          src={product.primaryImage}
-                          alt={product.name}
-                          style={{ width: 60, height: 40, objectFit: 'cover', borderRadius: 6, border: '1px solid rgba(255,255,255,0.1)' }}
-                        />
+              <div className={styles.listSide}>
+                <div className={styles.listActions}>
+                  <span style={{ textAlign: 'right' }}>
+                    <span className={styles.listStatLabel}>Price</span>
+                    <div className={styles.listStat}>
+                      {product.offerPercentage > 0 ? (
+                        <>
+                          <span style={{ color: 'var(--gold)' }}>{formatCurrency(product.offerPrice)}</span>{' '}
+                          <span style={{ textDecoration: 'line-through', color: 'var(--text-muted)' }}>
+                            {formatCurrency(product.originalPrice ?? product.price)}
+                          </span>
+                        </>
                       ) : (
-                        <div style={{ width: 60, height: 40, borderRadius: 6, background: 'rgba(255,255,255,0.08)', border: '1px dashed rgba(255,255,255,0.2)' }} />
+                        formatCurrency(product.price)
                       )}
-                      <span style={{ color: 'var(--text-dim)', fontSize: '0.72rem' }}>{product.imageCount} image(s)</span>
                     </div>
-                  </td>
-                  <td data-label="Stock">
-                    <input
-                      className={styles.input}
-                      style={{ maxWidth: '88px' }}
-                      readOnly
-                      inputMode="numeric"
-                      value={String(product.stock)}
-                      onChange={(e) => {
-                        const stock = Number(e.target.value || 0);
-                        setProducts((prev) =>
-                          prev.map((row) =>
-                            row.id === product.id
-                              ? {
-                                  ...row,
-                                  stock: Number.isFinite(stock) ? stock : row.stock,
-                                }
-                              : row
-                          )
-                        );
-                      }}
-                    />
-                  </td>
-                  <td data-label="Specs">
-                    <div style={{ display: 'grid', gap: '0.4rem', minWidth: '170px' }}>
-                      <input
-                        className={styles.input}
-                        readOnly
-                        inputMode="decimal"
-                        placeholder="Weight kg"
-                        value={String(product.weightKg)}
-                        onChange={(e) => {
-                          const next = toSafeMeasure(e.target.value);
-                          setLocalProduct(product.id, (current) => ({
-                            ...current,
-                            weightKg: next,
-                          }));
-                        }}
-                      />
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '0.35rem' }}>
-                        <input
-                          className={styles.input}
-                          readOnly
-                          inputMode="decimal"
-                          placeholder="W"
-                          value={String(product.widthCm)}
-                          onChange={(e) => {
-                            const next = toSafeMeasure(e.target.value);
-                            setLocalProduct(product.id, (current) => ({
-                              ...current,
-                              widthCm: next,
-                            }));
-                          }}
-                        />
-                        <input
-                          className={styles.input}
-                          readOnly
-                          inputMode="decimal"
-                          placeholder="D"
-                          value={String(product.depthCm)}
-                          onChange={(e) => {
-                            const next = toSafeMeasure(e.target.value);
-                            setLocalProduct(product.id, (current) => ({
-                              ...current,
-                              depthCm: next,
-                            }));
-                          }}
-                        />
-                        <input
-                          className={styles.input}
-                          readOnly
-                          inputMode="decimal"
-                          placeholder="H"
-                          value={String(product.heightCm)}
-                          onChange={(e) => {
-                            const next = toSafeMeasure(e.target.value);
-                            setLocalProduct(product.id, (current) => ({
-                              ...current,
-                              heightCm: next,
-                            }));
-                          }}
-                        />
-                      </div>
-                    </div>
-                  </td>
-                  <td data-label="Price">
-                    <div style={{ display: 'grid', gap: '0.45rem', minWidth: '180px' }}>
-                      <input
-                        className={styles.input}
-                        readOnly
-                        inputMode="numeric"
-                        value={String(product.price)}
-                        onChange={(e) => {
-                          const nextPrice = Number(e.target.value || 0);
-                          setLocalProduct(product.id, (current) =>
-                            applyOfferToProduct(
-                              current,
-                              Number.isFinite(nextPrice) ? nextPrice : current.price,
-                              current.offerPercentage
-                            )
-                          );
-                        }}
-                      />
-                      <input
-                        className={styles.input}
-                        readOnly
-                        inputMode="decimal"
-                        placeholder="Offer %"
-                        value={String(product.offerPercentage)}
-                        onChange={(e) => {
-                          const nextOffer = Number(e.target.value || 0);
-                          setLocalProduct(product.id, (current) =>
-                            applyOfferToProduct(
-                              current,
-                              current.price,
-                              Number.isFinite(nextOffer) ? nextOffer : current.offerPercentage
-                            )
-                          );
-                        }}
-                      />
-                    </div>
-                    <div style={{ color: 'var(--text-dim)', fontSize: '0.72rem', marginTop: '0.3rem', display: 'grid', gap: '0.2rem' }}>
-                      <span>Original: {formatCurrency(product.price)}</span>
-                      <span>Offer Price: {formatCurrency(product.offerPrice)}</span>
-                    </div>
-                  </td>
-                  <td data-label="Status">
-                    <div style={{ display: 'grid', gap: '0.4rem', minWidth: '145px' }}>
-                      <select
-                        className={styles.select}
-                        disabled
-                        value={product.status}
-                        onChange={(e) =>
-                          setLocalProduct(product.id, (current) => ({
-                            ...current,
-                            status: e.target.value as AdminStatus,
-                          }))
-                        }
-                      >
-                        <option>Active</option>
-                        <option>Draft</option>
-                        <option>Archived</option>
-                      </select>
-                      <select
-                        className={styles.select}
-                        disabled
-                        value={product.badge ?? ''}
-                        onChange={(e) =>
-                          setLocalProduct(product.id, (current) => ({
-                            ...current,
-                            badge: e.target.value ? (e.target.value as Exclude<AdminBadge, null>) : null,
-                          }))
-                        }
-                      >
-                        <option value="">No Badge</option>
-                        <option value="new">new</option>
-                        <option value="sale">sale</option>
-                        <option value="custom">custom</option>
-                        <option value="bestseller">bestseller</option>
-                      </select>
-                    </div>
-                  </td>
-                  <td data-label="Actions">
-                    <div className={styles.inlineActions}>
-                      <button
-                        className={styles.ghostButton}
-                        disabled={
-                          savingId === product.id ||
-                          (editingProductId !== null && editingProductId !== product.id) ||
-                          product.stock <= 0
-                        }
-                        onClick={() => void adjustProductStock(product, -1)}
-                      >
-                        -1 Stock
-                      </button>
-                      <button
-                        className={styles.ghostButton}
-                        disabled={
-                          savingId === product.id ||
-                          (editingProductId !== null && editingProductId !== product.id)
-                        }
-                        onClick={() => void adjustProductStock(product, 1)}
-                      >
-                        +1 Stock
-                      </button>
-                    </div>
-                    <div className={styles.inlineActions}>
-                      <button
-                        className={styles.ghostButton}
-                        disabled={
-                          savingId === product.id ||
-                          (editingProductId !== null && editingProductId !== product.id)
-                        }
-                        onClick={() => openEditModal(product)}
-                      >
-                        {editingProductId === product.id ? 'Editing...' : 'Edit'}
-                      </button>
-                      <button
-                        className={styles.ghostButton}
-                        disabled={savingId === product.id || product.images.length === 0}
-                        onClick={() => openImageManager(product)}
-                      >
-                        Remove Img
-                      </button>
-                      <button
-                        className={styles.ghostButton}
-                        disabled={savingId === product.id}
-                        onClick={() => deleteProduct(product.id)}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </span>
+                  <span style={{ textAlign: 'right' }}>
+                    <span className={styles.listStatLabel}>Stock</span>
+                    <div className={styles.listStat}>{product.stock}</div>
+                  </span>
+                  <div className={styles.listActions}>
+                    <button
+                      className={styles.ghostButton}
+                      disabled={savingId === product.id || product.stock <= 0}
+                      onClick={() => void adjustProductStock(product, -1)}
+                      aria-label={`Decrease stock of ${product.name}`}
+                    >
+                      −
+                    </button>
+                    <button
+                      className={styles.ghostButton}
+                      disabled={savingId === product.id}
+                      onClick={() => void adjustProductStock(product, +1)}
+                      aria-label={`Increase stock of ${product.name}`}
+                    >
+                      +
+                    </button>
+                  </div>
+                  <div className={styles.listActions}>
+                    <button
+                      className={styles.ghostButton}
+                      disabled={savingId === product.id}
+                      onClick={() => openEditForm(product)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className={styles.ghostButton}
+                      disabled={savingId === product.id || product.images.length === 0}
+                      onClick={() => openImageManager(product)}
+                    >
+                      Images
+                    </button>
+                    <button
+                      className={`${styles.ghostButton} ${styles.dangerText}`}
+                      disabled={savingId === product.id}
+                      onClick={() => void deleteProduct(product.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+          {!loading && filtered.length === 0 ? (
+            <p style={{ color: 'var(--text-dim)', padding: '1rem 0' }}>
+              {products.length === 0
+                ? 'No products yet — add the first one.'
+                : 'No products match this search.'}
+            </p>
+          ) : null}
         </div>
       </section>
 
+      {/* — Image manager — */}
       {imageManagerProduct ? (
         <div className={styles.modalOverlay} onClick={closeImageManager}>
           <div
@@ -2090,7 +1940,7 @@ export default function ProductsAdminPage() {
                           padding: 0,
                           border: isSelected
                             ? '3px solid var(--gold)'
-                            : '3px solid rgba(148, 163, 184, 0.35)',
+                            : '3px solid var(--border-light)',
                           borderRadius: '10px',
                           background: 'none',
                           cursor: 'pointer',
@@ -2109,19 +1959,7 @@ export default function ProductsAdminPage() {
                             display: 'block',
                           }}
                         />
-                        <span
-                          style={{
-                            position: 'absolute',
-                            left: '6px',
-                            bottom: '6px',
-                            fontSize: '0.62rem',
-                            padding: '0.15rem 0.4rem',
-                            borderRadius: '999px',
-                            background: 'rgba(0,0,0,0.65)',
-                            color: 'var(--text-primary)',
-                            lineHeight: 1.4,
-                          }}
-                        >
+                        <span className={styles.thumbTag}>
                           {imageIndex === 0 ? 'Main' : `#${imageIndex + 1}`}
                         </span>
                         {isSelected ? (
@@ -2134,7 +1972,7 @@ export default function ProductsAdminPage() {
                               height: '22px',
                               borderRadius: '50%',
                               background: 'var(--gold)',
-                              color: '#1F2937',
+                              color: 'var(--midnight)',
                               display: 'inline-flex',
                               alignItems: 'center',
                               justifyContent: 'center',
@@ -2151,7 +1989,7 @@ export default function ProductsAdminPage() {
                   })}
                 </div>
               )}
-              <p style={{ fontSize: '0.78rem', color: 'var(--text-dim)', marginTop: '0.75rem' }}>
+              <p className={styles.fieldHint} style={{ marginTop: '0.75rem' }}>
                 {selectedImageIds.length} image{selectedImageIds.length === 1 ? '' : 's'} selected.
                 Deleting removes the image from Cloudinary and the product.
               </p>
@@ -2175,366 +2013,67 @@ export default function ProductsAdminPage() {
         </div>
       ) : null}
 
-      {editingProductId && editDraft ? (
-        <div className={styles.modalOverlay} onClick={closeEditModal}>
+      {/* — Create / Edit product form — */}
+      {formOpen && productForm ? (
+        <div className={styles.modalOverlay} onClick={closeForm}>
           <div
             className={styles.modalCard}
             role="dialog"
             aria-modal="true"
-            aria-labelledby="edit-product-title"
+            aria-labelledby="product-form-title"
             onClick={(event) => event.stopPropagation()}
           >
             <div className={styles.modalHeader}>
               <div>
-                <h3 id="edit-product-title" className={styles.modalTitle}>Edit Product</h3>
-                <p className={styles.modalMeta}>ID: {editingProductId}</p>
+                <h3 id="product-form-title" className={styles.modalTitle}>
+                  {formMode === 'create' ? 'Add Product' : 'Edit Product'}
+                </h3>
+                <p className={styles.modalMeta}>
+                  {formMode === 'edit'
+                    ? `${productForm.name || 'Product'} · ID: ${formProductId}`
+                    : 'Fill in the details below — only the name is required to start.'}
+                </p>
               </div>
-              <button className={styles.ghostButton} onClick={closeEditModal} disabled={savingId === editingProductId}>
+              <button className={styles.ghostButton} onClick={closeForm} disabled={formSaving}>
                 Close
               </button>
             </div>
 
             <div className={styles.modalBody}>
-              <div className={styles.formGrid}>
-                <div className={styles.formRow}>
-                  <label className={styles.label}>SKU</label>
-                  <input
-                    className={styles.input}
-                    value={editDraft.sku}
-                    onChange={(e) =>
-                      setEditDraft((prev) => (prev ? { ...prev, sku: e.target.value } : prev))
-                    }
-                  />
-                </div>
-
-                <div className={styles.formRow}>
-                  <label className={styles.label}>Name</label>
-                  <input
-                    className={styles.input}
-                    value={editDraft.name}
-                    onChange={(e) =>
-                      setEditDraft((prev) => (prev ? { ...prev, name: e.target.value } : prev))
-                    }
-                  />
-                </div>
-
-                <div className={styles.formRow}>
-                  <label className={styles.label}>Slug</label>
-                  <input
-                    className={styles.input}
-                    value={editDraft.slug}
-                    onChange={(e) =>
-                      setEditDraft((prev) => (prev ? { ...prev, slug: e.target.value } : prev))
-                    }
-                  />
-                </div>
-
-                <div className={styles.formRow}>
-                  <label className={styles.label}>Category</label>
-                  <select
-                    className={styles.select}
-                    value={editDraft.category}
-                    onChange={(e) =>
-                      setEditDraft((prev) =>
-                        prev
-                          ? {
-                              ...prev,
-                              category: e.target.value as AdminCategory,
-                            }
-                          : prev
-                      )
-                    }
-                  >
-                    <option>Furniture</option>
-                    <option>Curtains</option>
-                    <option>Accessories</option>
-                  </select>
-                </div>
-
-                <div className={styles.formRow}>
-                  <label className={styles.label}>Subcategory</label>
-                  <input
-                    className={styles.input}
-                    value={editDraft.subcategory}
-                    onChange={(e) =>
-                      setEditDraft((prev) => (prev ? { ...prev, subcategory: e.target.value } : prev))
-                    }
-                  />
-                </div>
-
-                <div className={styles.formRow}>
-                  <label className={styles.label}>Status</label>
-                  <select
-                    className={styles.select}
-                    value={editDraft.status}
-                    onChange={(e) =>
-                      setEditDraft((prev) =>
-                        prev
-                          ? {
-                              ...prev,
-                              status: e.target.value as AdminStatus,
-                            }
-                          : prev
-                      )
-                    }
-                  >
-                    <option>Active</option>
-                    <option>Draft</option>
-                    <option>Archived</option>
-                  </select>
-                </div>
-
-                <div className={styles.formRow}>
-                  <label className={styles.label}>Badge</label>
-                  <select
-                    className={styles.select}
-                    value={editDraft.badge ?? ''}
-                    onChange={(e) =>
-                      setEditDraft((prev) =>
-                        prev
-                          ? {
-                              ...prev,
-                              badge: e.target.value ? (e.target.value as Exclude<AdminBadge, null>) : null,
-                            }
-                          : prev
-                      )
-                    }
-                  >
-                    <option value="">No Badge</option>
-                    <option value="new">new</option>
-                    <option value="sale">sale</option>
-                    <option value="custom">custom</option>
-                    <option value="bestseller">bestseller</option>
-                  </select>
-                </div>
-
-                <div className={styles.formRow}>
-                  <label className={styles.label}>Stock</label>
-                  <input
-                    className={styles.input}
-                    inputMode="numeric"
-                    value={String(editDraft.stock)}
-                    onChange={(e) => {
-                      const nextStock = Number(e.target.value || 0);
-                      setEditDraft((prev) =>
-                        prev
-                          ? {
-                              ...prev,
-                              stock: Number.isFinite(nextStock) ? nextStock : prev.stock,
-                            }
-                          : prev
-                      );
-                    }}
-                  />
-                </div>
-
-                <div className={styles.formRow}>
-                  <label className={styles.label}>Price (R)</label>
-                  <input
-                    className={styles.input}
-                    inputMode="numeric"
-                    value={String(editDraft.price)}
-                    onChange={(e) => {
-                      const nextPrice = Number(e.target.value || 0);
-                      setEditDraft((prev) =>
-                        prev
-                          ? applyOfferToProduct(
-                              prev,
-                              Number.isFinite(nextPrice) ? nextPrice : prev.price,
-                              prev.offerPercentage
-                            )
-                          : prev
-                      );
-                    }}
-                  />
-                </div>
-
-                <div className={styles.formRow}>
-                  <label className={styles.label}>Offer Percentage (%)</label>
-                  <input
-                    className={styles.input}
-                    inputMode="decimal"
-                    value={String(editDraft.offerPercentage)}
-                    onChange={(e) => {
-                      const nextOffer = Number(e.target.value || 0);
-                      setEditDraft((prev) =>
-                        prev
-                          ? applyOfferToProduct(
-                              prev,
-                              prev.price,
-                              Number.isFinite(nextOffer) ? nextOffer : prev.offerPercentage
-                            )
-                          : prev
-                      );
-                    }}
-                  />
-                </div>
-
-                <div className={styles.formRow}>
-                  <label className={styles.label}>Delivery Days</label>
-                  <input
-                    className={styles.input}
-                    value={editDraft.deliveryDays}
-                    onChange={(e) =>
-                      setEditDraft((prev) => (prev ? { ...prev, deliveryDays: e.target.value } : prev))
-                    }
-                  />
-                </div>
-
-                <div className={styles.formRow} style={{ gridColumn: '1 / -1' }}>
-                  <label className={styles.label}>Color Options</label>
-                  <ProductColorFields
-                    colors={editDraft.colors}
-                    onChange={(colors) =>
-                      setEditDraft((prev) => (prev ? { ...prev, colors } : prev))
-                    }
-                    uploadBaseName={editDraft.name || 'product'}
-                    galleryImages={editDraft.images}
-                  />
-                </div>
-
-                <div className={styles.formRow} style={{ gridColumn: '1 / -1' }}>
-                  <label className={styles.label}>Size Options</label>
-                  <ProductStringListFields
-                    values={editDraft.sizes}
-                    onChange={(sizes) =>
-                      setEditDraft((prev) => (prev ? { ...prev, sizes } : prev))
-                    }
-                    placeholder="e.g. Queen (152cm)"
-                    addLabel="Add Size"
-                  />
-                </div>
-
-                <div className={styles.formRow} style={{ gridColumn: '1 / -1' }}>
-                  <label className={styles.label}>Fabric Options</label>
-                  <ProductStringListFields
-                    values={editDraft.fabrics}
-                    onChange={(fabrics) =>
-                      setEditDraft((prev) => (prev ? { ...prev, fabrics } : prev))
-                    }
-                    placeholder="e.g. Linen Blend"
-                    addLabel="Add Fabric"
-                  />
-                </div>
-
-                <div className={styles.formRow}>
-                  <label className={styles.label}>Weight (kg)</label>
-                  <input
-                    className={styles.input}
-                    inputMode="decimal"
-                    value={String(editDraft.weightKg)}
-                    onChange={(e) =>
-                      setEditDraft((prev) =>
-                        prev
-                          ? {
-                              ...prev,
-                              weightKg: toSafeMeasure(e.target.value),
-                            }
-                          : prev
-                      )
-                    }
-                  />
-                </div>
-
-                <div className={styles.formRow}>
-                  <label className={styles.label}>Width (cm)</label>
-                  <input
-                    className={styles.input}
-                    inputMode="decimal"
-                    value={String(editDraft.widthCm)}
-                    onChange={(e) =>
-                      setEditDraft((prev) =>
-                        prev
-                          ? {
-                              ...prev,
-                              widthCm: toSafeMeasure(e.target.value),
-                            }
-                          : prev
-                      )
-                    }
-                  />
-                </div>
-
-                <div className={styles.formRow}>
-                  <label className={styles.label}>Depth (cm)</label>
-                  <input
-                    className={styles.input}
-                    inputMode="decimal"
-                    value={String(editDraft.depthCm)}
-                    onChange={(e) =>
-                      setEditDraft((prev) =>
-                        prev
-                          ? {
-                              ...prev,
-                              depthCm: toSafeMeasure(e.target.value),
-                            }
-                          : prev
-                      )
-                    }
-                  />
-                </div>
-
-                <div className={styles.formRow}>
-                  <label className={styles.label}>Height (cm)</label>
-                  <input
-                    className={styles.input}
-                    inputMode="decimal"
-                    value={String(editDraft.heightCm)}
-                    onChange={(e) =>
-                      setEditDraft((prev) =>
-                        prev
-                          ? {
-                              ...prev,
-                              heightCm: toSafeMeasure(e.target.value),
-                            }
-                          : prev
-                      )
-                    }
-                  />
-                </div>
-
-                <div className={styles.formRow} style={{ gridColumn: '1 / -1' }}>
-                  <label className={styles.label}>Short Description</label>
-                  <textarea
-                    className={styles.textarea}
-                    value={editDraft.description}
-                    onChange={(e) =>
-                      setEditDraft((prev) => (prev ? { ...prev, description: e.target.value } : prev))
-                    }
-                  />
-                </div>
-
-                <div className={styles.formRow} style={{ gridColumn: '1 / -1' }}>
-                  <label className={styles.label}>Long Description</label>
-                  <textarea
-                    className={styles.textarea}
-                    value={editDraft.longDescription}
-                    onChange={(e) =>
-                      setEditDraft((prev) => (prev ? { ...prev, longDescription: e.target.value } : prev))
-                    }
-                  />
-                </div>
-
-                <div className={styles.formRow} style={{ gridColumn: '1 / -1' }}>
-                  <label className={styles.label}>3D Model (GLB)</label>
-                  {editingProductId ? (
-                    <ProductModelFields
-                      productId={editingProductId}
-                      modelUrl={editDraft.modelUrl}
-                      onModelChange={(modelUrl) => applyModelChange(editingProductId, modelUrl)}
-                      onError={setError}
-                    />
-                  ) : null}
-                </div>
-              </div>
+              <ProductFormFields
+                values={productForm}
+                onPatch={patchForm}
+                mode={formMode}
+                productId={formMode === 'edit' ? formProductId ?? undefined : undefined}
+                modelUrl={formMode === 'edit' ? products.find((p) => p.id === formProductId)?.modelUrl ?? null : null}
+                onModelChange={(url) =>
+                  formProductId ? applyModelChange(formProductId, url) : undefined
+                }
+                onError={setError}
+                uploading={uploading}
+                uploadProgress={uploadProgress}
+                onUploadImages={(files, asMain) => void uploadFormImages(files, asMain)}
+                onRemoveImage={formMode === 'create' ? (publicId) => void removeFormImage(publicId) : undefined}
+              />
+              {error && formMode === 'edit' ? (
+                <p style={{ color: 'var(--status-danger)', marginTop: '0.75rem' }}>{error}</p>
+              ) : null}
             </div>
 
             <div className={styles.modalFooter}>
-              <button className={styles.ghostButton} onClick={closeEditModal} disabled={savingId === editingProductId}>
+              <button className={styles.ghostButton} onClick={closeForm} disabled={formSaving}>
                 Cancel
               </button>
-              <button className={styles.ghostButton} onClick={saveEditModal} disabled={savingId === editingProductId}>
-                {savingId === editingProductId ? 'Saving...' : 'Save Changes'}
+              <button
+                className={styles.primaryButton}
+                onClick={() => void saveForm()}
+                disabled={formSaving || uploading}
+              >
+                {formSaving
+                  ? 'Saving...'
+                  : formMode === 'create'
+                    ? 'Create Product'
+                    : 'Save Changes'}
               </button>
             </div>
           </div>
