@@ -438,6 +438,11 @@ export async function POST(request: Request) {
             : 'Unknown notification error',
       });
     }
+  } else {
+    console.warn('[Orders API] RESEND_API_KEY/RESEND_FROM_EMAIL missing; new-order email skipped.', {
+      orderId: order.id,
+      orderNumber: order.order_number,
+    });
   }
 
   return NextResponse.json({

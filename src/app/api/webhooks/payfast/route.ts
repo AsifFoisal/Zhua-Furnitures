@@ -13,7 +13,10 @@ import {
   verifyPayFastSignature,
 } from '@/lib/payments/payfast';
 import { applyPaidOrderStockDecrement } from '@/lib/inventory';
-import { sendAdminNewOrderNotification } from '@/lib/order-notifications';
+import {
+  sendAdminNewOrderNotification,
+  sendOrderStatusNotification,
+} from '@/lib/order-notifications';
 import { processCurtainQuotePaymentWebhook } from '@/lib/quote-payments';
 
 export const dynamic = 'force-dynamic';
@@ -542,6 +545,34 @@ export async function POST(request: Request) {
               : 'Unknown notification error',
         });
       }
+
+      try {
+        await sendOrderStatusNotification({
+          customerEmail: order.customer_email,
+          customerName: order.customer_name,
+          orderNumber: order.order_number,
+          paymentStatus: 'paid',
+        });
+      } catch (notificationError) {
+        console.error('[PayFast Webhook] Failed to send customer payment-confirmation email.', {
+          webhookId,
+          orderId: order.id,
+          orderNumber: order.order_number,
+          error:
+            notificationError instanceof Error
+              ? notificationError.message
+              : 'Unknown notification error',
+        });
+      }
+    } else {
+      console.warn(
+        '[PayFast Webhook] RESEND_API_KEY/RESEND_FROM_EMAIL missing; paid-order emails skipped.',
+        {
+          webhookId,
+          orderId: order.id,
+          orderNumber: order.order_number,
+        }
+      );
     }
   }
 
