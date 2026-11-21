@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createSupabaseAdminClient } from '@/lib/supabase/admin';
-import { hasServiceSupabaseEnv } from '@/lib/supabase/env';
+import { hasResendEnv, hasServiceSupabaseEnv } from '@/lib/supabase/env';
 import { getOptionalUser } from '@/lib/auth';
+import { sendAdminVendorApplicationNotification } from '@/lib/vendor-notifications';
 
 export const dynamic = 'force-dynamic';
 
@@ -65,6 +66,33 @@ export async function POST(request: Request) {
       { error: error?.message ?? 'Could not submit vendor application.' },
       { status: 500 }
     );
+  }
+
+  if (hasResendEnv) {
+    try {
+      await sendAdminVendorApplicationNotification({
+        applicationId: data.id,
+        businessName,
+        contactName,
+        email,
+        phone,
+        website,
+        category,
+        message,
+      });
+    } catch (notificationError) {
+      console.error('[Marketplace Waitlist API] Failed to send admin vendor application email.', {
+        applicationId: data.id,
+        error:
+          notificationError instanceof Error
+            ? notificationError.message
+            : 'Unknown notification error',
+      });
+    }
+  } else {
+    console.warn('[Marketplace Waitlist API] RESEND_API_KEY/RESEND_FROM_EMAIL missing; vendor application email skipped.', {
+      applicationId: data.id,
+    });
   }
 
   return NextResponse.json({ success: true, id: data.id });

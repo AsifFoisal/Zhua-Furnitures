@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createSupabaseAdminClient } from '@/lib/supabase/admin';
-import { hasServiceSupabaseEnv } from '@/lib/supabase/env';
+import { hasResendEnv, hasServiceSupabaseEnv } from '@/lib/supabase/env';
 import { getOptionalUser } from '@/lib/auth';
+import { sendAdminContactEnquiryNotification } from '@/lib/contact-notifications';
 
 export const dynamic = 'force-dynamic';
 
@@ -50,6 +51,31 @@ export async function POST(request: Request) {
 
   if (error || !data?.id) {
     return NextResponse.json({ error: error?.message ?? 'Could not submit enquiry.' }, { status: 500 });
+  }
+
+  if (hasResendEnv) {
+    try {
+      await sendAdminContactEnquiryNotification({
+        enquiryId: data.id,
+        fullName,
+        email,
+        phone,
+        message,
+        source: 'website',
+      });
+    } catch (notificationError) {
+      console.error('[Contact API] Failed to send admin enquiry email.', {
+        enquiryId: data.id,
+        error:
+          notificationError instanceof Error
+            ? notificationError.message
+            : 'Unknown notification error',
+      });
+    }
+  } else {
+    console.warn('[Contact API] RESEND_API_KEY/RESEND_FROM_EMAIL missing; enquiry email skipped.', {
+      enquiryId: data.id,
+    });
   }
 
   return NextResponse.json({ id: data.id, success: true });

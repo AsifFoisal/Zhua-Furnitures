@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createSupabaseAdminClient } from '@/lib/supabase/admin';
-import { hasServiceSupabaseEnv } from '@/lib/supabase/env';
+import { hasResendEnv, hasServiceSupabaseEnv } from '@/lib/supabase/env';
 import { getOptionalUser } from '@/lib/auth';
+import { sendAdminInstallationBookingNotification } from '@/lib/installation-notifications';
 
 export const dynamic = 'force-dynamic';
 
@@ -68,6 +69,34 @@ export async function POST(request: Request) {
 
   if (error || !data?.id) {
     return NextResponse.json({ error: error?.message ?? 'Could not create booking.' }, { status: 500 });
+  }
+
+  if (hasResendEnv) {
+    try {
+      await sendAdminInstallationBookingNotification({
+        bookingId: data.id,
+        productName,
+        address,
+        preferredDate,
+        preferredSlot,
+        customerName,
+        customerEmail,
+        customerPhone,
+        notes,
+      });
+    } catch (notificationError) {
+      console.error('[Book Installation API] Failed to send admin booking email.', {
+        bookingId: data.id,
+        error:
+          notificationError instanceof Error
+            ? notificationError.message
+            : 'Unknown notification error',
+      });
+    }
+  } else {
+    console.warn('[Book Installation API] RESEND_API_KEY/RESEND_FROM_EMAIL missing; booking email skipped.', {
+      bookingId: data.id,
+    });
   }
 
   return NextResponse.json({ id: data.id, success: true });
