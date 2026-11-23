@@ -1,6 +1,12 @@
 import type { Metadata } from 'next';
 import DivisionLanding from '@/components/pages/DivisionLanding';
+import type { Product } from '@/lib/data';
 import { homeImagery } from '@/lib/home-imagery';
+import { getStorefrontProducts } from '@/lib/storefront-products';
+import CurtainCalculatorCta from './CurtainCalculatorCta';
+import CurtainProductsSection from './CurtainProductsSection';
+
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Curtains & Blinds — Made-to-Measure, Measured & Installed',
@@ -8,7 +14,18 @@ export const metadata: Metadata = {
     'Made-to-measure ZHUA curtains and blinds: wave, pinch pleat, eyelet, sheer, blockout, roller, zebra, venetian, roman, vertical and motorised options — professionally measured, manufactured and installed.',
 };
 
-export default function CurtainsBlindsPage() {
+async function getCurtainProducts(): Promise<Product[]> {
+  try {
+    const products = await getStorefrontProducts();
+    return products.filter((product) => product.category === 'curtains');
+  } catch {
+    return [];
+  }
+}
+
+export default async function CurtainsBlindsPage() {
+  const products = await getCurtainProducts();
+
   return (
     <DivisionLanding
       eyebrow="ZHUA Curtains & Blinds"
@@ -47,6 +64,9 @@ export default function CurtainsBlindsPage() {
           description: 'Convenient, child-safe operation at the touch of a button.',
         },
       ]}
-    />
+    >
+      <CurtainCalculatorCta />
+      <CurtainProductsSection products={products} />
+    </DivisionLanding>
   );
 }
