@@ -279,8 +279,16 @@ export default function ShopPage() {
                       <span>({product.reviewCount})</span>
                     </div>
                     <div className={styles.cardPrice}>
-                      <span className={styles.price}>{formatPrice(product.price)}</span>
-                      {product.originalPrice && <span className={styles.original}>{formatPrice(product.originalPrice)}</span>}
+                      <span className={styles.price}>
+                        {formatPrice(product.price)}
+                        {product.category === 'curtains' ? ' / m' : ''}
+                      </span>
+                      {product.originalPrice && (
+                        <span className={styles.original}>
+                          {formatPrice(product.originalPrice)}
+                          {product.category === 'curtains' ? ' / m' : ''}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </Link>

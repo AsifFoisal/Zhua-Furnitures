@@ -103,6 +103,12 @@ export default function ProductPage() {
   const fabricOptions = product && Array.isArray(product.fabrics)
     ? product.fabrics.filter((entry) => typeof entry === 'string' && entry.trim().length > 0)
     : [];
+  const lightFiltrationOptions = product && Array.isArray(product.lightFiltration)
+    ? product.lightFiltration.filter((entry) => typeof entry === 'string' && entry.trim().length > 0)
+    : [];
+  const topStyleOptions = product && Array.isArray(product.topStyles)
+    ? product.topStyles.filter((entry) => typeof entry === 'string' && entry.trim().length > 0)
+    : [];
 
   const [selectedColorName, setSelectedColorName] = useState(colorOptions[0]?.name ?? 'Default');
   const [selectedSize, setSelectedSize] = useState(sizeOptions[0] || '');
@@ -205,6 +211,9 @@ export default function ProductPage() {
   const depthCm = Number(product?.dimensions?.depthCm ?? 0);
   const heightCm = Number(product?.dimensions?.heightCm ?? 0);
   const hasPhysicalSpecs = weightKg > 0 || widthCm > 0 || depthCm > 0 || heightCm > 0;
+  const isCurtain = product?.category === 'curtains';
+  const hasCurtainSpecs = lightFiltrationOptions.length > 0 || topStyleOptions.length > 0;
+  const hasSpecifications = hasPhysicalSpecs || hasCurtainSpecs;
   const colorImages = Array.isArray(selectedColor.images)
     ? toPreviewImages(selectedColor.images)
     : [];
@@ -459,11 +468,19 @@ export default function ProductPage() {
             </div>
 
             <div className={styles.priceBlock}>
-              <span className={styles.price}>{formatPrice(product.price)}</span>
+              <span className={styles.price}>
+                {formatPrice(product.price)}
+                {isCurtain ? (
+                  <span style={{ fontSize: '0.45em', color: 'var(--text-muted)' }}> / m</span>
+                ) : null}
+              </span>
               {product.originalPrice ? (
-                <span className={styles.originalPrice}>{formatPrice(product.originalPrice)}</span>
+                <span className={styles.originalPrice}>
+                  {formatPrice(product.originalPrice)}
+                  {isCurtain ? ' / m' : ''}
+                </span>
               ) : null}
-              {saving > 0 ? <span className={styles.saving}>Save {formatPrice(saving)}</span> : null}
+              {saving > 0 ? <span className={styles.saving}>Save {formatPrice(saving)}{isCurtain ? ' / m' : ''}</span> : null}
             </div>
 
             <p className={styles.desc}>{product.description}</p>
@@ -693,10 +710,22 @@ export default function ProductPage() {
                 </div>
               ) : null}
 
-              {hasPhysicalSpecs ? (
+              {hasSpecifications ? (
                 <div className={styles.block}>
                   <h2 className={styles.blockTitle}>Specifications</h2>
                   <dl className={styles.specList}>
+                    {lightFiltrationOptions.length > 0 ? (
+                      <div className={styles.specRow}>
+                        <dt>Light filtration</dt>
+                        <dd>{lightFiltrationOptions.join(', ')}</dd>
+                      </div>
+                    ) : null}
+                    {topStyleOptions.length > 0 ? (
+                      <div className={styles.specRow}>
+                        <dt>Top style</dt>
+                        <dd>{topStyleOptions.join(', ')}</dd>
+                      </div>
+                    ) : null}
                     {weightKg > 0 ? (
                       <div className={styles.specRow}>
                         <dt>Weight</dt>

@@ -15,6 +15,38 @@ import { createSupabaseAdminClient } from '@/lib/supabase/admin';
 
 export const dynamic = 'force-dynamic';
 
+const ADMIN_PRODUCT_COLUMNS =
+  'id, sku, slug, name, category, subcategory, stock, price_cents, original_price_cents, status, badge, description, long_description, delivery_days, weight_kg, width_cm, depth_cm, height_cm, colors, sizes, fabrics, light_filtration, top_styles, images, model_url';
+
+/** Pre-migration column set (curtain fields not added yet). */
+const ADMIN_PRODUCT_LEGACY_COLUMNS =
+  'id, sku, slug, name, category, subcategory, stock, price_cents, original_price_cents, status, badge, description, long_description, delivery_days, weight_kg, width_cm, depth_cm, height_cm, colors, sizes, fabrics, images, model_url';
+
+const CURTAIN_MIGRATION_HINT =
+  'Run migration 20261123_0018_product_curtain_fields.sql in the Supabase SQL editor first.';
+
+function isMissingCurtainColumnsError(error: { code?: string; message?: string } | null): boolean {
+  if (!error) {
+    return false;
+  }
+
+  return (
+    error.code === 'PGRST204' ||
+    error.code === '42703' ||
+    /column .* does not exist|could not find the '(light_filtration|top_styles)' column/i.test(
+      error.message ?? '',
+    )
+  );
+}
+
+function withCurtainMigrationHint(message: string): string {
+  if (/light_filtration|top_styles/i.test(message)) {
+    return `${message} — ${CURTAIN_MIGRATION_HINT}`;
+  }
+
+  return message;
+}
+
 function clampOfferPercentage(value: unknown, fallback = 0): number {
   const parsed =
     typeof value === 'number'
@@ -165,6 +197,8 @@ function toAdminProductRow(product: {
   colors: unknown;
   sizes: unknown;
   fabrics: unknown;
+  light_filtration?: unknown;
+  top_styles?: unknown;
   images: unknown;
   model_url: string | null;
 }) {
@@ -199,6 +233,8 @@ function toAdminProductRow(product: {
     colors: normalizeProductColors(product.colors),
     sizes: toSafeStringArray(product.sizes),
     fabrics: toSafeStringArray(product.fabrics),
+    lightFiltration: toSafeStringArray(product.light_filtration),
+    topStyles: toSafeStringArray(product.top_styles),
     images,
     primaryImage: images[0]?.secureUrl ?? null,
     imageCount: images.length,
@@ -225,6 +261,7 @@ export async function PATCH(
     stock?: number;
     price?: number;
     offerPercentage?: number;
+    discountPrice?: number | null;
     status?: string;
     badge?: string | null;
     description?: string;
@@ -238,6 +275,8 @@ export async function PATCH(
     colors?: unknown;
     sizes?: unknown;
     fabrics?: unknown;
+    lightFiltration?: unknown;
+    topStyles?: unknown;
   };
 
   const supabase = createSupabaseAdminClient();
@@ -264,6 +303,8 @@ export async function PATCH(
     colors?: ProductColor[];
     sizes?: string[];
     fabrics?: string[];
+    light_filtration?: string[];
+    top_styles?: string[];
     images?: unknown;
   } = {};
 
@@ -344,9 +385,18 @@ export async function PATCH(
     updateData.fabrics = toSafeStringArray(payload.fabrics);
   }
 
+  if (payload.lightFiltration !== undefined) {
+    updateData.light_filtration = toSafeStringArray(payload.lightFiltration);
+  }
+
+  if (payload.topStyles !== undefined) {
+    updateData.top_styles = toSafeStringArray(payload.topStyles);
+  }
+
   if (
     (typeof payload.price === 'number' && Number.isFinite(payload.price)) ||
-    payload.offerPercentage !== undefined
+    payload.offerPercentage !== undefined ||
+    payload.discountPrice !== undefined
   ) {
     const { data: current, error: currentError } = await supabase
       .from('products')
@@ -370,21 +420,42 @@ export async function PATCH(
       typeof payload.price === 'number' && Number.isFinite(payload.price)
         ? Math.max(0, payload.price)
         : currentBasePrice;
-    const nextOfferPercentage =
-      payload.offerPercentage !== undefined
-        ? clampOfferPercentage(payload.offerPercentage, currentOfferPercentage)
-        : currentOfferPercentage;
-    const pricing = applyOfferPricing(nextBasePrice, nextOfferPercentage);
+
+    let pricing: { priceCents: number; originalPriceCents: number | null };
+
+    if (payload.discountPrice !== undefined) {
+      // Curtain form: an explicit per-metre discount price, stored to the cent.
+      const discount = Number(payload.discountPrice);
+      const basePriceCents = toPriceCents(nextBasePrice);
+      pricing =
+        payload.discountPrice !== null &&
+        Number.isFinite(discount) &&
+        discount > 0 &&
+        toPriceCents(discount) < basePriceCents
+          ? { priceCents: toPriceCents(discount), originalPriceCents: basePriceCents }
+          : { priceCents: basePriceCents, originalPriceCents: null };
+    } else {
+      const nextOfferPercentage =
+        payload.offerPercentage !== undefined
+          ? clampOfferPercentage(payload.offerPercentage, currentOfferPercentage)
+          : currentOfferPercentage;
+      pricing = applyOfferPricing(nextBasePrice, nextOfferPercentage);
+    }
 
     updateData.price_cents = pricing.priceCents;
     updateData.original_price_cents = pricing.originalPriceCents;
 
     if (payload.badge === undefined) {
-      if (nextOfferPercentage > 0 && current.badge === null) {
+      const effectiveOfferPercentage = calculateOfferPercentage(
+        pricing.priceCents,
+        pricing.originalPriceCents
+      );
+
+      if (effectiveOfferPercentage > 0 && current.badge === null) {
         updateData.badge = 'sale';
       }
 
-      if (nextOfferPercentage <= 0 && current.badge === 'sale') {
+      if (effectiveOfferPercentage <= 0 && current.badge === 'sale') {
         updateData.badge = null;
       }
     }
@@ -394,19 +465,38 @@ export async function PATCH(
     updateData.images = normalizeCloudinaryImageAssets(payload.images);
   }
 
-  const { data, error } = await supabase
-    .from('products')
-    .update(updateData)
-    .eq('id', id)
-    .select('id, sku, slug, name, category, subcategory, stock, price_cents, original_price_cents, status, badge, description, long_description, delivery_days, weight_kg, width_cm, depth_cm, height_cm, colors, sizes, fabrics, images, model_url')
-    .single();
+  const { error } = await supabase.from('products').update(updateData).eq('id', id);
 
-  if (error || !data) {
-    return NextResponse.json({ error: error?.message ?? 'Could not update product.' }, { status: 500 });
+  if (error) {
+    return NextResponse.json(
+      { error: withCurtainMigrationHint(error.message) },
+      { status: 500 }
+    );
+  }
+
+  const fetchProduct = (columns: string) =>
+    supabase
+      .from('products')
+      .select(columns)
+      .eq('id', id)
+      .single();
+
+  let { data, error: fetchError } = await fetchProduct(ADMIN_PRODUCT_COLUMNS);
+  if (fetchError && isMissingCurtainColumnsError(fetchError)) {
+    ({ data, error: fetchError } = await fetchProduct(ADMIN_PRODUCT_LEGACY_COLUMNS));
+  }
+
+  if (fetchError || !data) {
+    return NextResponse.json(
+      { error: withCurtainMigrationHint(fetchError?.message ?? 'Could not load the updated product.') },
+      { status: 500 }
+    );
   }
 
   return NextResponse.json({
-    product: toAdminProductRow(data),
+    product: toAdminProductRow(
+      data as unknown as Parameters<typeof toAdminProductRow>[0]
+    ),
   });
 }
 

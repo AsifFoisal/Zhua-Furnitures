@@ -14,6 +14,38 @@ import { createSupabaseAdminClient } from '@/lib/supabase/admin';
 
 export const dynamic = 'force-dynamic';
 
+const ADMIN_PRODUCT_COLUMNS =
+  'id, sku, slug, name, category, subcategory, stock, price_cents, original_price_cents, status, badge, description, long_description, delivery_days, weight_kg, width_cm, depth_cm, height_cm, colors, sizes, fabrics, light_filtration, top_styles, images, model_url';
+
+/** Pre-migration column set (curtain fields not added yet). */
+const ADMIN_PRODUCT_LEGACY_COLUMNS =
+  'id, sku, slug, name, category, subcategory, stock, price_cents, original_price_cents, status, badge, description, long_description, delivery_days, weight_kg, width_cm, depth_cm, height_cm, colors, sizes, fabrics, images, model_url';
+
+const CURTAIN_MIGRATION_HINT =
+  'Run migration 20261123_0018_product_curtain_fields.sql in the Supabase SQL editor first.';
+
+function isMissingCurtainColumnsError(error: { code?: string; message?: string } | null): boolean {
+  if (!error) {
+    return false;
+  }
+
+  return (
+    error.code === 'PGRST204' ||
+    error.code === '42703' ||
+    /column .* does not exist|could not find the '(light_filtration|top_styles)' column/i.test(
+      error.message ?? '',
+    )
+  );
+}
+
+function withCurtainMigrationHint(message: string): string {
+  if (/light_filtration|top_styles/i.test(message)) {
+    return `${message} — ${CURTAIN_MIGRATION_HINT}`;
+  }
+
+  return message;
+}
+
 function buildSku(name: string): string {
   const base = slugify(name).toUpperCase().replace(/-/g, '').slice(0, 8);
   const token = Math.floor(Math.random() * 900 + 100);
@@ -136,6 +168,38 @@ function applyOfferPricing(basePrice: number, offerPercentage: number): {
   };
 }
 
+/**
+ * Curtain products price per metre and may carry an explicit discount price.
+ * Resolve that first so the stored price is exactly the amount the admin
+ * entered (no rounding from a percentage), then fall back to the percentage
+ * model used by the other categories.
+ */
+function resolvePricing(
+  basePrice: number,
+  offerPercentage: unknown,
+  discountPrice: unknown
+): { priceCents: number; originalPriceCents: number | null } {
+  const basePriceCents = toPriceCents(basePrice);
+  const discount =
+    typeof discountPrice === 'number'
+      ? discountPrice
+      : typeof discountPrice === 'string'
+        ? Number(discountPrice)
+        : Number.NaN;
+
+  if (Number.isFinite(discount) && discount > 0) {
+    const discountCents = toPriceCents(discount);
+    if (discountCents < basePriceCents) {
+      return {
+        priceCents: discountCents,
+        originalPriceCents: basePriceCents,
+      };
+    }
+  }
+
+  return applyOfferPricing(basePrice, clampOfferPercentage(offerPercentage, 0));
+}
+
 function calculateOfferPercentage(priceCents: number, originalPriceCents: number | null): number {
   if (
     typeof originalPriceCents !== 'number' ||
@@ -170,6 +234,8 @@ function toAdminProductRow(product: {
   colors: unknown;
   sizes: unknown;
   fabrics: unknown;
+  light_filtration?: unknown;
+  top_styles?: unknown;
   images: unknown;
   model_url: string | null;
 }) {
@@ -204,6 +270,8 @@ function toAdminProductRow(product: {
     colors: normalizeProductColors(product.colors),
     sizes: toSafeStringArray(product.sizes),
     fabrics: toSafeStringArray(product.fabrics),
+    lightFiltration: toSafeStringArray(product.light_filtration),
+    topStyles: toSafeStringArray(product.top_styles),
     images,
     primaryImage: images[0]?.secureUrl ?? null,
     imageCount: images.length,
@@ -218,16 +286,27 @@ export async function GET() {
   }
 
   const supabase = createSupabaseAdminClient();
-  const { data, error } = await supabase
-    .from('products')
-    .select('id, sku, slug, name, category, subcategory, stock, price_cents, original_price_cents, status, badge, description, long_description, delivery_days, weight_kg, width_cm, depth_cm, height_cm, colors, sizes, fabrics, images, model_url')
-    .order('created_at', { ascending: false });
+  const runQuery = (columns: string) =>
+    supabase
+      .from('products')
+      .select(columns)
+      .order('created_at', { ascending: false });
+
+  let { data, error } = await runQuery(ADMIN_PRODUCT_COLUMNS);
+
+  // Curtain columns arrive with migration 20261123_0018; keep the admin list
+  // usable until then by retrying with the legacy column set.
+  if (error && isMissingCurtainColumnsError(error)) {
+    ({ data, error } = await runQuery(ADMIN_PRODUCT_LEGACY_COLUMNS));
+  }
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  const rows = (data ?? []).map((product) => toAdminProductRow(product));
+  const rows = ((data ?? []) as unknown as Array<Parameters<typeof toAdminProductRow>[0]>).map(
+    (product) => toAdminProductRow(product)
+  );
 
   return NextResponse.json({ products: rows });
 }
@@ -246,6 +325,7 @@ export async function POST(request: Request) {
     subcategory?: string;
     price?: number;
     offerPercentage?: number;
+    discountPrice?: number | null;
     stock?: number;
     status?: string;
     badge?: string | null;
@@ -253,6 +333,8 @@ export async function POST(request: Request) {
     colors?: unknown;
     sizes?: unknown;
     fabrics?: unknown;
+    lightFiltration?: unknown;
+    topStyles?: unknown;
     description?: string;
     longDescription?: string;
     deliveryDays?: string;
@@ -270,13 +352,13 @@ export async function POST(request: Request) {
   const category = parseCategory(String(payload.category ?? 'furniture'));
   const price = Number(payload.price ?? 0);
   const offerPercentage = clampOfferPercentage(payload.offerPercentage, 0);
-  const pricing = applyOfferPricing(price, offerPercentage);
+  const pricing = resolvePricing(price, offerPercentage, payload.discountPrice);
   const stock = Number(payload.stock ?? 0);
   const slug = slugify(String(payload.slug ?? '').trim() || name);
   const subcategory = String(payload.subcategory ?? '').trim() || 'General';
   const status = parseProductStatus(String(payload.status ?? 'active'));
   const parsedBadge = parseProductBadge(payload.badge);
-  const badge = parsedBadge ?? (offerPercentage > 0 ? 'sale' : null);
+  const badge = parsedBadge ?? (pricing.originalPriceCents ? 'sale' : null);
   const description = String(payload.description ?? '').trim() || `${name} by Zhua Furniture.`;
   const longDescription =
     String(payload.longDescription ?? '').trim() ||
@@ -289,45 +371,82 @@ export async function POST(request: Request) {
   const colors = normalizeProductColors(payload.colors);
   const sizes = toSafeStringArray(payload.sizes);
   const fabrics = toSafeStringArray(payload.fabrics);
+  const lightFiltration = toSafeStringArray(payload.lightFiltration);
+  const topStyles = toSafeStringArray(payload.topStyles);
+
+  const insertData: Record<string, unknown> = {
+    slug,
+    name,
+    category,
+    subcategory,
+    price_cents: pricing.priceCents,
+    original_price_cents: pricing.originalPriceCents,
+    sku: payload.sku?.trim() || buildSku(name),
+    stock: Math.max(0, Math.round(stock)),
+    status,
+    badge,
+    in_stock: stock > 0,
+    description,
+    long_description: longDescription,
+    images: normalizeCloudinaryImageAssets(payload.images),
+    colors,
+    sizes,
+    fabrics,
+    features: [],
+    delivery_days: deliveryDays,
+    weight_kg: weightKg,
+    width_cm: widthCm,
+    depth_cm: depthCm,
+    height_cm: heightCm,
+  };
+
+  // Only touch the curtain columns when payload data is present so furniture
+  // and accessory products keep working before the migration is applied.
+  if (payload.lightFiltration !== undefined) {
+    insertData.light_filtration = lightFiltration;
+  }
+  if (payload.topStyles !== undefined) {
+    insertData.top_styles = topStyles;
+  }
 
   const supabase = createSupabaseAdminClient();
-  const { data, error } = await supabase
+  const { data: inserted, error } = await supabase
     .from('products')
-    .insert({
-      slug,
-      name,
-      category,
-      subcategory,
-      price_cents: pricing.priceCents,
-      original_price_cents: pricing.originalPriceCents,
-      sku: payload.sku?.trim() || buildSku(name),
-      stock: Math.max(0, Math.round(stock)),
-      status,
-      badge,
-      in_stock: stock > 0,
-      description,
-      long_description: longDescription,
-      images: normalizeCloudinaryImageAssets(payload.images),
-      colors,
-      sizes,
-      fabrics,
-      features: [],
-      delivery_days: deliveryDays,
-      weight_kg: weightKg,
-      width_cm: widthCm,
-      depth_cm: depthCm,
-      height_cm: heightCm,
-    })
-    .select('id, sku, slug, name, category, subcategory, stock, price_cents, original_price_cents, status, badge, description, long_description, delivery_days, weight_kg, width_cm, depth_cm, height_cm, colors, sizes, fabrics, images, model_url')
+    .insert(insertData)
+    .select('id')
     .single();
 
-  if (error || !data) {
-    return NextResponse.json({ error: error?.message ?? 'Could not create product.' }, { status: 500 });
+  if (error || !inserted) {
+    return NextResponse.json(
+      { error: withCurtainMigrationHint(error?.message ?? 'Could not create product.') },
+      { status: 500 }
+    );
+  }
+
+  const fetchProduct = (columns: string) =>
+    supabase
+      .from('products')
+      .select(columns)
+      .eq('id', inserted.id)
+      .single();
+
+  let { data, error: fetchError } = await fetchProduct(ADMIN_PRODUCT_COLUMNS);
+  if (fetchError && isMissingCurtainColumnsError(fetchError)) {
+    ({ data, error: fetchError } = await fetchProduct(ADMIN_PRODUCT_LEGACY_COLUMNS));
+  }
+
+  if (fetchError || !data) {
+    return NextResponse.json(
+      { error: withCurtainMigrationHint(fetchError?.message ?? 'Could not load the created product.') },
+      { status: 500 }
+    );
   }
 
   return NextResponse.json(
     {
-      product: toAdminProductRow(data),
+      product: toAdminProductRow(
+        data as unknown as Parameters<typeof toAdminProductRow>[0]
+      ),
     },
     { status: 201 }
   );

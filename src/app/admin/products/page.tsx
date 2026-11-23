@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { formatCurrency } from '@/lib/admin-data';
+import { fabricOptions, headingStyles } from '@/lib/data';
 import { useToastFeedback } from '@/lib/toast-feedback';
 import styles from '../admin-pages.module.css';
 
@@ -51,6 +52,8 @@ interface AdminProductRow {
   colors: AdminProductColor[];
   sizes: string[];
   fabrics: string[];
+  lightFiltration: string[];
+  topStyles: string[];
   images: CloudinaryImageAsset[];
   primaryImage: string | null;
   imageCount: number;
@@ -72,6 +75,7 @@ interface ProductFormValues {
   badge: AdminBadge;
   price: string;
   offerPercentage: string;
+  discountPrice: string;
   stock: string;
   description: string;
   longDescription: string;
@@ -83,10 +87,38 @@ interface ProductFormValues {
   colors: AdminProductColor[];
   sizes: string[];
   fabrics: string[];
+  lightFiltration: string[];
+  topStyles: string[];
   images: CloudinaryImageAsset[];
 }
 
 const DEFAULT_COLOR_HEX = 'var(--gold)';
+
+const CURTAIN_FABRIC_SUGGESTIONS = fabricOptions.map((fabric) => fabric.name);
+const CURTAIN_LIGHT_FILTRATION_SUGGESTIONS = [
+  'Sheer',
+  'Light Filtering',
+  'Room Darkening',
+  'Blockout',
+  'Sheer + Blockout',
+];
+const CURTAIN_TOP_STYLE_SUGGESTIONS = headingStyles.map((style) => style.name);
+
+function isCurtainCategory(category: AdminCategory): boolean {
+  return category === 'Curtains';
+}
+
+/** Percentage saved when a curtain product has an explicit discount price. */
+function curtainDiscountPercentage(price: string, discountPrice: string): number {
+  const base = Number(price) || 0;
+  const discount = Number(discountPrice) || 0;
+
+  if (base <= 0 || discount <= 0 || discount >= base) {
+    return 0;
+  }
+
+  return Math.round(((base - discount) / base) * 10000) / 100;
+}
 
 function toSafeColorHex(value: unknown): string {
   const raw = typeof value === 'string' ? value.trim() : '';
@@ -175,6 +207,7 @@ const defaultNewProduct: ProductFormValues = {
   badge: null,
   price: '',
   offerPercentage: '',
+  discountPrice: '',
   stock: '',
   description: '',
   longDescription: '',
@@ -186,6 +219,8 @@ const defaultNewProduct: ProductFormValues = {
   colors: [],
   sizes: [],
   fabrics: [],
+  lightFiltration: [],
+  topStyles: [],
   images: [],
 };
 
@@ -201,6 +236,7 @@ function formValuesFromRow(row: AdminProductRow): ProductFormValues {
     badge: row.badge,
     price: String(row.price),
     offerPercentage: String(row.offerPercentage),
+    discountPrice: row.offerPercentage > 0 ? String(row.offerPrice) : '',
     stock: String(row.stock),
     description: row.description,
     longDescription: row.longDescription,
@@ -215,6 +251,8 @@ function formValuesFromRow(row: AdminProductRow): ProductFormValues {
     })),
     sizes: [...row.sizes],
     fabrics: [...row.fabrics],
+    lightFiltration: [...(row.lightFiltration ?? [])],
+    topStyles: [...(row.topStyles ?? [])],
     images: row.images.map((image) => ({ ...image })),
   };
 }
@@ -271,6 +309,64 @@ function withOffer(
   };
 }
 
+/** Price/discount edits auto-manage the sale badge for curtain products. */
+function withCurtainDiscount(
+  values: ProductFormValues,
+  nextPrice: string,
+  nextDiscountPrice: string
+): ProductFormValues {
+  const hasDiscount = curtainDiscountPercentage(nextPrice, nextDiscountPrice) > 0;
+  const badge = hasDiscount
+    ? values.badge ?? 'sale'
+    : values.badge === 'sale'
+      ? null
+      : values.badge;
+
+  return {
+    ...values,
+    price: nextPrice,
+    discountPrice: nextDiscountPrice,
+    badge,
+  };
+}
+
+/**
+ * Carry the discount across category switches so the admin does not have to
+ * re-enter it: curtains use an explicit discount price, other categories use
+ * an offer percentage.
+ */
+function withCategory(values: ProductFormValues, nextCategory: AdminCategory): ProductFormValues {
+  if (nextCategory === values.category) {
+    return values;
+  }
+
+  const leavingCurtains = isCurtainCategory(values.category);
+  const enteringCurtains = isCurtainCategory(nextCategory);
+
+  if (enteringCurtains) {
+    const percentage = clampOfferPercentage(Number(values.offerPercentage) || 0);
+    return {
+      ...values,
+      category: nextCategory,
+      discountPrice:
+        percentage > 0
+          ? String(calculateOfferPrice(Number(values.price) || 0, percentage))
+          : '',
+    };
+  }
+
+  if (leavingCurtains) {
+    const percentage = curtainDiscountPercentage(values.price, values.discountPrice);
+    return {
+      ...values,
+      category: nextCategory,
+      offerPercentage: percentage > 0 ? String(percentage) : '',
+    };
+  }
+
+  return { ...values, category: nextCategory };
+}
+
 function normalizeProductRow(row: AdminProductRow): AdminProductRow {
   const safeBasePrice = Number.isFinite(row.price) ? Math.max(0, row.price) : 0;
   const safeOfferPercentage = clampOfferPercentage(Number(row.offerPercentage ?? 0));
@@ -306,6 +402,8 @@ function normalizeProductRow(row: AdminProductRow): AdminProductRow {
     colors: normalizeProductColors(row.colors),
     sizes: normalizeStringList(row.sizes),
     fabrics: normalizeStringList(row.fabrics),
+    lightFiltration: normalizeStringList(row.lightFiltration),
+    topStyles: normalizeStringList(row.topStyles),
     images: Array.isArray(row.images) ? row.images : [],
     primaryImage: row.primaryImage ?? null,
     imageCount: Number.isFinite(row.imageCount) ? row.imageCount : row.images?.length ?? 0,
@@ -314,6 +412,12 @@ function normalizeProductRow(row: AdminProductRow): AdminProductRow {
 }
 
 function buildSavePayload(values: ProductFormValues) {
+  const isCurtain = isCurtainCategory(values.category);
+  const price = Math.max(0, Math.round(Number(values.price) || 0));
+  const discountPercentage = isCurtain
+    ? curtainDiscountPercentage(values.price, values.discountPrice)
+    : 0;
+
   return {
     sku: values.sku.trim(),
     slug: values.slug.trim(),
@@ -322,8 +426,17 @@ function buildSavePayload(values: ProductFormValues) {
     subcategory: values.subcategory.trim() || 'General',
     status: values.status,
     badge: values.badge,
-    price: Math.max(0, Math.round(Number(values.price) || 0)),
-    offerPercentage: clampOfferPercentage(Number(values.offerPercentage) || 0),
+    price,
+    // Curtains price per metre with an explicit discount price; the other
+    // categories keep the percentage-based offer model.
+    ...(isCurtain
+      ? {
+          discountPrice:
+            discountPercentage > 0
+              ? Math.round((Number(values.discountPrice) || 0) * 100) / 100
+              : null,
+        }
+      : { offerPercentage: clampOfferPercentage(Number(values.offerPercentage) || 0) }),
     stock: Math.max(0, Math.round(Number(values.stock) || 0)),
     description: values.description.trim(),
     longDescription: values.longDescription.trim(),
@@ -335,6 +448,12 @@ function buildSavePayload(values: ProductFormValues) {
     colors: normalizeProductColors(values.colors),
     sizes: normalizeStringList(values.sizes),
     fabrics: normalizeStringList(values.fabrics),
+    ...(isCurtain
+      ? {
+          lightFiltration: normalizeStringList(values.lightFiltration),
+          topStyles: normalizeStringList(values.topStyles),
+        }
+      : {}),
     images: values.images,
   };
 }
@@ -680,9 +799,17 @@ interface ProductStringListFieldsProps {
   onChange: (values: string[]) => void;
   placeholder: string;
   addLabel: string;
+  /** Quick-add chips for common industry values. */
+  suggestions?: string[];
 }
 
-function ProductStringListFields({ values, onChange, placeholder, addLabel }: ProductStringListFieldsProps) {
+function ProductStringListFields({
+  values,
+  onChange,
+  placeholder,
+  addLabel,
+  suggestions = [],
+}: ProductStringListFieldsProps) {
   const rows = values.length > 0 ? values : [];
 
   const updateRow = (index: number, value: string) => {
@@ -697,13 +824,18 @@ function ProductStringListFields({ values, onChange, placeholder, addLabel }: Pr
     onChange(rows.filter((_, entryIndex) => entryIndex !== index));
   };
 
-  if (rows.length === 0) {
-    return (
-      <button className={styles.ghostButton} type="button" onClick={addRow}>
-        + {addLabel}
-      </button>
+  const toggleSuggestion = (suggestion: string) => {
+    onChange(
+      rows.includes(suggestion)
+        ? rows.filter((entry) => entry !== suggestion)
+        : [...rows, suggestion]
     );
-  }
+  };
+
+  const visibleRows = rows.filter((value) => value.trim().length > 0);
+  const unusedSuggestions = suggestions.filter(
+    (suggestion) => !visibleRows.some((value) => value.toLowerCase() === suggestion.toLowerCase())
+  );
 
   return (
     <div style={{ display: 'grid', gap: '0.5rem' }}>
@@ -732,10 +864,21 @@ function ProductStringListFields({ values, onChange, placeholder, addLabel }: Pr
           </button>
         </div>
       ))}
-      <div>
+      <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
         <button className={styles.ghostButton} type="button" onClick={addRow}>
           + {addLabel}
         </button>
+        {unusedSuggestions.map((suggestion) => (
+          <button
+            key={suggestion}
+            className={styles.ghostButton}
+            type="button"
+            onClick={() => toggleSuggestion(suggestion)}
+            title={`Add ${suggestion}`}
+          >
+            + {suggestion}
+          </button>
+        ))}
       </div>
     </div>
   );
@@ -949,6 +1092,140 @@ function ProductModelFields({ productId, modelUrl, onModelChange, onError }: Pro
    Unified product form (create + edit) — grouped sections
    ============================================================ */
 
+interface ProductMediaFieldsProps {
+  values: ProductFormValues;
+  mode: 'create' | 'edit';
+  productId?: string;
+  modelUrl?: string | null;
+  onModelChange?: (modelUrl: string | null) => void;
+  onError: (message: string) => void;
+  uploading: boolean;
+  uploadProgress: { done: number; total: number } | null;
+  onUploadImages: (files: File[], asMain: boolean) => void;
+  onRemoveImage?: (publicId: string) => void;
+}
+
+/** Shared image uploader used by both the standard and curtain layouts. */
+function ProductMediaFields({
+  values,
+  mode,
+  productId,
+  modelUrl,
+  onModelChange,
+  onError,
+  uploading,
+  uploadProgress,
+  onUploadImages,
+  onRemoveImage,
+}: ProductMediaFieldsProps) {
+  const uploadLabel = uploading
+    ? uploadProgress && uploadProgress.total > 1
+      ? `Uploading ${uploadProgress.done}/${uploadProgress.total}...`
+      : 'Uploading...'
+    : null;
+
+  return (
+    <div className={styles.fieldGrid}>
+      <div className={styles.fieldFull}>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+          <label className={styles.ghostButton} style={{ cursor: uploading ? 'wait' : 'pointer' }}>
+            {uploadLabel ?? (mode === 'create' ? 'Upload main image' : 'Upload images')}
+            <input
+              type="file"
+              accept="image/*"
+              multiple={mode === 'edit'}
+              style={{ display: 'none' }}
+              disabled={uploading}
+              onChange={(e) => {
+                const files = Array.from(e.currentTarget.files ?? []);
+                if (files.length > 0) {
+                  onUploadImages(files, mode === 'create');
+                }
+                e.currentTarget.value = '';
+              }}
+            />
+          </label>
+          {mode === 'create' ? (
+            <label className={styles.ghostButton} style={{ cursor: uploading ? 'wait' : 'pointer' }}>
+              {uploadLabel ?? 'Upload gallery images'}
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                style={{ display: 'none' }}
+                disabled={uploading}
+                onChange={(e) => {
+                  const files = Array.from(e.currentTarget.files ?? []);
+                  if (files.length > 0) {
+                    onUploadImages(files, false);
+                  }
+                  e.currentTarget.value = '';
+                }}
+              />
+            </label>
+          ) : null}
+          <span className={styles.fieldHint}>
+            {mode === 'create'
+              ? 'The main image is shown first on the product page.'
+              : 'New images are added after you save. Remove images from the list row → Images.'}
+          </span>
+        </div>
+
+        {values.images.length > 0 ? (
+          <div className={styles.thumbStrip} style={{ marginTop: '0.65rem' }}>
+            {values.images.map((image, imageIndex) => (
+              <span key={image.publicId} className={styles.thumbBox}>
+                <img
+                  src={image.secureUrl}
+                  alt={imageIndex === 0 ? 'Main product image' : `Product image ${imageIndex + 1}`}
+                  style={{
+                    width: '84px',
+                    height: '64px',
+                    objectFit: 'cover',
+                    borderRadius: '8px',
+                    border:
+                      imageIndex === 0 ? '2px solid var(--gold)' : '1px solid var(--border-light)',
+                    display: 'block',
+                  }}
+                />
+                <span className={styles.thumbTag}>
+                  {imageIndex === 0 ? 'Main' : `#${imageIndex + 1}`}
+                </span>
+                {mode === 'create' && onRemoveImage ? (
+                  <button
+                    type="button"
+                    aria-label={`Remove product image ${imageIndex + 1}`}
+                    className={styles.thumbRemove}
+                    disabled={uploading}
+                    onClick={() => onRemoveImage(image.publicId)}
+                  >
+                    ×
+                  </button>
+                ) : null}
+              </span>
+            ))}
+          </div>
+        ) : (
+          <p className={styles.fieldHint} style={{ marginTop: '0.55rem' }}>
+            No images yet.
+          </p>
+        )}
+      </div>
+
+      {mode === 'edit' && productId ? (
+        <div className={styles.fieldFull}>
+          <ProductModelFields
+            productId={productId}
+            modelUrl={modelUrl ?? null}
+            onModelChange={(url) => onModelChange?.(url)}
+            onError={onError}
+          />
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 interface ProductFormFieldsProps {
   values: ProductFormValues;
   onPatch: (patch: Partial<ProductFormValues>) => void;
@@ -980,12 +1257,303 @@ function ProductFormFields({
     Number(values.price) || 0,
     Number(values.offerPercentage) || 0
   );
+  const curtainDiscount = curtainDiscountPercentage(values.price, values.discountPrice);
+  const curtainPrice = Math.max(0, Number(values.price) || 0);
+  const curtainDiscountPrice = Math.max(0, Number(values.discountPrice) || 0);
 
-  const uploadLabel = uploading
-    ? uploadProgress && uploadProgress.total > 1
-      ? `Uploading ${uploadProgress.done}/${uploadProgress.total}...`
-      : 'Uploading...'
-    : null;
+  // Curtain products use a dedicated layout so the fields customers and
+  // merchandisers care about appear in a predictable, curtain-first order.
+  if (isCurtainCategory(values.category)) {
+    return (
+      <div>
+        {/* — Product details — */}
+        <div className={styles.fieldSection}>
+          <h4 className={styles.fieldSectionTitle}>Curtain Product</h4>
+          <div className={styles.fieldGrid}>
+            <div className={`${styles.formRow} ${styles.fieldFull}`}>
+              <label className={styles.label}>Product Title</label>
+              <input
+                className={styles.input}
+                placeholder="e.g. Sahara Eyelet Curtains"
+                value={values.name}
+                onChange={(e) => onPatch({ name: e.target.value })}
+              />
+            </div>
+            <div className={styles.formRow}>
+              <label className={styles.label}>SKU</label>
+              <input
+                className={styles.input}
+                placeholder="Auto-generated when empty"
+                value={values.sku}
+                onChange={(e) => onPatch({ sku: e.target.value })}
+              />
+            </div>
+            <div className={styles.formRow}>
+              <label className={styles.label}>Category</label>
+              <select
+                className={styles.select}
+                value={values.category}
+                onChange={(e) => onPatch(withCategory(values, e.target.value as AdminCategory))}
+              >
+                <option>Furniture</option>
+                <option>Curtains</option>
+                <option>Accessories</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* — Curtain specifications — */}
+        <div className={styles.fieldSection}>
+          <h4 className={styles.fieldSectionTitle}>Curtain Specifications</h4>
+          <div className={styles.fieldGrid}>
+            <div className={`${styles.formRow} ${styles.fieldFull}`}>
+              <label className={styles.label}>Fabric</label>
+              <ProductStringListFields
+                values={values.fabrics}
+                onChange={(fabrics) => onPatch({ fabrics })}
+                placeholder="e.g. Linen Blend"
+                addLabel="Add fabric"
+                suggestions={CURTAIN_FABRIC_SUGGESTIONS}
+              />
+            </div>
+            <div className={`${styles.formRow} ${styles.fieldFull}`}>
+              <label className={styles.label}>Light Filtration</label>
+              <ProductStringListFields
+                values={values.lightFiltration}
+                onChange={(lightFiltration) => onPatch({ lightFiltration })}
+                placeholder="e.g. Room Darkening"
+                addLabel="Add light filtration"
+                suggestions={CURTAIN_LIGHT_FILTRATION_SUGGESTIONS}
+              />
+            </div>
+            <div className={`${styles.formRow} ${styles.fieldFull}`}>
+              <label className={styles.label}>Colour</label>
+              <ProductColorFields
+                colors={values.colors}
+                onChange={(colors) => onPatch({ colors })}
+                uploadBaseName={values.name || 'curtain'}
+                galleryImages={mode === 'edit' ? values.images : []}
+              />
+            </div>
+            <div className={`${styles.formRow} ${styles.fieldFull}`}>
+              <label className={styles.label}>Top Style</label>
+              <ProductStringListFields
+                values={values.topStyles}
+                onChange={(topStyles) => onPatch({ topStyles })}
+                placeholder="e.g. Pinch Pleat"
+                addLabel="Add top style"
+                suggestions={CURTAIN_TOP_STYLE_SUGGESTIONS}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* — Pricing — */}
+        <div className={styles.fieldSection}>
+          <h4 className={styles.fieldSectionTitle}>Pricing</h4>
+          <div className={styles.fieldGrid}>
+            <div className={styles.formRow}>
+              <label className={styles.label}>Price (per metre)</label>
+              <input
+                className={styles.input}
+                inputMode="decimal"
+                placeholder="e.g. 420"
+                value={values.price}
+                onChange={(e) =>
+                  onPatch(withCurtainDiscount(values, e.target.value, values.discountPrice))
+                }
+              />
+            </div>
+            <div className={styles.formRow}>
+              <label className={styles.label}>Discount Price (per metre)</label>
+              <input
+                className={styles.input}
+                inputMode="decimal"
+                placeholder="Optional — e.g. 349"
+                value={values.discountPrice}
+                onChange={(e) =>
+                  onPatch(withCurtainDiscount(values, values.price, e.target.value))
+                }
+              />
+            </div>
+            <p className={`${styles.fieldHint} ${styles.fieldFull}`}>
+              {curtainDiscount > 0
+                ? `Customers pay ${formatCurrency(curtainDiscountPrice)}/m — ${curtainDiscount}% off ${formatCurrency(curtainPrice)}/m. The “sale” badge is applied automatically.`
+                : curtainPrice > 0 && curtainDiscountPrice >= curtainPrice
+                  ? 'The discount price must be lower than the price — it is ignored when saving.'
+                  : 'Leave the discount price empty for no sale. Curtain prices are per metre.'}
+            </p>
+          </div>
+        </div>
+
+        {/* — Image — */}
+        <div className={styles.fieldSection}>
+          <h4 className={styles.fieldSectionTitle}>Image</h4>
+          <ProductMediaFields
+            values={values}
+            mode={mode}
+            productId={productId}
+            modelUrl={modelUrl}
+            onModelChange={onModelChange}
+            onError={onError}
+            uploading={uploading}
+            uploadProgress={uploadProgress}
+            onUploadImages={onUploadImages}
+            onRemoveImage={onRemoveImage}
+          />
+        </div>
+
+        {/* — Description — */}
+        <div className={styles.fieldSection}>
+          <h4 className={styles.fieldSectionTitle}>Description</h4>
+          <div className={styles.fieldGrid}>
+            <div className={`${styles.formRow} ${styles.fieldFull}`}>
+              <label className={styles.label}>Description</label>
+              <textarea
+                className={styles.textarea}
+                rows={3}
+                placeholder="A short summary shown near the product title"
+                value={values.description}
+                onChange={(e) => onPatch({ description: e.target.value })}
+              />
+            </div>
+            <div className={`${styles.formRow} ${styles.fieldFull}`}>
+              <label className={styles.label}>Long description (optional)</label>
+              <textarea
+                className={styles.textarea}
+                rows={5}
+                placeholder="Detailed copy for the product detail page"
+                value={values.longDescription}
+                onChange={(e) => onPatch({ longDescription: e.target.value })}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* — Additional details — */}
+        <div className={styles.fieldSection}>
+          <h4 className={styles.fieldSectionTitle}>Additional Details</h4>
+          <div className={styles.fieldGrid}>
+            <div className={styles.formRow}>
+              <label className={styles.label}>Subcategory</label>
+              <input
+                className={styles.input}
+                placeholder="e.g. Block-Out Curtains"
+                value={values.subcategory}
+                onChange={(e) => onPatch({ subcategory: e.target.value })}
+              />
+            </div>
+            <div className={styles.formRow}>
+              <label className={styles.label}>Slug (optional)</label>
+              <input
+                className={styles.input}
+                placeholder="auto-generated when empty"
+                value={values.slug}
+                onChange={(e) => onPatch({ slug: e.target.value })}
+              />
+            </div>
+            <div className={styles.formRow}>
+              <label className={styles.label}>Status</label>
+              <select
+                className={styles.select}
+                value={values.status}
+                onChange={(e) => onPatch({ status: e.target.value as AdminStatus })}
+              >
+                <option>Active</option>
+                <option>Draft</option>
+                <option>Archived</option>
+              </select>
+            </div>
+            <div className={styles.formRow}>
+              <label className={styles.label}>Badge</label>
+              <select
+                className={styles.select}
+                value={values.badge ?? ''}
+                onChange={(e) =>
+                  onPatch({ badge: e.target.value ? (e.target.value as Exclude<AdminBadge, null>) : null })
+                }
+              >
+                <option value="">None</option>
+                <option value="new">new</option>
+                <option value="sale">sale</option>
+                <option value="custom">custom</option>
+                <option value="bestseller">bestseller</option>
+              </select>
+            </div>
+            <div className={styles.formRow}>
+              <label className={styles.label}>Stock</label>
+              <input
+                className={styles.input}
+                inputMode="numeric"
+                placeholder="e.g. 12"
+                value={values.stock}
+                onChange={(e) => onPatch({ stock: e.target.value })}
+              />
+            </div>
+            <div className={styles.formRow}>
+              <label className={styles.label}>Delivery estimate</label>
+              <input
+                className={styles.input}
+                placeholder="7-10 business days"
+                value={values.deliveryDays}
+                onChange={(e) => onPatch({ deliveryDays: e.target.value })}
+              />
+            </div>
+            <div className={`${styles.formRow} ${styles.fieldFull}`}>
+              <label className={styles.label}>Size options</label>
+              <ProductStringListFields
+                values={values.sizes}
+                onChange={(sizes) => onPatch({ sizes })}
+                placeholder="e.g. 240cm × 260cm"
+                addLabel="Add size"
+              />
+            </div>
+            <div className={styles.formRow}>
+              <label className={styles.label}>Weight (kg)</label>
+              <input
+                className={styles.input}
+                inputMode="decimal"
+                placeholder="0"
+                value={values.weightKg}
+                onChange={(e) => onPatch({ weightKg: e.target.value })}
+              />
+            </div>
+            <div className={styles.formRow}>
+              <label className={styles.label}>Width (cm)</label>
+              <input
+                className={styles.input}
+                inputMode="decimal"
+                placeholder="0"
+                value={values.widthCm}
+                onChange={(e) => onPatch({ widthCm: e.target.value })}
+              />
+            </div>
+            <div className={styles.formRow}>
+              <label className={styles.label}>Depth (cm)</label>
+              <input
+                className={styles.input}
+                inputMode="decimal"
+                placeholder="0"
+                value={values.depthCm}
+                onChange={(e) => onPatch({ depthCm: e.target.value })}
+              />
+            </div>
+            <div className={styles.formRow}>
+              <label className={styles.label}>Height (cm)</label>
+              <input
+                className={styles.input}
+                inputMode="decimal"
+                placeholder="0"
+                value={values.heightCm}
+                onChange={(e) => onPatch({ heightCm: e.target.value })}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -1007,7 +1575,7 @@ function ProductFormFields({
             <select
               className={styles.select}
               value={values.category}
-              onChange={(e) => onPatch({ category: e.target.value as AdminCategory })}
+              onChange={(e) => onPatch(withCategory(values, e.target.value as AdminCategory))}
             >
               <option>Furniture</option>
               <option>Curtains</option>
@@ -1127,104 +1695,18 @@ function ProductFormFields({
       {/* — Media — */}
       <div className={styles.fieldSection}>
         <h4 className={styles.fieldSectionTitle}>Media</h4>
-        <div className={styles.fieldGrid}>
-          <div className={styles.fieldFull}>
-            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
-              <label className={styles.ghostButton} style={{ cursor: uploading ? 'wait' : 'pointer' }}>
-                {uploadLabel ?? (mode === 'create' ? 'Upload main image' : 'Upload images')}
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple={mode === 'edit'}
-                  style={{ display: 'none' }}
-                  disabled={uploading}
-                  onChange={(e) => {
-                    const files = Array.from(e.currentTarget.files ?? []);
-                    if (files.length > 0) {
-                      onUploadImages(files, mode === 'create');
-                    }
-                    e.currentTarget.value = '';
-                  }}
-                />
-              </label>
-              {mode === 'create' ? (
-                <label className={styles.ghostButton} style={{ cursor: uploading ? 'wait' : 'pointer' }}>
-                  {uploadLabel ?? 'Upload gallery images'}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    style={{ display: 'none' }}
-                    disabled={uploading}
-                    onChange={(e) => {
-                      const files = Array.from(e.currentTarget.files ?? []);
-                      if (files.length > 0) {
-                        onUploadImages(files, false);
-                      }
-                      e.currentTarget.value = '';
-                    }}
-                  />
-                </label>
-              ) : null}
-              <span className={styles.fieldHint}>
-                {mode === 'create'
-                  ? 'The main image is shown first on the product page.'
-                  : 'New images are added after you save. Remove images from the list row → Images.'}
-              </span>
-            </div>
-
-            {values.images.length > 0 ? (
-              <div className={styles.thumbStrip} style={{ marginTop: '0.65rem' }}>
-                {values.images.map((image, imageIndex) => (
-                  <span key={image.publicId} className={styles.thumbBox}>
-                    <img
-                      src={image.secureUrl}
-                      alt={imageIndex === 0 ? 'Main product image' : `Product image ${imageIndex + 1}`}
-                      style={{
-                        width: '84px',
-                        height: '64px',
-                        objectFit: 'cover',
-                        borderRadius: '8px',
-                        border:
-                          imageIndex === 0 ? '2px solid var(--gold)' : '1px solid var(--border-light)',
-                        display: 'block',
-                      }}
-                    />
-                    <span className={styles.thumbTag}>
-                      {imageIndex === 0 ? 'Main' : `#${imageIndex + 1}`}
-                    </span>
-                    {mode === 'create' && onRemoveImage ? (
-                      <button
-                        type="button"
-                        aria-label={`Remove product image ${imageIndex + 1}`}
-                        className={styles.thumbRemove}
-                        disabled={uploading}
-                        onClick={() => onRemoveImage(image.publicId)}
-                      >
-                        ×
-                      </button>
-                    ) : null}
-                  </span>
-                ))}
-              </div>
-            ) : (
-              <p className={styles.fieldHint} style={{ marginTop: '0.55rem' }}>
-                No images yet.
-              </p>
-            )}
-          </div>
-
-          {mode === 'edit' && productId ? (
-            <div className={styles.fieldFull}>
-              <ProductModelFields
-                productId={productId}
-                modelUrl={modelUrl ?? null}
-                onModelChange={(url) => onModelChange?.(url)}
-                onError={onError}
-              />
-            </div>
-          ) : null}
-        </div>
+        <ProductMediaFields
+          values={values}
+          mode={mode}
+          productId={productId}
+          modelUrl={modelUrl}
+          onModelChange={onModelChange}
+          onError={onError}
+          uploading={uploading}
+          uploadProgress={uploadProgress}
+          onUploadImages={onUploadImages}
+          onRemoveImage={onRemoveImage}
+        />
       </div>
 
       {/* — Options — */}
@@ -1819,7 +2301,9 @@ export default function ProductsAdminPage() {
               <div className={styles.listSide}>
                 <div className={styles.listActions}>
                   <span style={{ textAlign: 'right' }}>
-                    <span className={styles.listStatLabel}>Price</span>
+                    <span className={styles.listStatLabel}>
+                      {product.category === 'Curtains' ? 'Price / m' : 'Price'}
+                    </span>
                     <div className={styles.listStat}>
                       {product.offerPercentage > 0 ? (
                         <>

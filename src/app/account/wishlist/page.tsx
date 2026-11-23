@@ -32,7 +32,10 @@ export default function WishlistPage() {
               <article key={product.id} style={{ background: 'var(--charcoal)', border: '1px solid rgba(181,146,65,0.18)', borderRadius: 14, padding: '1rem', display: 'grid', gap: '0.7rem' }}>
                 <h2 style={{ color: 'var(--text-primary)', fontSize: '1rem' }}>{product.name}</h2>
                 <p style={{ color: 'var(--text-dim)', fontSize: '0.88rem' }}>{product.subcategory}</p>
-                <p style={{ color: 'var(--gold)', fontWeight: 600 }}>{formatPrice(product.price)}</p>
+                <p style={{ color: 'var(--gold)', fontWeight: 600 }}>
+                  {formatPrice(product.price)}
+                  {product.category === 'curtains' ? ' / m' : ''}
+                </p>
                 <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
                   <button
                     className="btn btn-primary btn-sm"

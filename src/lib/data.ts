@@ -27,6 +27,10 @@ export interface Product {
   colors: ProductColor[];
   sizes?: string[];
   fabrics?: string[];
+  /** Curtain-only options, editable in the admin curtain product form. */
+  lightFiltration?: string[];
+  /** Curtain heading / top-style options. */
+  topStyles?: string[];
   inStock: boolean;
   isCustomizable: boolean;
   deliveryDays: string;

@@ -77,7 +77,10 @@ export default function SearchModal() {
                   <p className={styles.resultName}>{product.name}</p>
                   <p className={styles.resultMeta}>{product.subcategory}</p>
                 </div>
-                <span className={styles.resultPrice}>{formatPrice(product.price)}</span>
+                <span className={styles.resultPrice}>
+                  {formatPrice(product.price)}
+                  {product.category === 'curtains' ? ' / m' : ''}
+                </span>
               </Link>
             ))
           )}

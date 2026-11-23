@@ -71,10 +71,62 @@ function toImageUrls(value: unknown): string[] {
   }
 
   if (Array.isArray(value)) {
-    return value.filter((entry) => isRenderableImageUrl(entry));
+    return value.filter((entry) => typeof entry === 'string' && isRenderableImageUrl(entry));
   }
 
   return [];
+}
+
+/** Row shape of the dynamic-column select below. */
+interface StorefrontProductRow {
+  id: string;
+  slug: string;
+  name: string;
+  category: Product['category'];
+  subcategory: string;
+  price_cents: number;
+  original_price_cents: number | null;
+  rating: number | null;
+  review_count: number;
+  badge: Product['badge'] | null;
+  description: string;
+  long_description: string;
+  images: unknown;
+  colors: unknown;
+  sizes: unknown;
+  fabrics: unknown;
+  light_filtration?: unknown;
+  top_styles?: unknown;
+  in_stock: boolean;
+  is_customizable: boolean;
+  delivery_days: string;
+  weight_kg: number | null;
+  width_cm: number | null;
+  depth_cm: number | null;
+  height_cm: number | null;
+  features: string[] | null;
+  model_url: string | null;
+}
+
+const STOREFRONT_PRODUCT_COLUMNS =
+  'id, slug, name, category, subcategory, price_cents, original_price_cents, rating, review_count, badge, description, long_description, images, colors, sizes, fabrics, light_filtration, top_styles, in_stock, is_customizable, delivery_days, weight_kg, width_cm, depth_cm, height_cm, features, model_url';
+
+/** Pre-migration column set (curtain fields not added yet). */
+const STOREFRONT_PRODUCT_LEGACY_COLUMNS =
+  'id, slug, name, category, subcategory, price_cents, original_price_cents, rating, review_count, badge, description, long_description, images, colors, sizes, fabrics, in_stock, is_customizable, delivery_days, weight_kg, width_cm, depth_cm, height_cm, features, model_url';
+
+function isMissingCurtainColumnsError(error: { code?: string; message?: string } | null): boolean {
+  if (!error) {
+    return false;
+  }
+
+  return (
+    error.code === 'PGRST204' ||
+    error.code === '42703' ||
+    /column .* does not exist|could not find the '(light_filtration|top_styles)' column/i.test(
+      error.message ?? '',
+    )
+  );
 }
 
 /**
@@ -89,19 +141,26 @@ export async function getStorefrontProducts(): Promise<Product[]> {
   }
 
   const supabase = createSupabaseAdminClient();
-  const { data, error } = await supabase
-    .from('products')
-    .select(
-      'id, slug, name, category, subcategory, price_cents, original_price_cents, rating, review_count, badge, description, long_description, images, colors, sizes, fabrics, in_stock, is_customizable, delivery_days, weight_kg, width_cm, depth_cm, height_cm, features, model_url'
-    )
-    .eq('status', 'active')
-    .order('created_at', { ascending: false });
+  const runQuery = (columns: string) =>
+    supabase
+      .from('products')
+      .select(columns)
+      .eq('status', 'active')
+      .order('created_at', { ascending: false });
+
+  let { data, error } = await runQuery(STOREFRONT_PRODUCT_COLUMNS);
+
+  // The curtain columns ship in migration 20261123_0018. Until it is applied,
+  // fall back to the old column set so the storefront keeps working.
+  if (error && isMissingCurtainColumnsError(error)) {
+    ({ data, error } = await runQuery(STOREFRONT_PRODUCT_LEGACY_COLUMNS));
+  }
 
   if (error) {
     throw new Error(error.message);
   }
 
-  return (data ?? []).map((row) => ({
+  return ((data ?? []) as unknown as StorefrontProductRow[]).map((row) => ({
     id: row.id,
     slug: row.slug,
     name: row.name,
@@ -121,6 +180,8 @@ export async function getStorefrontProducts(): Promise<Product[]> {
     colors: toSafeColors(row.colors),
     sizes: toSafeStringArray(row.sizes),
     fabrics: toSafeStringArray(row.fabrics),
+    lightFiltration: toSafeStringArray(row.light_filtration),
+    topStyles: toSafeStringArray(row.top_styles),
     inStock: row.in_stock,
     isCustomizable: row.is_customizable,
     deliveryDays: row.delivery_days,

@@ -159,9 +159,15 @@ export default function FeaturedProducts() {
                   <span className={styles.ratingText}>({product.reviewCount})</span>
                 </div>
                 <div className={styles.priceRow}>
-                  <span className={styles.price}>{formatPrice(product.price)}</span>
+                  <span className={styles.price}>
+                    {formatPrice(product.price)}
+                    {product.category === 'curtains' ? ' / m' : ''}
+                  </span>
                   {product.originalPrice && (
-                    <span className={styles.originalPrice}>{formatPrice(product.originalPrice)}</span>
+                    <span className={styles.originalPrice}>
+                      {formatPrice(product.originalPrice)}
+                      {product.category === 'curtains' ? ' / m' : ''}
+                    </span>
                   )}
                 </div>
                 {product.isCustomizable && (

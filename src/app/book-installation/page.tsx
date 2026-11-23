@@ -1,10 +1,17 @@
 'use client';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useMemo, useState } from 'react';
 import { useStorefrontProducts } from '@/lib/use-storefront-products';
+import type { Product } from '@/lib/data';
 import { useToastFeedback } from '@/lib/toast-feedback';
 import { buildWhatsAppUrl } from '@/lib/whatsapp';
 
 const slots = ['08:00 - 10:00', '10:00 - 12:00', '13:00 - 15:00', '15:00 - 17:00'];
+
+const PRODUCT_GROUPS: { category: Product['category']; label: string }[] = [
+  { category: 'furniture', label: 'Furniture' },
+  { category: 'curtains', label: 'Curtains & Blinds' },
+  { category: 'accessories', label: 'Home Accessories' },
+];
 
 const defaultBookingForm = {
   productId: '',
@@ -26,6 +33,18 @@ export default function BookInstallationPage() {
   const [success, setSuccess] = useState('');
 
   useToastFeedback({ error, success });
+
+  // Group the catalogue so the dropdown is browsable by product category.
+  const groupedProducts = useMemo(
+    () =>
+      PRODUCT_GROUPS.map((group) => ({
+        ...group,
+        products: products
+          .filter((product) => product.category === group.category)
+          .sort((a, b) => a.name.localeCompare(b.name)),
+      })).filter((group) => group.products.length > 0),
+    [products]
+  );
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -100,8 +119,9 @@ export default function BookInstallationPage() {
 
         <form onSubmit={onSubmit} style={{ background: 'var(--charcoal)', border: '1px solid rgba(181,146,65,0.2)', borderRadius: 14, padding: '1.2rem', display: 'grid', gap: '0.8rem' }}>
           <div className="form-group">
-            <label className="form-label">Product</label>
+            <label className="form-label" htmlFor="installation-product">Product</label>
             <select
+              id="installation-product"
               className="form-select"
               required
               value={form.productId}
@@ -109,7 +129,13 @@ export default function BookInstallationPage() {
               disabled={loading}
             >
               <option value="">{loading ? 'Loading products…' : 'Select product'}</option>
-              {products.map((product) => <option key={product.id} value={product.id}>{product.name}</option>)}
+              {groupedProducts.map((group) => (
+                <optgroup key={group.category} label={group.label}>
+                  {group.products.map((product) => (
+                    <option key={product.id} value={product.id}>{product.name}</option>
+                  ))}
+                </optgroup>
+              ))}
             </select>
           </div>
           <div style={{ display: 'grid', gap: '0.7rem', gridTemplateColumns: '1fr 1fr' }}>

@@ -49,7 +49,10 @@ export default function CategoryProductGrid({ products, loading = false, emptyMe
             <div className={styles.body}>
               <p className={styles.subcategory}>{product.subcategory}</p>
               <h2 className={styles.name}>{product.name}</h2>
-              <p className={styles.price}>{formatPrice(product.price)}</p>
+              <p className={styles.price}>
+                {formatPrice(product.price)}
+                {product.category === 'curtains' ? ' / m' : ''}
+              </p>
             </div>
           </Link>
         );
