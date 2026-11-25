@@ -224,6 +224,10 @@ export default function ProductPage() {
     ? product.modelUrl
     : null;
   const safeImgIndex = Math.min(imgIndex, Math.max(0, imgCount - 1));
+  // The thumbnail rail also holds the 3D entry point, so it is shown for a
+  // single-image product when a model exists. Layout must follow the rail, not
+  // just the image count, or the rail stacks full-width above the stage.
+  const showThumbRail = imgCount > 1 || Boolean(modelUrl);
   const saving =
     product && product.originalPrice && product.originalPrice > product.price
       ? product.originalPrice - product.price
@@ -310,10 +314,10 @@ export default function ProductPage() {
 
         <div className={styles.shell}>
           <section
-            className={`${styles.gallery} ${imgCount <= 1 ? styles.galleryNoThumbs : ''}`}
+            className={`${styles.gallery} ${showThumbRail ? '' : styles.galleryNoThumbs}`}
             aria-label="Product images"
           >
-            {imgCount > 1 || modelUrl ? (
+            {showThumbRail ? (
               <div className={styles.thumbs} role="group" aria-label="Choose product image">
                 {modelUrl ? (
                   <button
