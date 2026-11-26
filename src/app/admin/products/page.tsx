@@ -103,6 +103,19 @@ const CURTAIN_LIGHT_FILTRATION_SUGGESTIONS = [
   'Sheer + Blockout',
 ];
 const CURTAIN_TOP_STYLE_SUGGESTIONS = headingStyles.map((style) => style.name);
+/**
+ * Common panel sizes in width × drop order (the convention curtain makers
+ * quote in). "Made to measure" covers products sold purely custom so the
+ * storefront card still shows a measurement.
+ */
+const CURTAIN_SIZE_SUGGESTIONS = [
+  '140 × 220 cm',
+  '180 × 220 cm',
+  '220 × 260 cm',
+  '260 × 260 cm',
+  '300 × 260 cm',
+  'Made to measure',
+];
 
 function isCurtainCategory(category: AdminCategory): boolean {
   return category === 'Curtains';
@@ -1346,6 +1359,20 @@ function ProductFormFields({
                 suggestions={CURTAIN_TOP_STYLE_SUGGESTIONS}
               />
             </div>
+            <div className={`${styles.formRow} ${styles.fieldFull}`}>
+              <label className={styles.label}>Measurements / Sizes</label>
+              <ProductStringListFields
+                values={values.sizes}
+                onChange={(sizes) => onPatch({ sizes })}
+                placeholder="e.g. 220 × 260 cm (W × Drop)"
+                addLabel="Add size"
+                suggestions={CURTAIN_SIZE_SUGGESTIONS}
+              />
+              <p className={styles.fieldHint}>
+                Width × drop per panel. These become the size options on the product page and the
+                measurement shown on curtain cards. Leave empty for made-to-measure only.
+              </p>
+            </div>
           </div>
         </div>
 
@@ -1498,15 +1525,6 @@ function ProductFormFields({
                 placeholder="7-10 business days"
                 value={values.deliveryDays}
                 onChange={(e) => onPatch({ deliveryDays: e.target.value })}
-              />
-            </div>
-            <div className={`${styles.formRow} ${styles.fieldFull}`}>
-              <label className={styles.label}>Size options</label>
-              <ProductStringListFields
-                values={values.sizes}
-                onChange={(sizes) => onPatch({ sizes })}
-                placeholder="e.g. 240cm × 260cm"
-                addLabel="Add size"
               />
             </div>
             <div className={styles.formRow}>
@@ -2293,6 +2311,11 @@ export default function ProductsAdminPage() {
                     <span className={`${styles.chip} ${styles.chipGold}`}>{product.badge}</span>
                   ) : null}
                   <span className={styles.chip}>{product.status}</span>
+                  {product.category === 'Curtains' && product.sizes.length > 0 ? (
+                    <span className={styles.chip}>
+                      {product.sizes.length} measurement{product.sizes.length === 1 ? '' : 's'}
+                    </span>
+                  ) : null}
                   {product.sku ? <span>{product.sku}</span> : null}
                   {product.imageCount > 0 ? <span>{product.imageCount} image{product.imageCount === 1 ? '' : 's'}</span> : null}
                 </span>

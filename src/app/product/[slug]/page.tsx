@@ -212,7 +212,10 @@ export default function ProductPage() {
   const heightCm = Number(product?.dimensions?.heightCm ?? 0);
   const hasPhysicalSpecs = weightKg > 0 || widthCm > 0 || depthCm > 0 || heightCm > 0;
   const isCurtain = product?.category === 'curtains';
-  const hasCurtainSpecs = lightFiltrationOptions.length > 0 || topStyleOptions.length > 0;
+  const hasCurtainSpecs =
+    lightFiltrationOptions.length > 0 ||
+    topStyleOptions.length > 0 ||
+    (isCurtain && sizeOptions.length > 0);
   const hasSpecifications = hasPhysicalSpecs || hasCurtainSpecs;
   const colorImages = Array.isArray(selectedColor.images)
     ? toPreviewImages(selectedColor.images)
@@ -522,7 +525,8 @@ export default function ProductPage() {
               {hasSizeOptions || !isFragrance ? (
                 <div className={styles.field} role="group" aria-labelledby="size-label">
                   <span id="size-label" className={styles.fieldLabel}>
-                    Size <em className={styles.fieldValue}>{hasSizeOptions ? activeSize : 'Not specified'}</em>
+                    {isCurtain ? 'Measurement' : 'Size'}{' '}
+                    <em className={styles.fieldValue}>{hasSizeOptions ? activeSize : 'Not specified'}</em>
                   </span>
                   {hasSizeOptions ? (
                     <div className={styles.options}>
@@ -718,6 +722,12 @@ export default function ProductPage() {
                 <div className={styles.block}>
                   <h2 className={styles.blockTitle}>Specifications</h2>
                   <dl className={styles.specList}>
+                    {isCurtain && sizeOptions.length > 0 ? (
+                      <div className={styles.specRow}>
+                        <dt>Measurements</dt>
+                        <dd>{sizeOptions.join(', ')}</dd>
+                      </div>
+                    ) : null}
                     {lightFiltrationOptions.length > 0 ? (
                       <div className={styles.specRow}>
                         <dt>Light filtration</dt>
