@@ -86,10 +86,22 @@ interface ProductFormValues {
   heightCm: string;
   colors: AdminProductColor[];
   sizes: string[];
+  /** Structured curtain measurements — serialised into `sizes` on save. */
+  measurements: CurtainMeasurementValue[];
   fabrics: string[];
   lightFiltration: string[];
   topStyles: string[];
   images: CloudinaryImageAsset[];
+}
+
+type MeasurementUnit = 'cm' | 'in' | 'ft';
+
+interface CurtainMeasurementValue {
+  width: string;
+  drop: string;
+  unit: MeasurementUnit;
+  /** Legacy free-text size entry that is not a width × drop pair. */
+  label?: string;
 }
 
 const DEFAULT_COLOR_HEX = 'var(--gold)';
@@ -116,6 +128,91 @@ const CURTAIN_SIZE_SUGGESTIONS = [
   '300 × 260 cm',
   'Made to measure',
 ];
+
+const MEASUREMENT_UNITS: { value: MeasurementUnit; label: string }[] = [
+  { value: 'cm', label: 'cm' },
+  { value: 'in', label: 'inches' },
+  { value: 'ft', label: 'feet' },
+];
+
+const MEASUREMENT_UNIT_ALIASES: Record<string, MeasurementUnit> = {
+  cm: 'cm',
+  cms: 'cm',
+  centimeter: 'cm',
+  centimeters: 'cm',
+  centimetre: 'cm',
+  centimetres: 'cm',
+  in: 'in',
+  inch: 'in',
+  inches: 'in',
+  '"': 'in',
+  '”': 'in',
+  ft: 'ft',
+  foot: 'ft',
+  feet: 'ft',
+  "'": 'ft',
+};
+
+/**
+ * Parses a saved size such as "220 × 260 cm", "55 × 87 in" or "5.5 × 7 ft"
+ * back into the structured row. Anything that is not a width × drop pair
+ * (e.g. "Made to measure") becomes a free-text label row so existing values
+ * are never dropped on edit.
+ */
+function parseMeasurementValue(raw: string): CurtainMeasurementValue {
+  const value = raw.trim();
+  const match = value.match(
+    /^(\d+(?:[.,]\d+)?)\s*(cm|cms|centimet(?:er|re)s?|in|inch(?:es)?|"|”|ft|feet|foot|')?\s*[×xX*]\s*(\d+(?:[.,]\d+)?)\s*(cm|cms|centimet(?:er|re)s?|in|inch(?:es)?|"|”|ft|feet|foot|')?$/i
+  );
+
+  if (!match) {
+    return { width: '', drop: '', unit: 'cm', label: value };
+  }
+
+  const unit = (match[4] || match[2] || 'cm').toLowerCase();
+
+  return {
+    width: match[1].replace(',', '.'),
+    drop: match[3].replace(',', '.'),
+    unit: MEASUREMENT_UNIT_ALIASES[unit] ?? 'cm',
+  };
+}
+
+function parseMeasurements(sizes: string[]): CurtainMeasurementValue[] {
+  return sizes
+    .filter((entry) => typeof entry === 'string' && entry.trim().length > 0)
+    .map(parseMeasurementValue);
+}
+
+function normalizeMeasurementDimension(value: string): string {
+  const parsed = Number(value.trim().replace(',', '.'));
+
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    return '';
+  }
+
+  return String(parsed);
+}
+
+/** One row → the storefront-facing string, or '' when the row is incomplete. */
+function serializeMeasurement(row: CurtainMeasurementValue): string {
+  if (typeof row.label === 'string' && row.label.trim().length > 0) {
+    return row.label.trim();
+  }
+
+  const width = normalizeMeasurementDimension(row.width);
+  const drop = normalizeMeasurementDimension(row.drop);
+
+  if (!width || !drop) {
+    return '';
+  }
+
+  return `${width} × ${drop} ${row.unit}`;
+}
+
+function serializeMeasurements(rows: CurtainMeasurementValue[]): string[] {
+  return normalizeStringList(rows.map(serializeMeasurement));
+}
 
 function isCurtainCategory(category: AdminCategory): boolean {
   return category === 'Curtains';
@@ -231,6 +328,7 @@ const defaultNewProduct: ProductFormValues = {
   heightCm: '',
   colors: [],
   sizes: [],
+  measurements: [],
   fabrics: [],
   lightFiltration: [],
   topStyles: [],
@@ -263,6 +361,7 @@ function formValuesFromRow(row: AdminProductRow): ProductFormValues {
       images: (color.images ?? []).map((image) => ({ ...image })),
     })),
     sizes: [...row.sizes],
+    measurements: parseMeasurements(row.sizes),
     fabrics: [...row.fabrics],
     lightFiltration: [...(row.lightFiltration ?? [])],
     topStyles: [...(row.topStyles ?? [])],
@@ -361,6 +460,7 @@ function withCategory(values: ProductFormValues, nextCategory: AdminCategory): P
     return {
       ...values,
       category: nextCategory,
+      measurements: parseMeasurements(values.sizes),
       discountPrice:
         percentage > 0
           ? String(calculateOfferPrice(Number(values.price) || 0, percentage))
@@ -373,6 +473,7 @@ function withCategory(values: ProductFormValues, nextCategory: AdminCategory): P
     return {
       ...values,
       category: nextCategory,
+      sizes: serializeMeasurements(values.measurements),
       offerPercentage: percentage > 0 ? String(percentage) : '',
     };
   }
@@ -459,7 +560,9 @@ function buildSavePayload(values: ProductFormValues) {
     depthCm: toSafeMeasure(values.depthCm),
     heightCm: toSafeMeasure(values.heightCm),
     colors: normalizeProductColors(values.colors),
-    sizes: normalizeStringList(values.sizes),
+    sizes: isCurtain
+      ? serializeMeasurements(values.measurements)
+      : normalizeStringList(values.sizes),
     fabrics: normalizeStringList(values.fabrics),
     ...(isCurtain
       ? {
@@ -887,6 +990,147 @@ function ProductStringListFields({
             className={styles.ghostButton}
             type="button"
             onClick={() => toggleSuggestion(suggestion)}
+            title={`Add ${suggestion}`}
+          >
+            + {suggestion}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+interface ProductMeasurementFieldsProps {
+  values: CurtainMeasurementValue[];
+  onChange: (values: CurtainMeasurementValue[]) => void;
+}
+
+const MEASUREMENT_ROW_GRID = 'minmax(0, 1fr) minmax(0, 1fr) 108px auto';
+
+/**
+ * Curtain sizes as explicit Width × Drop rows, each with its own unit. The
+ * rows are serialised into the shared `sizes` column on save so the product
+ * page and storefront cards keep working unchanged.
+ */
+function ProductMeasurementFields({ values, onChange }: ProductMeasurementFieldsProps) {
+  const updateRow = (index: number, patch: Partial<CurtainMeasurementValue>) => {
+    onChange(
+      values.map((row, rowIndex) => (rowIndex === index ? { ...row, ...patch } : row))
+    );
+  };
+
+  const addRow = (row: CurtainMeasurementValue = { width: '', drop: '', unit: 'cm' }) => {
+    onChange([...values, row]);
+  };
+
+  const removeRow = (index: number) => {
+    onChange(values.filter((_, rowIndex) => rowIndex !== index));
+  };
+
+  const savedValues = serializeMeasurements(values);
+  const unusedSuggestions = CURTAIN_SIZE_SUGGESTIONS.filter(
+    (suggestion) => !savedValues.some((value) => value.toLowerCase() === suggestion.toLowerCase())
+  );
+
+  return (
+    <div style={{ display: 'grid', gap: '0.5rem' }}>
+      {values.length > 0 ? (
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: MEASUREMENT_ROW_GRID,
+            gap: '0.5rem',
+          }}
+        >
+          <span className={styles.label}>Width</span>
+          <span className={styles.label}>Drop</span>
+          <span className={styles.label}>Unit</span>
+          <span aria-hidden="true" />
+        </div>
+      ) : null}
+
+      {values.map((row, index) => (
+        <div
+          key={index}
+          style={{
+            display: 'grid',
+            gridTemplateColumns: MEASUREMENT_ROW_GRID,
+            gap: '0.5rem',
+            alignItems: 'center',
+          }}
+        >
+          {row.label !== undefined ? (
+            <>
+              <input
+                className={styles.input}
+                style={{ gridColumn: '1 / 4' }}
+                placeholder="e.g. Made to measure"
+                aria-label={`Measurement ${index + 1}`}
+                value={row.label}
+                onChange={(event) => updateRow(index, { label: event.target.value })}
+              />
+              <button
+                className={styles.ghostButton}
+                type="button"
+                onClick={() => removeRow(index)}
+              >
+                Remove
+              </button>
+            </>
+          ) : (
+            <>
+              <input
+                className={styles.input}
+                inputMode="decimal"
+                placeholder="e.g. 140"
+                aria-label={`Width for size ${index + 1}`}
+                value={row.width}
+                onChange={(event) => updateRow(index, { width: event.target.value })}
+              />
+              <input
+                className={styles.input}
+                inputMode="decimal"
+                placeholder="e.g. 220"
+                aria-label={`Drop for size ${index + 1}`}
+                value={row.drop}
+                onChange={(event) => updateRow(index, { drop: event.target.value })}
+              />
+              <select
+                className={styles.select}
+                aria-label={`Unit for size ${index + 1}`}
+                value={row.unit}
+                onChange={(event) =>
+                  updateRow(index, { unit: event.target.value as MeasurementUnit })
+                }
+              >
+                {MEASUREMENT_UNITS.map((unit) => (
+                  <option key={unit.value} value={unit.value}>
+                    {unit.label}
+                  </option>
+                ))}
+              </select>
+              <button
+                className={styles.ghostButton}
+                type="button"
+                onClick={() => removeRow(index)}
+              >
+                Remove
+              </button>
+            </>
+          )}
+        </div>
+      ))}
+
+      <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+        <button className={styles.ghostButton} type="button" onClick={() => addRow()}>
+          + Add size
+        </button>
+        {unusedSuggestions.map((suggestion) => (
+          <button
+            key={suggestion}
+            className={styles.ghostButton}
+            type="button"
+            onClick={() => addRow(parseMeasurementValue(suggestion))}
             title={`Add ${suggestion}`}
           >
             + {suggestion}
@@ -1361,16 +1605,14 @@ function ProductFormFields({
             </div>
             <div className={`${styles.formRow} ${styles.fieldFull}`}>
               <label className={styles.label}>Measurements / Sizes</label>
-              <ProductStringListFields
-                values={values.sizes}
-                onChange={(sizes) => onPatch({ sizes })}
-                placeholder="e.g. 220 × 260 cm (W × Drop)"
-                addLabel="Add size"
-                suggestions={CURTAIN_SIZE_SUGGESTIONS}
+              <ProductMeasurementFields
+                values={values.measurements}
+                onChange={(measurements) => onPatch({ measurements })}
               />
               <p className={styles.fieldHint}>
-                Width × drop per panel. These become the size options on the product page and the
-                measurement shown on curtain cards. Leave empty for made-to-measure only.
+                Width × drop per panel, in cm, inches or feet. Add as many sizes as the product
+                comes in — they become the size options on the product page and the measurement
+                shown on curtain cards. Rows missing a width or drop are ignored.
               </p>
             </div>
           </div>
